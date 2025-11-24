@@ -5,35 +5,43 @@ import { Calendar } from 'lucide-react';
 const experiences = [
     {
         id: 1,
-        role: "Senior Frontend Engineer",
-        company: "TechNova Solutions",
-        period: "2023 - Present",
-        description: "Leading the frontend team in rebuilding the core product using React and Next.js. Improved performance by 40% and established a new design system.",
-        tags: ["React", "Next.js", "Team Leadership"]
+        role: "Fullstack (Inventory Project)",
+        company: "Firmer Parttime",
+        period: "Apr 2025 - Present",
+        description: "Continuing development on the inventory project as a part-time Fullstack developer.",
+        tags: ["Fullstack", "Inventory System"]
     },
     {
         id: 2,
-        role: "Fullstack Developer",
-        company: "Orbit Systems",
-        period: "2021 - 2023",
-        description: "Developed scalable microservices using Node.js and Go. Implemented real-time data visualization features for the client dashboard.",
-        tags: ["Node.js", "Go", "WebSockets"]
+        role: "Fullstack (Inventory Project)",
+        company: "Firmer Coorperate",
+        period: "Sep 2024 - Mar 2025",
+        description: "Worked as a cooperative education student developing an inventory project.",
+        tags: ["Fullstack", "Inventory System", "Co-op"]
     },
     {
         id: 3,
-        role: "Frontend Developer",
-        company: "Creative Pulse",
-        period: "2019 - 2021",
-        description: "Collaborated with designers to create award-winning websites. Specialized in complex GSAP animations and WebGL experiences.",
-        tags: ["Vue.js", "GSAP", "WebGL"]
+        role: "Tech Staff",
+        company: "IT Openhouse 2025",
+        period: "Jan 2025 - Mar 2025",
+        description: "School of Information Technology, KMITL. Developed landing page with registered form for IT openhouse camping using react ts and nest js for backend dev.",
+        tags: ["React", "NestJS", "TypeScript"]
     },
     {
         id: 4,
-        role: "Frontend Developer2",
-        company: "Creative Pulse",
-        period: "2019 - 2021",
-        description: "Collaborated with designers to create award-winning websites. Specialized in complex GSAP animations and WebGL experiences.",
-        tags: ["Vue.js", "GSAP", "WebGL"]
+        role: "Tech Staff",
+        company: "ITCamp20",
+        period: "Jan 2024 - Apr 2024",
+        description: "School of Information Technology, KMITL. Developed a website for promoting and recruiting for ITCamp20 using the Nuxt framework and TailwindCSS for web development.",
+        tags: ["Nuxt", "TailwindCSS"]
+    },
+    {
+        id: 5,
+        role: "Registration Staff",
+        company: "UNITE Camp 5",
+        period: "Jan 2023",
+        description: "School of Information Technology, KMITL. Was responsible for managing the registration process for staff and campers participating in the event.",
+        tags: ["Management", "Registration"]
     }
 ];
 

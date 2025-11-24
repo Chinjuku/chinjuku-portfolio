@@ -1,9 +1,20 @@
-import React from 'react';
-import { projects } from '../data/projects';
-import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
+import React, { useState } from 'react';
+import { all_projects } from '../data/projects';
+import { ArrowLeft, ExternalLink, Github, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AllProjects: React.FC = () => {
+    const [showRepoModal, setShowRepoModal] = useState(false);
+    const [selectedRepo, setSelectedRepo] = useState<string | string[] | null>(null);
+
+    const handleRepoClick = (repos: string | string[]) => {
+        if (Array.isArray(repos)) {
+            setSelectedRepo(repos);
+            setShowRepoModal(true);
+        } else {
+            window.open(repos, '_blank');
+        }
+    };
     return (
         <div className="min-h-screen bg-space-white dark:bg-space-black transition-colors duration-300 py-24 px-6">
             <div className="container mx-auto">
@@ -22,7 +33,7 @@ const AllProjects: React.FC = () => {
 
                 {/* Projects Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {projects.map((project) => (
+                    {all_projects.map((project) => (
                         <div key={project.id} className="group relative bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-nebula-purple/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
 
                             {/* Image */}
@@ -57,14 +68,22 @@ const AllProjects: React.FC = () => {
                                 </div>
 
                                 <div className="flex gap-4 mt-auto">
-                                    <a href="#" className="flex items-center gap-1 text-sm font-medium text-space-black dark:text-white hover:text-nebula-purple dark:hover:text-nebula-glow transition-colors">
-                                        <ExternalLink className="w-4 h-4" />
-                                        Demo
-                                    </a>
-                                    <a href="#" className="flex items-center gap-1 text-sm font-medium text-space-black dark:text-white hover:text-nebula-purple dark:hover:text-nebula-glow transition-colors">
+                                    {project.web_url && (
+                                        <button
+                                            onClick={() => window.open(project.web_url, '_blank')}
+                                            className="flex items-center gap-1 text-sm font-medium text-space-black dark:text-white hover:text-nebula-purple dark:hover:text-nebula-glow transition-colors"
+                                        >
+                                            <ExternalLink className="w-4 h-4" />
+                                            Demo
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => handleRepoClick(project.repos)}
+                                        className="flex items-center gap-1 text-sm font-medium text-space-black dark:text-white hover:text-nebula-purple dark:hover:text-nebula-glow transition-colors"
+                                    >
                                         <Github className="w-4 h-4" />
                                         Code
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -72,6 +91,44 @@ const AllProjects: React.FC = () => {
                 </div>
 
             </div>
+
+            {/* Repo Modal */}
+            {showRepoModal && selectedRepo && Array.isArray(selectedRepo) && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-space-black border border-gray-200 dark:border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative">
+                        <button
+                            onClick={() => setShowRepoModal(false)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <h3 className="text-xl font-bold text-space-black dark:text-white mb-4">Select Repository</h3>
+
+                        <div className="space-y-3">
+                            <a
+                                href={selectedRepo[0]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                            >
+                                <span className="font-medium text-space-black dark:text-white">Frontend Repository</span>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple transition-colors" />
+                            </a>
+
+                            <a
+                                href={selectedRepo[1]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                            >
+                                <span className="font-medium text-space-black dark:text-white">Backend Repository</span>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple transition-colors" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

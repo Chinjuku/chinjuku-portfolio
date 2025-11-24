@@ -40,35 +40,35 @@ const About: React.FC = () => {
                 <div className="about-text flex-1">
                     <div className="flex items-center gap-2 text-nebula-purple dark:text-nebula-glow mb-4">
                         <User className="w-5 h-5" />
-                        <span className="tracking-widest uppercase font-medium">The Commander</span>
+                        <span className="tracking-widest uppercase font-medium">About Me</span>
                     </div>
 
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-space-black dark:text-white mb-6 leading-tight">
-                        Architecting the Future of <br />
+                        Driven by Passion <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-starlight-blue to-nebula-purple dark:from-starlight-cyan dark:to-nebula-purple">
-                            Web Experiences
+                            Defined by Code
                         </span>
                     </h2>
 
                     <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg leading-relaxed mb-8">
-                        I'm a creative engineer obsessed with performance and aesthetics. My mission is to bridge the gap between design and code, creating immersive digital experiences that feel alive. With a background in both systems architecture and interactive design, I build applications that are not only beautiful but also robust and scalable.
+                        A highly responsible and self-motivated college junior with an IT (Information Technology) major at King Mongkut's Institute of Technology Ladkrabang. Seeking an opportunity for a cooperative position as a Backend developer that will allow me to apply and expand my skills in Backend development your company. I look forward to the opportunity to work with your team.
                     </p>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
                             <div className="flex items-center gap-3 mb-2">
                                 <Zap className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
-                                <h4 className="font-bold text-space-black dark:text-white">Core Strengths</h4>
+                                <h4 className="font-bold text-space-black dark:text-white">Personal Skills</h4>
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">System Design, Performance Optimization, Creative Coding, UI/UX Architecture</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Fast learner, Teamwork, Problem-solving, Leadership</p>
                         </div>
 
                         <div className="p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
                             <div className="flex items-center gap-3 mb-2">
                                 <BookOpen className="w-5 h-5 text-starlight-blue dark:text-starlight-cyan" />
-                                <h4 className="font-bold text-space-black dark:text-white">Currently Researching</h4>
+                                <h4 className="font-bold text-space-black dark:text-white">Education</h4>
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">LLM Integration, WebGPU, Server Components, Edge Computing</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">KMITL, Information Technology (Software Engineering), 2022 - Present</p>
                         </div>
                     </div>
                 </div>

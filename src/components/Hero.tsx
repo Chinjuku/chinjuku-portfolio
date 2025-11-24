@@ -1,11 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ArrowRight, Download } from 'lucide-react';
+import ProfileAvatar from '../assets/profile.png';
+import { useNavClick } from '../utils';
+import resumePdf from '../assets/resume.pdf';
 
 const Hero: React.FC = () => {
     const componentRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLSpanElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const handleNavClick = useNavClick();
 
     // Particle Animation
     useEffect(() => {
@@ -90,7 +94,7 @@ const Hero: React.FC = () => {
             });
 
             // Typing Effect
-            const roles = ["Fullstack Developer", "Cloud Architect", "UI/UX Enthusiast"];
+            const roles = ["Backend Developer", "Fullstack Developer", "Software Engineer"];
             let roleIndex = 0;
             let charIndex = 0;
             let isDeleting = false;
@@ -137,26 +141,28 @@ const Hero: React.FC = () => {
 
                 {/* Text Content */}
                 <div className="hero-content flex-1 text-center md:text-left">
-                    <h2 className="text-nebula-purple dark:text-nebula-glow font-medium text-base md:text-lg mb-4 tracking-widest uppercase">Mission Status: Online</h2>
+                    <h2 className="text-nebula-purple dark:text-nebula-glow font-medium text-base md:text-lg mb-4 tracking-widest uppercase">Welcome to my universe</h2>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-space-black dark:text-white">
-                        Navigating the <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-starlight-blue to-nebula-purple dark:from-starlight-cyan dark:to-nebula-purple">
-                            Digital Universe
+                        I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-starlight-blue to-nebula-purple dark:from-starlight-cyan dark:to-nebula-purple">
+                            Chinatip Wu
                         </span>
                     </h1>
+                    <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 font-light">
+                        Navigating the Digital Universe
+                    </p>
 
                     <div className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 h-8 font-mono">
                         I am a <span ref={textRef} className="text-space-black dark:text-white border-r-2 border-nebula-purple pr-1"></span>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                        <button className="group relative px-6 py-2 md:px-8 md:py-3 bg-nebula-purple hover:bg-nebula-glow text-white rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden shadow-lg shadow-nebula-purple/20">
+                        <button onClick={() => handleNavClick('#experience')} className="group relative px-6 py-2 md:px-8 md:py-3 bg-nebula-purple hover:bg-nebula-glow text-white rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden shadow-lg shadow-nebula-purple/20">
                             <span className="relative z-10">View Mission Log</span>
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
                             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         </button>
 
-                        <button className="group px-6 py-2 md:px-8 md:py-3 border border-gray-300 dark:border-white/20 hover:border-starlight-blue dark:hover:border-starlight-cyan text-space-black dark:text-white rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-white/5">
+                        <button onClick={() => window.open(resumePdf, '_blank')} className="group px-6 py-2 md:px-8 md:py-3 border border-gray-300 dark:border-white/20 hover:border-starlight-blue dark:hover:border-starlight-cyan text-space-black dark:text-white rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-white/5">
                             <span>Download Flight Data</span>
                             <Download className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
                         </button>
@@ -176,7 +182,7 @@ const Hero: React.FC = () => {
                     <div className="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] md:w-[380px] md:h-[380px] lg:w-[420px] lg:h-[420px] rounded-full p-2 bg-gradient-to-b from-white/20 to-transparent backdrop-blur-sm">
                         <div className="w-full h-full rounded-full overflow-hidden border-4 border-space-dark relative group">
                             <img
-                                src="https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1000&auto=format&fit=crop"
+                                src={ProfileAvatar}
                                 alt="Astronaut"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             />

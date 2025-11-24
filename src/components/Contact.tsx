@@ -1,5 +1,6 @@
 import React from 'react';
-import { Mail, Github, Linkedin, FileText, ArrowUpRight } from 'lucide-react';
+import { Mail, Github, Linkedin, FileText, ArrowUpRight, Phone } from 'lucide-react';
+import resumePdf from '../assets/resume.pdf';
 
 const Contact: React.FC = () => {
     return (
@@ -13,13 +14,13 @@ const Contact: React.FC = () => {
                 <h3 className="text-4xl md:text-6xl font-bold text-space-black dark:text-white mb-12">Let's Build the Future</h3>
 
                 <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-20">
-                    <a href="#" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
+                    <a href="mailto:chinatipwuu@gmail.com" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
                         <Mail className="w-6 h-6 md:w-8 md:h-8 group-hover:text-nebula-purple transition-colors" />
-                        <span>Email Me</span>
+                        <span>chinatipwuu@gmail.com</span>
                         <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 group-hover:translate-x-1 transition-all" />
                     </a>
 
-                    <a href="#" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
+                    <a href="https://github.com/Chinjuku" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
                         <Github className="w-6 h-6 md:w-8 md:h-8 group-hover:text-space-black dark:group-hover:text-white transition-colors" />
                         <span>GitHub</span>
                         <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 group-hover:translate-x-1 transition-all" />
@@ -31,9 +32,15 @@ const Contact: React.FC = () => {
                         <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 group-hover:translate-x-1 transition-all" />
                     </a>
 
-                    <a href="#" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
+                    <a href={resumePdf} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
                         <FileText className="w-6 h-6 md:w-8 md:h-8 group-hover:text-starlight-cyan transition-colors" />
                         <span>Resume</span>
+                        <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 group-hover:translate-x-1 transition-all" />
+                    </a>
+
+                    <a href="tel:0885959868" className="group flex items-center gap-2 text-2xl md:text-3xl font-bold text-gray-500 dark:text-gray-400 hover:text-space-black dark:hover:text-white transition-colors">
+                        <Phone className="w-6 h-6 md:w-8 md:h-8 group-hover:text-green-500 transition-colors" />
+                        <span>088-5959-868</span>
                         <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 group-hover:translate-x-1 transition-all" />
                     </a>
                 </div>

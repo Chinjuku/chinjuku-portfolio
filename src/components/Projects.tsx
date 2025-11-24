@@ -1,7 +1,7 @@
 import React, { useRef, useLayoutEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Github, ExternalLink, ArrowRight } from 'lucide-react';
+import { Github, ExternalLink, ArrowRight, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { projects } from '../data/projects';
 
@@ -11,6 +11,15 @@ const Projects: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const orbitRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [showRepoModal, setShowRepoModal] = useState(false);
+
+    const handleRepoClick = (repos: string | string[]) => {
+        if (Array.isArray(repos)) {
+            setShowRepoModal(true);
+        } else {
+            window.open(repos, '_blank');
+        }
+    };
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
@@ -110,11 +119,19 @@ const Projects: React.FC = () => {
 
                     <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 mb-8 lg:mb-10">
                         <div className="flex gap-4 lg:gap-6">
-                            <button className="px-6 py-2 lg:px-8 lg:py-3 bg-nebula-purple hover:bg-nebula-glow text-white rounded-full font-medium transition-all flex items-center gap-2 text-sm lg:text-base shadow-lg hover:shadow-nebula-purple/50">
-                                <ExternalLink className="w-4 h-4" />
-                                Live Demo
-                            </button>
-                            <button className="px-6 py-2 lg:px-8 lg:py-3 border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/5 text-space-black dark:text-white rounded-full font-medium transition-all flex items-center gap-2 text-sm lg:text-base">
+                            {projects[activeIndex].web_url && (
+                                <button
+                                    onClick={() => window.open(projects[activeIndex].web_url, '_blank')}
+                                    className="px-6 py-2 lg:px-8 lg:py-3 bg-nebula-purple hover:bg-nebula-glow text-white rounded-full font-medium transition-all flex items-center gap-2 text-sm lg:text-base shadow-lg hover:shadow-nebula-purple/50"
+                                >
+                                    <ExternalLink className="w-4 h-4" />
+                                    Live Demo
+                                </button>
+                            )}
+                            <button
+                                onClick={() => handleRepoClick(projects[activeIndex].repos)}
+                                className="px-6 py-2 lg:px-8 lg:py-3 border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/5 text-space-black dark:text-white rounded-full font-medium transition-all flex items-center gap-2 text-sm lg:text-base"
+                            >
                                 <Github className="w-4 h-4" />
                                 Source Code
                             </button>
@@ -201,6 +218,44 @@ const Projects: React.FC = () => {
                     />
                 ))}
             </div>
+
+            {/* Repo Modal */}
+            {showRepoModal && Array.isArray(projects[activeIndex].repos) && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-space-black border border-gray-200 dark:border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative">
+                        <button
+                            onClick={() => setShowRepoModal(false)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <h3 className="text-xl font-bold text-space-black dark:text-white mb-4">Select Repository</h3>
+
+                        <div className="space-y-3">
+                            <a
+                                href={(projects[activeIndex].repos as string[])[0]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                            >
+                                <span className="font-medium text-space-black dark:text-white">Frontend Repository</span>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple transition-colors" />
+                            </a>
+
+                            <a
+                                href={(projects[activeIndex].repos as string[])[1]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                            >
+                                <span className="font-medium text-space-black dark:text-white">Backend Repository</span>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple transition-colors" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </section>
     );

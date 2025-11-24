@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Rocket, Sun, Moon, Monitor } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import resumePdf from '../assets/resume.pdf';
 
 const Navbar: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +28,16 @@ const Navbar: React.FC = () => {
         { name: 'Contact', href: '#contact' },
     ];
 
+    const handleOpenResume = () => {
+        window.open(resumePdf, '_blank');
+    };
+
+    const toggleTheme = () => {
+        if (theme === 'light') setTheme('dark');
+        else if (theme === 'dark') setTheme('system');
+        else setTheme('light');
+    };
+
     const handleNavClick = (href: string) => {
         setIsOpen(false);
         if (location.pathname !== '/') {
@@ -40,12 +51,6 @@ const Navbar: React.FC = () => {
             const element = document.querySelector(href);
             if (element) element.scrollIntoView({ behavior: 'smooth' });
         }
-    };
-
-    const toggleTheme = () => {
-        if (theme === 'light') setTheme('dark');
-        else if (theme === 'dark') setTheme('system');
-        else setTheme('light');
     };
 
     const ThemeIcon = () => {
@@ -83,7 +88,10 @@ const Navbar: React.FC = () => {
 
                         <div className="h-6 w-px bg-gray-300 dark:bg-white/20" />
 
-                        <button className="px-5 py-2 bg-space-black/5 dark:bg-white/10 hover:bg-space-black/10 dark:hover:bg-white/20 border border-gray-200 dark:border-white/10 rounded-full text-sm font-medium transition-all text-space-black dark:text-white">
+                        <button
+                            onClick={handleOpenResume}
+                            className="px-5 py-2 bg-space-black/5 dark:bg-white/10 hover:bg-space-black/10 dark:hover:bg-white/20 border border-gray-200 dark:border-white/10 rounded-full text-sm font-medium transition-all text-space-black dark:text-white"
+                        >
                             Resume
                         </button>
 
@@ -127,7 +135,10 @@ const Navbar: React.FC = () => {
                             {link.name}
                         </button>
                     ))}
-                    <button className="px-8 py-3 bg-white/10 border border-white/10 rounded-full text-lg font-medium text-white">
+                    <button
+                        onClick={handleOpenResume}
+                        className="px-8 py-3 bg-white/10 border border-white/10 rounded-full text-lg font-medium text-white"
+                    >
                         Resume
                     </button>
                 </div>
