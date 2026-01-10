@@ -140,7 +140,7 @@ const Projects: React.FC = () => {
 
                     {/* View All Projects Button */}
                     <Link to="/projects" className="group flex items-center gap-2 text-nebula-purple dark:text-nebula-glow hover:text-space-black dark:hover:text-white transition-colors mt-2 sm:mt-0">
-                        <span className="font-medium text-sm lg:text-base">View Mission Archives</span>
+                        <span className="font-medium text-sm lg:text-base">View Project Archives</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
 

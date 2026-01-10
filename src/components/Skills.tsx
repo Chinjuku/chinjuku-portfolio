@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import React, { useRef } from 'react';
 import { Code2, Cloud, Database, Globe } from 'lucide-react';
 
 const skillCategories = [
@@ -27,6 +26,7 @@ const skillCategories = [
             { name: "Tailwind", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
             { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
             { name: "Laravel", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg" },
+            { name: "FastAPI", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg", darkInvert: true },
             { name: "Flask", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg", darkInvert: true },
         ]
     },
@@ -58,81 +58,69 @@ const skillCategories = [
 const Skills: React.FC = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            // Entrance Animation
-            gsap.from(".skill-category", {
-                y: 50,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.2,
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 80%",
-                }
-            });
-
-            // Floating Animation for Icons
-            gsap.to(".skill-icon-container", {
-                y: -10,
-                duration: 2,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut",
-                stagger: {
-                    each: 0.1,
-                    from: "random"
-                }
-            });
-
-        }, sectionRef);
-
-        return () => ctx.revert();
-    }, []);
+    // Flatten skills for rows
+    const row1Skills = [...skillCategories[0].skills, ...skillCategories[1].skills]; // Languages + Frameworks
+    const row2Skills = [...skillCategories[2].skills, ...skillCategories[3].skills]; // Databases + Tools
 
     return (
         <section ref={sectionRef} className="min-h-screen flex items-center justify-center bg-space-white dark:bg-space-dark relative overflow-hidden py-24 transition-colors duration-300">
             {/* Background Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
-            <div className="container mx-auto px-6 relative z-10">
+            <div className="container mx-auto relative z-10 w-full overflow-hidden">
                 <div className="text-center mb-16">
                     <h2 className="text-nebula-purple dark:text-nebula-glow font-medium tracking-widest uppercase mb-2">The Arsenal</h2>
                     <h3 className="text-3xl md:text-4xl font-bold text-space-black dark:text-white">Technical Proficiency</h3>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {skillCategories.map((category, idx) => (
-                        <div
-                            key={idx}
-                            className="skill-category glass-panel p-8 rounded-2xl bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:border-nebula-purple/30 transition-colors duration-300"
-                        >
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="p-3 rounded-lg bg-nebula-purple/10 dark:bg-white/5">
-                                    {category.icon}
-                                </div>
-                                <h4 className="text-xl font-bold text-space-black dark:text-white">{category.title}</h4>
-                            </div>
-
-                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-6">
-                                {category.skills.map((skill, sIdx) => (
-                                    <div key={sIdx} className="skill-icon-container flex flex-col items-center gap-3 group">
-                                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center p-2.5 shadow-sm group-hover:shadow-lg group-hover:border-nebula-purple/50 transition-all duration-300 relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-nebula-purple/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                            <img
-                                                src={skill.icon}
-                                                alt={skill.name}
-                                                className={`w-full h-full object-contain transition-transform duration-300 group-hover:scale-110 ${skill.darkInvert ? 'dark:invert' : ''}`}
-                                            />
-                                        </div>
-                                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400 group-hover:text-nebula-purple dark:group-hover:text-white transition-colors">
-                                            {skill.name}
-                                        </span>
+                <div className="space-y-16">
+                    {/* Row 1 - Left Scroll */}
+                    <div className="relative w-full overflow-hidden group">
+                        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10" />
+                        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10" />
+                        
+                        <div className="flex w-max animate-scroll group-hover:[animation-play-state:paused] gap-8">
+                            {[...row1Skills, ...row1Skills].map((skill, idx) => (
+                                <div key={`row1-${idx}`} className="flex flex-col items-center justify-center gap-4 w-40 h-40 glass-panel rounded-2xl bg-white/50 dark:bg-white/5 group/item hover:border-nebula-purple transition-colors duration-300">
+                                    <div className="w-16 h-16 relative flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-nebula-purple/20 rounded-full blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                                        <img
+                                            src={skill.icon}
+                                            alt={skill.name}
+                                            className={`w-full h-full object-contain ${skill.darkInvert ? 'dark:invert' : ''}`}
+                                        />
                                     </div>
-                                ))}
-                            </div>
+                                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover/item:text-nebula-purple dark:group-hover/item:text-white transition-colors">
+                                        {skill.name}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Row 2 - Right Scroll */}
+                    <div className="relative w-full overflow-hidden group">
+                        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10" />
+                        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10" />
+
+                        <div className="flex w-max animate-scroll-reverse group-hover:[animation-play-state:paused] gap-8">
+                            {[...row2Skills, ...row2Skills].map((skill, idx) => (
+                                <div key={`row2-${idx}`} className="flex flex-col items-center justify-center gap-4 w-40 h-40 glass-panel rounded-2xl bg-white/50 dark:bg-white/5 group/item hover:border-nebula-purple transition-colors duration-300">
+                                    <div className="w-16 h-16 relative flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-nebula-purple/20 rounded-full blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                                        <img
+                                            src={skill.icon}
+                                            alt={skill.name}
+                                            className={`w-full h-full object-contain ${skill.darkInvert ? 'dark:invert' : ''}`}
+                                        />
+                                    </div>
+                                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover/item:text-nebula-purple dark:group-hover/item:text-white transition-colors">
+                                        {skill.name}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

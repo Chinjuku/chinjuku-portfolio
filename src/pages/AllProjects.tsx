@@ -6,6 +6,15 @@ import { Link } from 'react-router-dom';
 const AllProjects: React.FC = () => {
     const [showRepoModal, setShowRepoModal] = useState(false);
     const [selectedRepo, setSelectedRepo] = useState<string | string[] | null>(null);
+    const [selectedYear, setSelectedYear] = useState<string>('All');
+
+    // Get unique years from projects
+    const years = Array.from(new Set(all_projects.map(p => new Date(p.finished_date).getFullYear()))).sort((a, b) => b - a);
+
+    // Filter and sort projects
+    const filteredProjects = all_projects
+        .filter(project => selectedYear === 'All' || new Date(project.finished_date).getFullYear().toString() === selectedYear.toString())
+        .sort((a, b) => new Date(b.finished_date).getTime() - new Date(a.finished_date).getTime());
 
     const handleRepoClick = (repos: string | string[]) => {
         if (Array.isArray(repos)) {
@@ -23,17 +32,46 @@ const AllProjects: React.FC = () => {
                 <div className="mb-16">
                     <Link to="/" className="inline-flex items-center gap-2 text-nebula-purple dark:text-nebula-glow hover:underline mb-8">
                         <ArrowLeft className="w-4 h-4" />
-                        Back to Mission Control
+                        Back to Home Page
                     </Link>
-                    <h1 className="text-4xl md:text-6xl font-bold text-space-black dark:text-white mb-4">Mission Archives</h1>
-                    <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
-                        A complete log of all deployed systems, experimental prototypes, and classified research projects.
-                    </p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-4">
+                        <div>
+                            <h1 className="text-4xl md:text-6xl font-bold text-space-black dark:text-white mb-4">Project Archives</h1>
+                            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
+                                A complete list of all projects I have worked on.
+                            </p>
+                        </div>
+
+                        {/* Filters */}
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                onClick={() => setSelectedYear('All')}
+                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedYear === 'All'
+                                        ? 'bg-nebula-purple text-white shadow-lg shadow-nebula-purple/25'
+                                        : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'
+                                    }`}
+                            >
+                                All
+                            </button>
+                            {years.map((year) => (
+                                <button
+                                    key={year}
+                                    onClick={() => setSelectedYear(year.toString())}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedYear === year.toString()
+                                            ? 'bg-nebula-purple text-white shadow-lg shadow-nebula-purple/25'
+                                            : 'bg-white dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'
+                                        }`}
+                                >
+                                    {year}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Projects Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {all_projects.map((project) => (
+                    {filteredProjects.map((project) => (
                         <div key={project.id} className="group relative bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden hover:border-nebula-purple/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
 
                             {/* Image */}
@@ -53,6 +91,9 @@ const AllProjects: React.FC = () => {
                                         <span className="text-xs font-mono text-nebula-purple dark:text-nebula-glow uppercase tracking-wider">{project.role}</span>
                                         <h3 className="text-xl font-bold text-space-black dark:text-white mt-1">{project.title}</h3>
                                     </div>
+                                    <span className="text-xs font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-1 rounded">
+                                        {new Date(project.finished_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                    </span>
                                 </div>
 
                                 <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3">

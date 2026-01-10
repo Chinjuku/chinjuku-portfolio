@@ -51,7 +51,7 @@ const About: React.FC = () => {
                     </h2>
 
                     <p className="text-gray-600 dark:text-gray-300 text-base md:text-lg leading-relaxed mb-8">
-                        A highly responsible and self-motivated college junior with an IT (Information Technology) major at King Mongkut's Institute of Technology Ladkrabang. Seeking an opportunity for a cooperative position as a Backend developer that will allow me to apply and expand my skills in Backend development your company. I look forward to the opportunity to work with your team.
+                        A highly responsible and self-motivated college junior with an IT (Information Technology) major at King Mongkut's Institute of Technology Ladkrabang. Seeking an opportunity for a cooperative position as a Fullstack developer that will allow me to apply and expand my skills in Fullstack development your company. I look forward to the opportunity to work with your team.
                     </p>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

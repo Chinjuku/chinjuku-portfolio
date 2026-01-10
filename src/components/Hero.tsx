@@ -94,7 +94,7 @@ const Hero: React.FC = () => {
             });
 
             // Typing Effect
-            const roles = ["Backend Developer", "Fullstack Developer", "Software Engineer"];
+            const roles = ["Backend Developer", "Fullstack Developer", "Software Developer"];
             let roleIndex = 0;
             let charIndex = 0;
             let isDeleting = false;
@@ -157,13 +157,13 @@ const Hero: React.FC = () => {
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                         <button onClick={() => handleNavClick('#experience')} className="group relative px-6 py-2 md:px-8 md:py-3 bg-nebula-purple hover:bg-nebula-glow text-white rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 overflow-hidden shadow-lg shadow-nebula-purple/20">
-                            <span className="relative z-10">View Mission Log</span>
+                            <span className="relative z-10">View Experience Log</span>
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
                             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         </button>
 
                         <button onClick={() => window.open(resumePdf, '_blank')} className="group px-6 py-2 md:px-8 md:py-3 border border-gray-300 dark:border-white/20 hover:border-starlight-blue dark:hover:border-starlight-cyan text-space-black dark:text-white rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-white/5">
-                            <span>Download Flight Data</span>
+                            <span>Download Resume</span>
                             <Download className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
                         </button>
                     </div>

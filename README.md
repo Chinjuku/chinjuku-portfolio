@@ -71,3 +71,8 @@ export default defineConfig([
   },
 ])
 ```
+
+## to update web production
+```
+vercel --prod
+```

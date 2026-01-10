@@ -1,49 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { Calendar } from 'lucide-react';
-
-const experiences = [
-    {
-        id: 1,
-        role: "Fullstack (Inventory Project)",
-        company: "Firmer Parttime",
-        period: "Apr 2025 - Present",
-        description: "Continuing development on the inventory project as a part-time Fullstack developer.",
-        tags: ["Fullstack", "Inventory System"]
-    },
-    {
-        id: 2,
-        role: "Fullstack (Inventory Project)",
-        company: "Firmer Coorperate",
-        period: "Sep 2024 - Mar 2025",
-        description: "Worked as a cooperative education student developing an inventory project.",
-        tags: ["Fullstack", "Inventory System", "Co-op"]
-    },
-    {
-        id: 3,
-        role: "Tech Staff",
-        company: "IT Openhouse 2025",
-        period: "Jan 2025 - Mar 2025",
-        description: "School of Information Technology, KMITL. Developed landing page with registered form for IT openhouse camping using react ts and nest js for backend dev.",
-        tags: ["React", "NestJS", "TypeScript"]
-    },
-    {
-        id: 4,
-        role: "Tech Staff",
-        company: "ITCamp20",
-        period: "Jan 2024 - Apr 2024",
-        description: "School of Information Technology, KMITL. Developed a website for promoting and recruiting for ITCamp20 using the Nuxt framework and TailwindCSS for web development.",
-        tags: ["Nuxt", "TailwindCSS"]
-    },
-    {
-        id: 5,
-        role: "Registration Staff",
-        company: "UNITE Camp 5",
-        period: "Jan 2023",
-        description: "School of Information Technology, KMITL. Was responsible for managing the registration process for staff and campers participating in the event.",
-        tags: ["Management", "Registration"]
-    }
-];
+import { experiences } from '../data/experiences';
 
 const Experience: React.FC = () => {
     const sectionRef = useRef<HTMLDivElement>(null);
@@ -92,7 +50,7 @@ const Experience: React.FC = () => {
             <div className="container mx-auto px-6">
                 <div className="text-center mb-16">
                     <h2 className="text-nebula-purple dark:text-nebula-glow font-medium tracking-widest uppercase mb-2">Mission History</h2>
-                    <h3 className="text-3xl md:text-4xl font-bold text-space-black dark:text-white">Professional Experience</h3>
+                    <h3 className="text-3xl md:text-4xl font-bold text-space-black dark:text-white">Activities & Experiences</h3>
                 </div>
 
                 <div className="relative max-w-4xl mx-auto">
