@@ -69,28 +69,28 @@ const Skills: React.FC = () => {
 
             <div className="container mx-auto relative z-10 w-full overflow-hidden">
                 <div className="text-center mb-16">
-                    <h2 className="text-nebula-purple dark:text-nebula-glow font-medium tracking-widest uppercase mb-2">The Arsenal</h2>
-                    <h3 className="text-3xl md:text-4xl font-bold text-space-black dark:text-white">Technical Proficiency</h3>
+                    <h2 className="sci-fi-subheading mb-2">The Arsenal</h2>
+                    <h3 className="text-3xl md:text-4xl sci-fi-heading">Technical Proficiency</h3>
                 </div>
 
                 <div className="space-y-16">
                     {/* Row 1 - Left Scroll */}
                     <div className="relative w-full overflow-hidden group">
-                        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10" />
-                        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10" />
+                        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
+                        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
                         
-                        <div className="flex w-max animate-scroll group-hover:[animation-play-state:paused] gap-8">
+                        <div className="flex w-max animate-scroll group-hover:[animation-play-state:paused] gap-8 py-2">
                             {[...row1Skills, ...row1Skills].map((skill, idx) => (
-                                <div key={`row1-${idx}`} className="flex flex-col items-center justify-center gap-4 w-40 h-40 glass-panel rounded-2xl bg-white/50 dark:bg-white/5 group/item hover:border-nebula-purple transition-colors duration-300">
+                                <div key={`row1-${idx}`} className="flex flex-col items-center justify-center gap-4 w-40 h-40 sci-fi-card rounded-2xl group/item hover:scale-105">
                                     <div className="w-16 h-16 relative flex items-center justify-center">
-                                        <div className="absolute inset-0 bg-nebula-purple/20 rounded-full blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-0 bg-nebula-purple/20 dark:bg-starlight-cyan/20 rounded-full blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity" />
                                         <img
                                             src={skill.icon}
                                             alt={skill.name}
                                             className={`w-full h-full object-contain ${skill.darkInvert ? 'dark:invert' : ''}`}
                                         />
                                     </div>
-                                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover/item:text-nebula-purple dark:group-hover/item:text-white transition-colors">
+                                    <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover/item:text-nebula-purple dark:group-hover/item:text-starlight-cyan transition-colors">
                                         {skill.name}
                                     </span>
                                 </div>
@@ -100,21 +100,21 @@ const Skills: React.FC = () => {
 
                     {/* Row 2 - Right Scroll */}
                     <div className="relative w-full overflow-hidden group">
-                        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10" />
-                        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10" />
+                        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
+                        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
 
-                        <div className="flex w-max animate-scroll-reverse group-hover:[animation-play-state:paused] gap-8">
+                        <div className="flex w-max animate-scroll-reverse group-hover:[animation-play-state:paused] gap-8 py-2">
                             {[...row2Skills, ...row2Skills].map((skill, idx) => (
-                                <div key={`row2-${idx}`} className="flex flex-col items-center justify-center gap-4 w-40 h-40 glass-panel rounded-2xl bg-white/50 dark:bg-white/5 group/item hover:border-nebula-purple transition-colors duration-300">
+                                <div key={`row2-${idx}`} className="flex flex-col items-center justify-center gap-4 w-40 h-40 sci-fi-card rounded-2xl group/item hover:scale-105">
                                     <div className="w-16 h-16 relative flex items-center justify-center">
-                                        <div className="absolute inset-0 bg-nebula-purple/20 rounded-full blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-0 bg-starlight-blue/20 dark:bg-nebula-glow/20 rounded-full blur-xl opacity-0 group-hover/item:opacity-100 transition-opacity" />
                                         <img
                                             src={skill.icon}
                                             alt={skill.name}
                                             className={`w-full h-full object-contain ${skill.darkInvert ? 'dark:invert' : ''}`}
                                         />
                                     </div>
-                                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover/item:text-nebula-purple dark:group-hover/item:text-white transition-colors">
+                                    <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover/item:text-nebula-purple dark:group-hover/item:text-starlight-cyan transition-colors">
                                         {skill.name}
                                     </span>
                                 </div>

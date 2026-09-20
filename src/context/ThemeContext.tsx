@@ -8,10 +8,10 @@ interface ThemeProviderProps {
     storageKey?: string;
 }
 
-interface ThemeProviderState {
+type ThemeProviderState = {
     theme: Theme;
     setTheme: (theme: Theme) => void;
-}
+};
 
 const initialState: ThemeProviderState = {
     theme: 'system',

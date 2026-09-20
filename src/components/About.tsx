@@ -4,6 +4,16 @@ import { User, Cpu, Zap, BookOpen } from 'lucide-react';
 
 const About: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    
+    // Fixed positions to prevent overlaps
+    const techItems = [
+        { label: "TS", color: "text-nebula-purple dark:text-nebula-glow", top: "10%", left: "80%", duration: "3s", delay: "0s" },
+        { label: "React", color: "text-starlight-blue dark:text-starlight-cyan", top: "15%", left: "10%", duration: "4s", delay: "1s" },
+        { label: "Node.js", color: "text-starlight-blue dark:text-starlight-cyan", top: "45%", left: "85%", duration: "5s", delay: "0.5s" },
+        { label: "Next.js", color: "text-starlight-blue dark:text-starlight-cyan", top: "50%", left: "5%", duration: "3.5s", delay: "1.5s" },
+        { label: "Tailwind", color: "text-starlight-blue dark:text-starlight-cyan", top: "80%", left: "70%", duration: "4.5s", delay: "0.8s" },
+        { label: "Git", color: "text-starlight-blue dark:text-starlight-cyan", top: "75%", left: "15%", duration: "4s", delay: "2s" }
+    ];
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -38,14 +48,14 @@ const About: React.FC = () => {
 
                 {/* Text Content */}
                 <div className="about-text flex-1">
-                    <div className="flex items-center gap-2 text-nebula-purple dark:text-nebula-glow mb-4">
-                        <User className="w-5 h-5" />
-                        <span className="tracking-widest uppercase font-medium">About Me</span>
+                    <div className="flex items-center gap-2 mb-4">
+                        <User className="w-5 h-5 text-nebula-purple dark:text-starlight-cyan" />
+                        <span className="sci-fi-subheading">About Me // PROFILE</span>
                     </div>
 
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-space-black dark:text-white mb-6 leading-tight">
+                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold sci-fi-heading mb-6 leading-tight">
                         Driven by Passion <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-starlight-blue to-nebula-purple dark:from-starlight-cyan dark:to-nebula-purple">
+                        <span className="sci-fi-gradient-text">
                             Defined by Code
                         </span>
                     </h2>
@@ -55,20 +65,20 @@ const About: React.FC = () => {
                     </p>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
+                        <div className="p-5 rounded-2xl sci-fi-card">
                             <div className="flex items-center gap-3 mb-2">
-                                <Zap className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
-                                <h4 className="font-bold text-space-black dark:text-white">Personal Skills</h4>
+                                <Zap className="w-5 h-5 text-amber-500" />
+                                <h4 className="font-bold sci-fi-heading">Personal Skills</h4>
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Fast learner, Teamwork, Problem-solving, Leadership</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Fast learner, Teamwork, Problem-solving, Leadership</p>
                         </div>
 
-                        <div className="p-4 rounded-xl bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm">
+                        <div className="p-5 rounded-2xl sci-fi-card">
                             <div className="flex items-center gap-3 mb-2">
                                 <BookOpen className="w-5 h-5 text-starlight-blue dark:text-starlight-cyan" />
-                                <h4 className="font-bold text-space-black dark:text-white">Education</h4>
+                                <h4 className="font-bold sci-fi-heading">Education</h4>
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">KMITL, Information Technology (Software Engineering), 2022 - Present</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">KMITL, Information Technology (Software Engineering), 2022 - Present</p>
                         </div>
                     </div>
                 </div>
@@ -83,18 +93,28 @@ const About: React.FC = () => {
                         <div className="absolute inset-20 border border-nebula-purple/30 rounded-full animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '15s' }} />
 
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-32 h-32 bg-white/50 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/20 rotate-45 flex items-center justify-center shadow-2xl">
-                                <Cpu className="w-16 h-16 text-space-black dark:text-white opacity-80 -rotate-45" />
+                            <div className="w-32 h-32 sci-fi-glass rounded-2xl rotate-45 flex items-center justify-center shadow-2xl">
+                                <Cpu className="w-16 h-16 text-nebula-purple dark:text-starlight-cyan opacity-90 -rotate-45" />
                             </div>
                         </div>
 
                         {/* Floating elements */}
-                        <div className="absolute top-0 right-10 w-12 h-12 bg-white dark:bg-space-black border border-gray-200 dark:border-white/20 rounded-lg flex items-center justify-center animate-bounce shadow-lg" style={{ animationDuration: '3s' }}>
-                            <span className="text-xs font-bold text-nebula-purple dark:text-nebula-glow">TS</span>
-                        </div>
-                        <div className="absolute bottom-10 left-0 w-16 h-10 bg-white dark:bg-space-black border border-gray-200 dark:border-white/20 rounded-lg flex items-center justify-center animate-bounce shadow-lg" style={{ animationDuration: '4s', animationDelay: '1s' }}>
-                            <span className="text-xs font-bold text-starlight-blue dark:text-starlight-cyan">React</span>
-                        </div>
+                        {techItems.map((item, index) => (
+                            <div 
+                                key={index}
+                                className="absolute sci-fi-glass text-xs font-mono font-bold px-3 py-1.5 rounded-xl flex items-center justify-center animate-bounce shadow-lg"
+                                style={{ 
+                                    top: item.top, 
+                                    left: item.left,
+                                    animationDuration: item.duration,
+                                    animationDelay: item.delay
+                                }}
+                            >
+                                <span className={`text-xs font-bold ${item.color}`}>
+                                    {item.label}
+                                </span>
+                            </div>
+                        ))}
                     </div>
                 </div>
 

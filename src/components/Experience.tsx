@@ -25,7 +25,7 @@ const Experience: React.FC = () => {
             );
 
             // Items fade in
-            gsap.utils.toArray(".timeline-item").forEach((item: any) => {
+            gsap.utils.toArray<HTMLElement>(".timeline-item").forEach((item) => {
                 gsap.from(item, {
                     opacity: 0,
                     x: -50,
@@ -49,8 +49,8 @@ const Experience: React.FC = () => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-nebula-purple/5 via-transparent to-transparent" />
             <div className="container mx-auto px-6">
                 <div className="text-center mb-16">
-                    <h2 className="text-nebula-purple dark:text-nebula-glow font-medium tracking-widest uppercase mb-2">Mission History</h2>
-                    <h3 className="text-3xl md:text-4xl font-bold text-space-black dark:text-white">Activities & Experiences</h3>
+                    <h2 className="sci-fi-subheading mb-2">Mission History // LOGS</h2>
+                    <h3 className="text-3xl md:text-4xl sci-fi-heading">Activities & Experiences</h3>
                 </div>
 
                 <div className="relative max-w-4xl mx-auto">
@@ -65,22 +65,22 @@ const Experience: React.FC = () => {
 
                                 {/* Content */}
                                 <div className="flex-1">
-                                    <div className="glass-panel p-6 rounded-xl border-l-4 border-nebula-purple hover:bg-gray-50 dark:hover:bg-white/5 transition-colors bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10 shadow-sm">
+                                    <div className="sci-fi-card p-6 rounded-xl border-l-4 !border-l-nebula-purple dark:!border-l-starlight-cyan">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h4 className="text-lg md:text-xl font-bold text-space-black dark:text-white">{exp.role}</h4>
-                                            <span className="text-sm text-nebula-purple dark:text-nebula-glow font-mono hidden sm:inline-block">{exp.company}</span>
+                                            <h4 className="text-lg md:text-xl font-bold sci-fi-heading">{exp.role}</h4>
+                                            <span className="text-sm text-nebula-purple dark:text-starlight-cyan font-mono font-semibold hidden sm:inline-block">{exp.company}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm mb-4">
-                                            <Calendar className="w-4 h-4" />
+                                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm mb-4 font-mono">
+                                            <Calendar className="w-4 h-4 text-nebula-purple dark:text-starlight-cyan" />
                                             {exp.period}
                                             <span className="sm:hidden">• {exp.company}</span>
                                         </div>
-                                        <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                                        <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-sm md:text-base">
                                             {exp.description}
                                         </p>
                                         <div className="flex flex-wrap gap-2">
                                             {exp.tags.map((tag, i) => (
-                                                <span key={i} className="text-xs px-2 py-1 bg-gray-100 dark:bg-white/5 rounded text-gray-500 dark:text-gray-400">
+                                                <span key={i} className="sci-fi-badge">
                                                     {tag}
                                                 </span>
                                             ))}
@@ -90,7 +90,7 @@ const Experience: React.FC = () => {
 
                                 {/* Dot */}
                                 <div className="relative flex items-center justify-center md:w-0">
-                                    <div className="w-4 h-4 rounded-full bg-white dark:bg-space-black border-2 border-nebula-purple z-10 shadow-[0_0_10px_rgba(124,58,237,0.5)] hidden md:block" />
+                                    <div className="w-4 h-4 rounded-full bg-white dark:bg-space-black border-2 border-nebula-purple dark:border-starlight-cyan z-10 shadow-[0_0_12px_rgba(124,58,237,0.7)] hidden md:block" />
                                 </div>
 
                                 {/* Spacer for opposite side */}

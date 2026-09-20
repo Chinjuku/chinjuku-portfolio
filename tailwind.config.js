@@ -13,6 +13,7 @@ export default {
           dark: '#12121A',
           light: '#1E1E2E',
           white: '#F8FAFC', // Light mode background
+          canvas: '#07070A',
         },
         station: {
           gray: '#E2E8F0',
@@ -21,10 +22,25 @@ export default {
         nebula: {
           purple: '#7C3AED',
           glow: '#8B5CF6',
+          deep: '#5B21B6',
+          light: '#A78BFA',
         },
         starlight: {
           cyan: '#06B6D4',
           blue: '#3B82F6',
+          teal: '#14B8A6',
+          sky: '#38BDF8',
+        },
+        surface: {
+          'glass-light': 'rgba(255, 255, 255, 0.70)',
+          'glass-dark': 'rgba(18, 18, 26, 0.70)',
+          'border-light': 'rgba(226, 232, 240, 0.80)',
+          'border-dark': 'rgba(255, 255, 255, 0.10)',
+        },
+        cyber: {
+          emerald: '#10B981',
+          amber: '#F59E0B',
+          rose: '#F43F5E',
         }
       },
       backgroundImage: {

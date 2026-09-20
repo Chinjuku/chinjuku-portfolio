@@ -10,7 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   return (
-    <main className="bg-space-black min-h-screen text-white selection:bg-nebula-purple selection:text-white">
+    <main className="bg-space-white dark:bg-space-black min-h-screen text-space-black dark:text-white selection:bg-nebula-purple selection:text-white transition-colors duration-300">
       <div className="grain-overlay" />
 
       <Navbar />

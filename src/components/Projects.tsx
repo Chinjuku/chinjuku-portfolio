@@ -98,10 +98,10 @@ const Projects: React.FC = () => {
                 {/* Left Side: Text Content */}
                 <div className="flex flex-col justify-center h-full order-2 lg:order-1 pointer-events-none md:pointer-events-auto relative z-20">
                     <div className="mb-2 lg:mb-4">
-                        <span className="text-nebula-purple dark:text-nebula-glow font-mono text-xs lg:text-sm tracking-widest uppercase">Project 0{projects[activeIndex].id}</span>
+                        <span className="sci-fi-subheading">Project 0{projects[activeIndex].id} // DEPLOYMENT</span>
                     </div>
 
-                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold text-space-black dark:text-white mb-4 lg:mb-8 transition-all duration-500 leading-tight">
+                    <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold sci-fi-heading mb-4 lg:mb-8 transition-all duration-500 leading-tight">
                         {projects[activeIndex].title}
                     </h2>
 
@@ -111,18 +111,18 @@ const Projects: React.FC = () => {
 
                     <div className="flex flex-wrap gap-2 lg:gap-3 mb-8 lg:mb-10">
                         {projects[activeIndex].tech.map((t, i) => (
-                            <span key={i} className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full text-xs lg:text-sm text-nebula-purple dark:text-starlight-cyan font-medium">
+                            <span key={i} className="sci-fi-badge">
                                 {t}
                             </span>
                         ))}
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 mb-8 lg:mb-10">
-                        <div className="flex gap-4 lg:gap-6">
+                        <div className="flex flex-wrap gap-3 lg:gap-5">
                             {projects[activeIndex].web_url && (
                                 <button
                                     onClick={() => window.open(projects[activeIndex].web_url, '_blank')}
-                                    className="px-6 py-2 lg:px-8 lg:py-3 bg-nebula-purple hover:bg-nebula-glow text-white rounded-full font-medium transition-all flex items-center gap-2 text-sm lg:text-base shadow-lg hover:shadow-nebula-purple/50"
+                                    className="sci-fi-btn-primary"
                                 >
                                     <ExternalLink className="w-4 h-4" />
                                     Live Demo
@@ -130,7 +130,7 @@ const Projects: React.FC = () => {
                             )}
                             <button
                                 onClick={() => handleRepoClick(projects[activeIndex].repos)}
-                                className="px-6 py-2 lg:px-8 lg:py-3 border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/5 text-space-black dark:text-white rounded-full font-medium transition-all flex items-center gap-2 text-sm lg:text-base"
+                                className="sci-fi-btn-secondary"
                             >
                                 <Github className="w-4 h-4" />
                                 Source Code
@@ -139,9 +139,9 @@ const Projects: React.FC = () => {
                     </div>
 
                     {/* View All Projects Button */}
-                    <Link to="/projects" className="group flex items-center gap-2 text-nebula-purple dark:text-nebula-glow hover:text-space-black dark:hover:text-white transition-colors mt-2 sm:mt-0">
-                        <span className="font-medium text-sm lg:text-base">View Project Archives</span>
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <Link to="/projects" className="group inline-flex items-center gap-2 text-nebula-purple dark:text-starlight-cyan hover:text-nebula-glow dark:hover:text-white transition-colors mt-2 sm:mt-0 font-mono text-sm tracking-wider uppercase">
+                        <span className="font-semibold">View Project Archives</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                     </Link>
 
                 </div>
@@ -221,36 +221,39 @@ const Projects: React.FC = () => {
 
             {/* Repo Modal */}
             {showRepoModal && Array.isArray(projects[activeIndex].repos) && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white dark:bg-space-black border border-gray-200 dark:border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+                    <div className="sci-fi-glass rounded-2xl p-6 max-w-sm w-full relative">
                         <button
                             onClick={() => setShowRepoModal(false)}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
 
-                        <h3 className="text-xl font-bold text-space-black dark:text-white mb-4">Select Repository</h3>
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="w-2 h-2 rounded-full bg-starlight-cyan animate-ping" />
+                            <h3 className="text-xl font-bold sci-fi-heading">Select Repository</h3>
+                        </div>
 
                         <div className="space-y-3">
                             <a
                                 href={(projects[activeIndex].repos as string[])[0]}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                                className="flex items-center justify-between p-4 rounded-xl sci-fi-card group"
                             >
-                                <span className="font-medium text-space-black dark:text-white">Frontend Repository</span>
-                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple transition-colors" />
+                                <span className="font-medium text-gray-800 dark:text-gray-200 group-hover:text-nebula-purple dark:group-hover:text-starlight-cyan transition-colors">Frontend Repository</span>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple dark:group-hover:text-starlight-cyan transition-colors" />
                             </a>
 
                             <a
                                 href={(projects[activeIndex].repos as string[])[1]}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                                className="flex items-center justify-between p-4 rounded-xl sci-fi-card group"
                             >
-                                <span className="font-medium text-space-black dark:text-white">Backend Repository</span>
-                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple transition-colors" />
+                                <span className="font-medium text-gray-800 dark:text-gray-200 group-hover:text-nebula-purple dark:group-hover:text-starlight-cyan transition-colors">Backend Repository</span>
+                                <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-nebula-purple dark:group-hover:text-starlight-cyan transition-colors" />
                             </a>
                         </div>
                     </div>
