@@ -13,8 +13,9 @@ export const useNavClick = () => {
         if (href.startsWith('/')) {
             if (location.pathname !== href) {
                 navigate(href);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
 

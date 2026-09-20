@@ -108,6 +108,9 @@ const AllProjects: React.FC = () => {
 
     // Stage 1: The "Lens Flare" Spotlight Mask Scroll Sequence at the very top ("scroll แรกสุด")
     useEffect(() => {
+        // Ensure starting from top on mount
+        window.scrollTo(0, 0);
+
         const ctx = gsap.context(() => {
             const maskData = { r: 0 };
 

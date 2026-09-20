@@ -1,38 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowUp } from 'lucide-react';
-import { useNavClick } from '../hooks';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+/**
+ * ScrollToTop Component
+ * Ensures clean, reliable route transitions in Single Page Application (SPA).
+ * - Instantly resets scroll position to top (scrollY = 0) on route change.
+ * - Forces GSAP ScrollTrigger to recalculate trigger & pin coordinates accurately.
+ * - Respects hash anchors (e.g. /#contact) if navigated with a specific target.
+ */
 const ScrollToTop: React.FC = () => {
-    const [isVisible, setIsVisible] = useState(false);
-    const handleNavClick = useNavClick();
+    const { pathname, hash } = useLocation();
 
     useEffect(() => {
-        const toggleVisibility = () => {
-            if (window.scrollY > 300) {
-                setIsVisible(true);
-            } else {
-                setIsVisible(false);
+        // If navigating to a specific in-page anchor, smoothly scroll to it
+        if (hash) {
+            const element = document.querySelector(hash);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                return;
             }
-        };
+        }
 
-        window.addEventListener('scroll', toggleVisibility, { passive: true });
+        // On route change without hash (e.g. "/" -> "/projects"),
+        // instantly reset scroll to (0, 0) so the page starts from the very top.
+        // Using 'instant' prevents GSAP ScrollTrigger layout calculation glitches.
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
-        return () => window.removeEventListener('scroll', toggleVisibility);
-    }, []);
+        // Request an animation frame then refresh ScrollTrigger calculations
+        requestAnimationFrame(() => {
+            ScrollTrigger.refresh();
+        });
+    }, [pathname, hash]);
 
-    return (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-            {isVisible && (
-                <button
-                    onClick={() => handleNavClick('#hero')}
-                    className="p-3 rounded-full bg-gradient-to-r from-nebula-purple to-starlight-blue hover:from-nebula-glow hover:to-starlight-cyan text-white shadow-xl shadow-nebula-purple/40 transition-all duration-300 animate-bounce pointer-events-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-starlight-cyan"
-                    aria-label="Scroll to top"
-                >
-                    <ArrowUp className="w-6 h-6" />
-                </button>
-            )}
-        </div>
-    );
+    return null;
 };
 
 export default ScrollToTop;

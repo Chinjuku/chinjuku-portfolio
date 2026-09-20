@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import AllProjects from './pages/AllProjects';
 import gsap from 'gsap';
@@ -13,6 +14,7 @@ function App() {
     <main className="bg-space-white dark:bg-space-black min-h-screen text-space-black dark:text-white selection:bg-nebula-purple selection:text-white transition-colors duration-300">
       <div className="grain-overlay" />
 
+      <ScrollToTop />
       <Navbar />
 
       <Routes>
