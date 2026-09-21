@@ -134,8 +134,8 @@ const skillCategories: SkillCategory[] = [
   },
   {
     id: "tools",
-    title: "DevOps & Toolchain",
-    tagline: "Containerization, cloud workloads, CI/CD & UI systems",
+    title: "DevOps & AI Toolchain",
+    tagline: "Containerization, cloud workloads, CI/CD & AI agentic workflows",
     accent: "blue",
     icon: <Cloud className="w-5 h-5 text-starlight-blue" />,
     skills: [
@@ -154,6 +154,22 @@ const skillCategories: SkillCategory[] = [
       {
         name: "VS Code",
         icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg",
+      },
+      {
+        name: "Claude Code",
+        icon: "/icons/claude.svg",
+      },
+      {
+        name: "Antigravity",
+        icon: "/icons/antigravity.svg",
+      },
+      {
+        name: "ChatGPT",
+        icon: "/icons/chatgpt.svg",
+      },
+      {
+        name: "Codex",
+        icon: "/icons/codex.svg",
       },
       {
         name: "Figma",
