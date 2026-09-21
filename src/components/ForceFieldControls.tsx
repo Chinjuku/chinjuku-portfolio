@@ -54,11 +54,11 @@ export const ForceFieldControls: React.FC<ForceFieldControlsProps> = ({
             <span className="w-2 h-2 rounded-full bg-starlight-cyan animate-pulse" />
             <Sliders className="w-3.5 h-3.5 text-starlight-cyan" />
             <span className="font-semibold">HUD</span>
-            {stats && (
+            {/* {stats && (
               <span className="text-[10px] text-gray-500 dark:text-white/40 ml-1">
                 {stats.fps} FPS • {stats.pointCount.toLocaleString()}
               </span>
-            )}
+            )} */}
             {isOpen ? (
               <ChevronDown className="w-3.5 h-3.5 text-gray-400 dark:text-white/50" />
             ) : (
