@@ -1,10 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import ScrollToTop from './components/ScrollToTop';
-import Home from './pages/Home';
-import AllProjects from './pages/AllProjects';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/common/Navbar";
+import ScrollToTop from "./components/common/ScrollToTop";
+import Home from "./pages/Home";
+import AllProjects from "./pages/AllProjects";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Register ScrollTrigger globally
 gsap.registerPlugin(ScrollTrigger);

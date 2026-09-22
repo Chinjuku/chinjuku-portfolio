@@ -5,15 +5,17 @@ import profileTechImg from '../assets/profile.png';
 import cosmicNebulaImg from '../assets/cosmic-nebula.jpg';
 import { useNavClick } from '../utils';
 import resumePdf from '../assets/resume.pdf';
-import { chinjukuContact } from '../data/contact';
+import { chinjukuContact } from '../constants/contact';
 import { useTheme } from '../context/ThemeContext';
-import ForceFieldBackground from './ForceFieldBackground';
-import ForceFieldControls, { type ForceFieldParams, type ForceFieldStats } from './ForceFieldControls';
-import ProfileAura from './ProfileAura';
+import ForceFieldBackground from './hero/ForceFieldBackground';
+import ForceFieldControls, { type ForceFieldParams, type ForceFieldStats } from './hero/ForceFieldControls';
+import ProfileAura from './hero/ProfileAura';
 
 const Hero: React.FC = () => {
     const componentRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLSpanElement>(null);
+    const imageContainerRef = useRef<HTMLDivElement>(null);
+    const portraitFrameRef = useRef<HTMLDivElement>(null);
     const handleNavClick = useNavClick();
     const { theme } = useTheme();
 
@@ -122,6 +124,93 @@ const Hero: React.FC = () => {
         }, componentRef);
 
         return () => ctx.revert();
+    }, []);
+
+    // Interactive 3D Holographic Mouse Tracking / Tilt effect on profile avatar
+    useEffect(() => {
+        const container = imageContainerRef.current;
+        const heroSection = componentRef.current;
+        const frame = portraitFrameRef.current;
+        if (!container || !heroSection || !frame) return;
+
+        // Respect prefers-reduced-motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        // High-performance GSAP quickTo interpolators for silky 60fps response
+        const setRotateX = gsap.quickTo(frame, "rotationX", { duration: 0.6, ease: "power2.out" });
+        const setRotateY = gsap.quickTo(frame, "rotationY", { duration: 0.6, ease: "power2.out" });
+        const setFrameX = gsap.quickTo(frame, "x", { duration: 0.6, ease: "power2.out" });
+        const setFrameY = gsap.quickTo(frame, "y", { duration: 0.6, ease: "power2.out" });
+
+        // Multi-plane orbital rings counter-parallax
+        const setRingsX = gsap.quickTo(".hero-orbit-ring", "x", { duration: 0.8, ease: "power2.out" });
+        const setRingsY = gsap.quickTo(".hero-orbit-ring", "y", { duration: 0.8, ease: "power2.out" });
+
+        // Floating status pill & HUD corner markers
+        const setPillX = gsap.quickTo(".hero-status-pill", "x", { duration: 0.7, ease: "power2.out" });
+        const setPillY = gsap.quickTo(".hero-status-pill", "y", { duration: 0.7, ease: "power2.out" });
+        const setHudX = gsap.quickTo(".hero-hud-corner", "x", { duration: 0.65, ease: "power2.out" });
+        const setHudY = gsap.quickTo(".hero-hud-corner", "y", { duration: 0.65, ease: "power2.out" });
+
+        // Dynamic specular reflection shift
+        const setSpecularX = gsap.quickTo(".hero-specular-light", "x", { duration: 0.5, ease: "power2.out" });
+        const setSpecularY = gsap.quickTo(".hero-specular-light", "y", { duration: 0.5, ease: "power2.out" });
+
+        const handleMouseMove = (e: MouseEvent) => {
+            const rect = container.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // Normalized distance (-1 to 1) from portrait center across viewport
+            const deltaX = (e.clientX - centerX) / (window.innerWidth * 0.45);
+            const deltaY = (e.clientY - centerY) / (window.innerHeight * 0.45);
+
+            const clampedX = Math.max(-1, Math.min(1, deltaX));
+            const clampedY = Math.max(-1, Math.min(1, deltaY));
+
+            // Subtle angles: Max ~9 degrees rotation for natural high-tech look
+            const rotY = clampedX * 9.5;
+            const rotX = -clampedY * 9.5;
+
+            setRotateY(rotY);
+            setRotateX(rotX);
+            setFrameX(clampedX * 10);
+            setFrameY(clampedY * 10);
+
+            // Counter-parallax on rings (gives genuine 3D holographic depth)
+            setRingsX(-clampedX * 14);
+            setRingsY(-clampedY * 14);
+
+            // Subtle floating pill & HUD tracking
+            setPillX(clampedX * 8);
+            setPillY(clampedY * 8);
+            setHudX(clampedX * 6);
+            setHudY(clampedY * 6);
+
+            // Dynamic specular highlight reflection
+            setSpecularX(clampedX * 18);
+            setSpecularY(clampedY * 18);
+        };
+
+        const handleMouseLeave = () => {
+            gsap.to([frame, ".hero-orbit-ring", ".hero-status-pill", ".hero-hud-corner", ".hero-specular-light"], {
+                rotationX: 0,
+                rotationY: 0,
+                x: 0,
+                y: 0,
+                duration: 1.2,
+                ease: "elastic.out(1, 0.4)",
+                overwrite: "auto",
+            });
+        };
+
+        heroSection.addEventListener("mousemove", handleMouseMove);
+        heroSection.addEventListener("mouseleave", handleMouseLeave);
+
+        return () => {
+            heroSection.removeEventListener("mousemove", handleMouseMove);
+            heroSection.removeEventListener("mouseleave", handleMouseLeave);
+        };
     }, []);
 
     return (
@@ -271,40 +360,50 @@ const Hero: React.FC = () => {
                 </div>
 
                 {/* Right Column: Profile with Aura Dot Emitter & Cyber HUD */}
-                <div className="hero-image-container flex-1 flex justify-center items-center relative pointer-events-auto my-4 lg:my-0">
+                <div
+                    ref={imageContainerRef}
+                    className="hero-image-container flex-1 flex justify-center items-center relative pointer-events-auto my-4 lg:my-0"
+                    style={{ perspective: "1000px" }}
+                >
                     {/* Radial Aura Dot Emitter (densely radiating outward from intense to faded) */}
                     <ProfileAura isDark={isDark} />
 
                     {/* Sci-Fi HUD Corner Target Markers */}
-                    <div className="absolute -top-6 -left-6 w-4 h-4 border-t-2 border-l-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10" />
-                    <div className="absolute -top-6 -right-6 w-4 h-4 border-t-2 border-r-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10" />
-                    <div className="absolute -bottom-6 -left-6 w-4 h-4 border-b-2 border-l-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10" />
-                    <div className="absolute -bottom-6 -right-6 w-4 h-4 border-b-2 border-r-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10" />
+                    <div className="hero-hud-corner absolute -top-6 -left-6 w-4 h-4 border-t-2 border-l-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10 will-change-transform" />
+                    <div className="hero-hud-corner absolute -top-6 -right-6 w-4 h-4 border-t-2 border-r-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10 will-change-transform" />
+                    <div className="hero-hud-corner absolute -bottom-6 -left-6 w-4 h-4 border-b-2 border-l-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10 will-change-transform" />
+                    <div className="hero-hud-corner absolute -bottom-6 -right-6 w-4 h-4 border-b-2 border-r-2 border-indigo-600/50 dark:border-starlight-cyan/60 hidden sm:block z-10 will-change-transform" />
 
                     {/* Floating Status Pill */}
-                    <div className="absolute -bottom-4 z-20 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-space-black/85 backdrop-blur-xl border border-slate-200 dark:border-starlight-cyan/40 text-[11px] font-mono tracking-wider text-slate-800 dark:text-starlight-cyan shadow-lg shadow-black/10 dark:shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center gap-2">
+                    <div className="hero-status-pill absolute -bottom-4 z-20 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-space-black/85 backdrop-blur-xl border border-slate-200 dark:border-starlight-cyan/40 text-[11px] font-mono tracking-wider text-slate-800 dark:text-starlight-cyan shadow-lg shadow-black/10 dark:shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center gap-2 will-change-transform">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         <span>STATUS: ONLINE // BANGKOK</span>
                     </div>
 
                     {/* Outer Orbital Rings with Starlight & Nebula accents */}
-                    <div className="absolute w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[420px] md:h-[420px] lg:w-[470px] lg:h-[470px] border border-indigo-500/20 dark:border-starlight-cyan/30 rounded-full animate-spin-slow shadow-[0_0_25px_rgba(6,182,212,0.15)]" />
+                    <div className="hero-orbit-ring absolute w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] md:w-[420px] md:h-[420px] lg:w-[470px] lg:h-[470px] border border-indigo-500/20 dark:border-starlight-cyan/30 rounded-full animate-spin-slow shadow-[0_0_25px_rgba(6,182,212,0.15)] will-change-transform" />
                     <div
-                        className="absolute w-[260px] h-[260px] sm:w-[310px] sm:h-[310px] md:w-[390px] md:h-[390px] lg:w-[440px] lg:h-[440px] border border-dashed border-purple-500/30 dark:border-nebula-purple/50 rounded-full animate-spin-slow shadow-[0_0_30px_rgba(139,92,246,0.2)]"
+                        className="hero-orbit-ring absolute w-[260px] h-[260px] sm:w-[310px] sm:h-[310px] md:w-[390px] md:h-[390px] lg:w-[440px] lg:h-[440px] border border-dashed border-purple-500/30 dark:border-nebula-purple/50 rounded-full animate-spin-slow shadow-[0_0_30px_rgba(139,92,246,0.2)] will-change-transform"
                         style={{ animationDirection: 'reverse', animationDuration: '28s' }}
                     />
 
                     {/* Glowing Cosmos Core behind image */}
-                    <div className="absolute w-[210px] h-[210px] sm:w-[270px] sm:h-[270px] md:w-[350px] md:h-[350px] bg-gradient-radial from-indigo-500/20 via-purple-500/15 to-transparent dark:from-nebula-glow/30 dark:via-starlight-blue/20 dark:to-transparent rounded-full blur-[80px]" />
+                    <div className="hero-orbit-ring absolute w-[210px] h-[210px] sm:w-[270px] sm:h-[270px] md:w-[350px] md:h-[350px] bg-gradient-radial from-indigo-500/20 via-purple-500/15 to-transparent dark:from-nebula-glow/30 dark:via-starlight-blue/20 dark:to-transparent rounded-full blur-[80px] will-change-transform" />
 
-                    {/* Main Tech Portrait Image Frame with Aura Shadow */}
-                    <div className="relative w-[220px] h-[220px] sm:w-[270px] sm:h-[270px] md:w-[340px] md:h-[340px] lg:w-[370px] lg:h-[370px] rounded-full p-2 bg-gradient-to-b from-indigo-500/40 via-purple-500/20 to-cyan-500/30 dark:from-starlight-cyan/50 dark:via-white/20 dark:to-nebula-purple/40 backdrop-blur-md shadow-[0_0_35px_rgba(139,92,246,0.35),0_0_70px_rgba(6,182,212,0.2)] dark:shadow-[0_0_45px_rgba(139,92,246,0.5),0_0_90px_rgba(6,182,212,0.3)] transition-shadow duration-500">
+                    {/* Main Tech Portrait Image Frame with Aura Shadow and 3D Perspective Tilt */}
+                    <div
+                        ref={portraitFrameRef}
+                        style={{ transformStyle: 'preserve-3d' }}
+                        className="hero-portrait-frame relative w-[220px] h-[220px] sm:w-[270px] sm:h-[270px] md:w-[340px] md:h-[340px] lg:w-[370px] lg:h-[370px] rounded-full p-2 bg-gradient-to-b from-indigo-500/40 via-purple-500/20 to-cyan-500/30 dark:from-starlight-cyan/50 dark:via-white/20 dark:to-nebula-purple/40 backdrop-blur-md shadow-[0_0_35px_rgba(139,92,246,0.35),0_0_70px_rgba(6,182,212,0.2)] dark:shadow-[0_0_45px_rgba(139,92,246,0.5),0_0_90px_rgba(6,182,212,0.3)] transition-shadow duration-500 will-change-transform"
+                    >
                         <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/60 dark:border-white/20 relative group bg-space-dark">
                             <img
                                 src={profileTechImg}
                                 alt="Chinatip Wu"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
+                            {/* Dynamic specular light reflection that shifts with tilt */}
+                            <div className="hero-specular-light absolute -inset-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25),transparent_60%)] pointer-events-none opacity-40 group-hover:opacity-75 transition-opacity duration-300 will-change-transform" />
                             {/* Subtle futuristic rim light overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-space-black/50 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none" />
                         </div>

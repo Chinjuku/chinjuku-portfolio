@@ -1,108 +1,210 @@
-import React, { useRef, useEffect } from 'react';
-import gsap from 'gsap';
-import { Calendar } from 'lucide-react';
-import { experiences } from '../data/experiences';
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { experiences } from "../constants/experiences";
+import {
+  ExperienceHeader,
+  ExperienceTimelineNode,
+  ExperienceCard,
+  ExperienceTelemetrySide,
+} from "./experience/index";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Experience: React.FC = () => {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const lineRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const timelineContainerRef = useRef<HTMLDivElement>(null);
+  const laserLineRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            // Line fill animation
-            gsap.fromTo(lineRef.current,
-                { height: "0%" },
-                {
-                    height: "100%",
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: "top center",
-                        end: "bottom center",
-                        scrub: 1
-                    }
-                }
-            );
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Header Entrance
+      gsap.fromTo(
+        ".experience-header",
+        { y: -25, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "restart none restart none",
+          },
+        },
+      );
 
-            // Items fade in
-            gsap.utils.toArray<HTMLElement>(".timeline-item").forEach((item) => {
-                gsap.from(item, {
-                    opacity: 0,
-                    x: -50,
-                    duration: 1,
-                    scrollTrigger: {
-                        trigger: item,
-                        start: "top 80%",
-                        toggleActions: "play none none reverse"
-                    }
-                });
-            });
+      // 2. Central Laser Energy Conduit Scrub
+      if (laserLineRef.current && timelineContainerRef.current) {
+        gsap.fromTo(
+          laserLineRef.current,
+          { height: "0%" },
+          {
+            height: "100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: timelineContainerRef.current,
+              start: "top 75%",
+              end: "bottom 75%",
+              scrub: 0.5,
+            },
+          },
+        );
+      }
 
-        }, sectionRef);
+      // 3. Staggered Alternating Slide-In for Experience Cards, Nodes & Opposite Telemetry Plates
+      const items = gsap.utils.toArray<HTMLElement>(".experience-timeline-row");
+      items.forEach((item, index) => {
+        const isEven = index % 2 === 0;
+        const card = item.querySelector(".experience-card");
+        const node = item.querySelector(".experience-node");
+        const telemetry = item.querySelector(".experience-telemetry");
 
-        return () => ctx.revert();
-    }, []);
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            toggleActions: "restart none restart none",
+          },
+        });
 
-    return (
-        <section ref={sectionRef} className="min-h-screen flex items-center justify-center bg-space-white dark:bg-space-black relative py-24 transition-colors duration-300">
-            {/* Background Elements */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-nebula-purple/5 via-transparent to-transparent" />
-            <div className="container mx-auto px-6">
-                <div className="text-center mb-16">
-                    <h2 className="sci-fi-subheading mb-2">Mission History // LOGS</h2>
-                    <h3 className="text-3xl md:text-4xl sci-fi-heading">Activities & Experiences</h3>
+        // Node pop & ripple
+        if (node) {
+          tl.fromTo(
+            node,
+            { scale: 0.4, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.5,
+              ease: "back.out(1.5)",
+            },
+          );
+        }
+
+        // Card slide from alternating sides (on mobile, slide in from right)
+        if (card) {
+          tl.fromTo(
+            card,
+            {
+              opacity: 0,
+              x: () => {
+                if (window.innerWidth < 768) return 40;
+                return isEven ? -60 : 60;
+              },
+              y: 15,
+            },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              duration: 0.65,
+              ease: "back.out(1.15)",
+            },
+            "-=0.35",
+          );
+        }
+
+        // Opposite side Telemetry Plate clamps in simultaneously
+        if (telemetry) {
+          tl.fromTo(
+            telemetry,
+            {
+              opacity: 0,
+              x: isEven ? 50 : -50,
+              y: 15,
+            },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              duration: 0.65,
+              ease: "back.out(1.15)",
+            },
+            "-=0.55",
+          );
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const timelineSpan = `${new Date(experiences[experiences.length - 1].finished_date).getFullYear()} - ${new Date(experiences[0].finished_date).getFullYear()}`;
+
+  return (
+    <section
+      id="experience"
+      ref={sectionRef}
+      className="min-h-screen flex items-center justify-center bg-space-white dark:bg-space-black relative py-24 sm:py-28 overflow-hidden transition-colors duration-300"
+    >
+      {/* Background Ambient Elements */}
+      <div className="absolute top-1/3 -left-36 w-80 h-80 bg-nebula-purple/10 dark:bg-starlight-cyan/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/3 -right-36 w-80 h-80 bg-starlight-cyan/10 dark:bg-nebula-purple/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:32px_32px] pointer-events-none opacity-30 dark:opacity-40" />
+
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative z-10">
+        {/* Header Component */}
+        <ExperienceHeader
+          totalCount={experiences.length}
+          timelineSpan={timelineSpan}
+        />
+
+        {/* Central Timeline Container */}
+        <div ref={timelineContainerRef} className="relative max-w-5xl mx-auto">
+          {/* Central Cyber Energy Conduit Line */}
+          {/* Desktop Line (Centered) */}
+          <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
+            <div
+              ref={laserLineRef}
+              className="w-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(6,182,212,0.8)]"
+            />
+          </div>
+
+          {/* Mobile Left-Aligned Rail Line */}
+          <div className="md:hidden absolute left-4 sm:left-6 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
+            <div className="w-full h-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(6,182,212,0.8)]" />
+          </div>
+
+          {/* Timeline Rows */}
+          <div className="space-y-10 sm:space-y-14 md:space-y-16">
+            {experiences.map((exp, index) => {
+              const isEven = index % 2 === 0;
+
+              return (
+                <div
+                  key={exp.id}
+                  className={`experience-timeline-row relative flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-6 md:gap-10 pl-10 sm:pl-14 md:pl-0 ${
+                    isEven ? "md:flex-row" : "md:flex-row-reverse"
+                  }`}
+                >
+                  {/* Left (or Right) Content Card */}
+                  <div className="w-full md:w-1/2">
+                    <ExperienceCard experience={exp} isEven={isEven} />
+                  </div>
+
+                  {/* Center Node (Absolute position on mobile, flex centered on desktop) */}
+                  <div className="absolute left-0 md:relative md:left-auto md:w-0 flex items-center justify-center -translate-x-1/2 md:translate-x-0 top-3 md:top-auto">
+                    <ExperienceTimelineNode index={index} />
+                  </div>
+
+                  {/* Opposite Telemetry / HUD Milestone Plate on desktop */}
+                  <div className="hidden md:flex w-1/2">
+                    <ExperienceTelemetrySide
+                      experience={exp}
+                      index={index}
+                      isEven={isEven}
+                    />
+                  </div>
                 </div>
-
-                <div className="relative max-w-4xl mx-auto">
-                    {/* Central Line */}
-                    <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gray-200 dark:bg-white/10 -translate-x-1/2 hidden md:block">
-                        <div ref={lineRef} className="w-full bg-gradient-to-b from-nebula-purple to-starlight-blue dark:to-starlight-cyan" />
-                    </div>
-
-                    <div className="space-y-12">
-                        {experiences.map((exp, index) => (
-                            <div key={exp.id} className={`timeline-item flex flex-col md:flex-row gap-8 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-
-                                {/* Content */}
-                                <div className="flex-1">
-                                    <div className="sci-fi-card p-6 rounded-xl border-l-4 !border-l-nebula-purple dark:!border-l-starlight-cyan">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h4 className="text-lg md:text-xl font-bold sci-fi-heading">{exp.role}</h4>
-                                            <span className="text-sm text-nebula-purple dark:text-starlight-cyan font-mono font-semibold hidden sm:inline-block">{exp.company}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm mb-4 font-mono">
-                                            <Calendar className="w-4 h-4 text-nebula-purple dark:text-starlight-cyan" />
-                                            {exp.period}
-                                            <span className="sm:hidden">• {exp.company}</span>
-                                        </div>
-                                        <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed text-sm md:text-base">
-                                            {exp.description}
-                                        </p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {exp.tags.map((tag, i) => (
-                                                <span key={i} className="sci-fi-badge">
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Dot */}
-                                <div className="relative flex items-center justify-center md:w-0">
-                                    <div className="w-4 h-4 rounded-full bg-white dark:bg-space-black border-2 border-nebula-purple dark:border-starlight-cyan z-10 shadow-[0_0_12px_rgba(124,58,237,0.7)] hidden md:block" />
-                                </div>
-
-                                {/* Spacer for opposite side */}
-                                <div className="flex-1 hidden md:block" />
-
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Experience;

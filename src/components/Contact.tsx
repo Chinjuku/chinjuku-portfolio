@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Mail, Github, Linkedin, FileText, ArrowUpRight, Phone, Sparkles } from 'lucide-react';
 import resumePdf from '../assets/resume.pdf';
-import { chinjukuContact } from '../data/contact';
+import { chinjukuContact } from '../constants/contact';
 
 gsap.registerPlugin(ScrollTrigger);
 

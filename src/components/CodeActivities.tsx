@@ -2,90 +2,24 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  Activity,
-  Calendar,
-  Flame,
-  ExternalLink,
-  Github,
-  Sparkles,
-  TrendingUp,
-  Clock,
-  Award,
-  RotateCw,
-} from "lucide-react";
+  CACHE_PREFIX,
+  CACHE_DURATION,
+  MONTH_NAMES,
+  FULL_MONTH_NAMES,
+  generateFallbackYearData,
+  type ContributionDay,
+  type YearActivityData,
+} from "../constants/codeActivities";
+import {
+  ActivityHeader,
+  ActivityStats,
+  ActivityHeatmap,
+  ActivityYearTabs,
+  ActivityMonthlyChart,
+  ActivityTooltip,
+} from "./code-activities";
 
 gsap.registerPlugin(ScrollTrigger);
-
-interface ContributionDay {
-  date: string;
-  count: number;
-  level: number;
-}
-
-interface YearActivityData {
-  total?: Record<string, number>;
-  contributions: ContributionDay[];
-}
-
-const YEARS = [2026, 2025, 2024, 2023, 2022];
-const CACHE_PREFIX = "gh_activity_chinjuku_v2_";
-const CACHE_DURATION = 3600000; // 1 hour (3600000 ms)
-
-const MONTH_NAMES = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-const FULL_MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-const DAY_LABELS = [
-  { label: "", index: 0 },
-  { label: "Mon", index: 1 },
-  { label: "", index: 2 },
-  { label: "Wed", index: 3 },
-  { label: "", index: 4 },
-  { label: "Fri", index: 5 },
-  { label: "", index: 6 },
-];
-
-// Fallback generator for network/offline resilience
-function generateFallbackYearData(year: number): YearActivityData {
-  const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  const daysCount = isLeap ? 366 : 365;
-  const contributions: ContributionDay[] = [];
-  const startDate = new Date(Date.UTC(year, 0, 1));
-
-  for (let i = 0; i < daysCount; i++) {
-    const d = new Date(startDate.getTime() + i * 86400000);
-    const dateStr = d.toISOString().split("T")[0];
-    contributions.push({ date: dateStr, count: 0, level: 0 });
-  }
-
-  return { total: { [year.toString()]: 0 }, contributions };
-}
 
 const CodeActivities: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number>(2026);
@@ -119,25 +53,25 @@ const CodeActivities: React.FC = () => {
       tl.fromTo(
         ".activity-pill",
         { y: -15, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }
+        { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" },
       )
         .fromTo(
           ".activity-title",
           { y: 25, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" },
-          "-=0.25"
+          "-=0.25",
         )
         .fromTo(
           ".activity-desc",
           { y: 20, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-          "-=0.3"
+          "-=0.3",
         )
         .fromTo(
           ".activity-actions",
           { y: 15, opacity: 0, scale: 0.95 },
           { y: 0, opacity: 1, scale: 1, duration: 0.45, ease: "power2.out" },
-          "-=0.3"
+          "-=0.3",
         )
         // 2. 4 Stats overview cards (Staggered spring)
         .fromTo(
@@ -151,27 +85,27 @@ const CodeActivities: React.FC = () => {
             stagger: 0.08,
             ease: "back.out(1.2)",
           },
-          "-=0.2"
+          "-=0.2",
         )
         // 3. Heatmap matrix & Year selector tabs
         .fromTo(
           ".activity-heatmap",
           { y: 30, opacity: 0, scale: 0.98 },
           { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
-          "-=0.2"
+          "-=0.2",
         )
         .fromTo(
           ".activity-year-tabs",
           { x: 25, opacity: 0 },
           { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
-          "-=0.35"
+          "-=0.35",
         )
         // 4. Monthly breakdown chart
         .fromTo(
           ".activity-chart",
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-          "-=0.25"
+          "-=0.25",
         );
     }, sectionRef);
 
@@ -377,440 +311,62 @@ const CodeActivities: React.FC = () => {
   // Auto-scroll calendar horizontally on mobile to show active progress
   useEffect(() => {
     if (scrollContainerRef.current) {
-      // Scroll to end for current year or start for past years
       if (selectedYear === 2026) {
         scrollContainerRef.current.scrollLeft = 0;
       }
     }
   }, [selectedYear]);
 
-  // Color level token styling
-  const getCellColor = (level: number, count: number) => {
-    if (count === 0 || level === 0) {
-      return "bg-slate-200 dark:bg-[#151c2c] border border-slate-300/60 dark:border-white/5";
-    }
-    if (level === 1) {
-      return "bg-emerald-300 dark:bg-[#064e3b] border border-emerald-400/50 dark:border-emerald-600/40 shadow-[0_0_6px_rgba(5,150,105,0.25)]";
-    }
-    if (level === 2) {
-      return "bg-emerald-400 dark:bg-[#059669] border border-emerald-500/60 dark:border-emerald-500/50 shadow-[0_0_8px_rgba(16,185,129,0.35)]";
-    }
-    if (level === 3) {
-      return "bg-emerald-500 dark:bg-[#10b981] border border-emerald-600/60 dark:border-emerald-400/60 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
-    }
-    return "bg-emerald-600 dark:bg-[#34d399] border border-emerald-700/70 dark:border-cyan-300/80 shadow-[0_0_12px_rgba(52,211,153,0.85)]";
-  };
-
   return (
-    <section id="activity" ref={sectionRef} className="py-24 px-6 relative z-10 overflow-hidden">
+    <section
+      id="activity"
+      ref={sectionRef}
+      className="py-24 px-6 relative z-10 overflow-hidden"
+    >
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 -left-40 w-96 h-96 bg-nebula-purple/10 dark:bg-starlight-cyan/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-starlight-cyan/10 dark:bg-nebula-purple/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto max-w-7xl">
-        {/* ============================================================ */}
-        {/* 1. SECTION HEADER WITH HUD BADGE & GITHUB PROFILE PILL       */}
-        {/* ============================================================ */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <div className="activity-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-3">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              <span>LIVE TELEMETRY // COMMITS</span>
-            </div>
-            <h2 className="activity-title text-3xl sm:text-4xl md:text-5xl font-black sci-fi-heading tracking-tight mb-3">
-              Code Activities
-            </h2>
-            <p className="activity-desc text-slate-600 dark:text-[#94a3b8] text-sm sm:text-base max-w-2xl leading-relaxed">
-              Continuous mission logs, version control frequency, and GitHub
-              contribution telemetry tracking repository operations across
-              chronological milestones.
-            </p>
-          </div>
+        {/* 1. Header with HUD badge & Github profile actions */}
+        <ActivityHeader
+          isRefreshing={isRefreshing}
+          onRefresh={handleManualRefresh}
+        />
 
-          {/* GitHub Link & Cache Refresh Pill */}
-          <div className="activity-actions flex items-center gap-3 self-start md:self-auto flex-wrap">
-            <button
-              onClick={handleManualRefresh}
-              disabled={isRefreshing}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-mono bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 shadow-sm transition-all cursor-pointer disabled:opacity-50"
-              title="Force refresh GitHub data"
-            >
-              <RotateCw
-                className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-cyan-400" : ""}`}
-              />
-              <span>{isRefreshing ? "Syncing..." : "Sync"}</span>
-            </button>
+        {/* 2. Stats overview cards */}
+        <ActivityStats
+          selectedYear={selectedYear}
+          loading={loading}
+          stats={stats}
+        />
 
-            <a
-              href="https://github.com/Chinjuku"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-semibold bg-slate-900 dark:bg-space-dark hover:bg-slate-800 text-white border border-cyan-500/30 hover:border-cyan-400 shadow-md shadow-cyan-500/10 hover:shadow-cyan-500/25 transition-all group"
-            >
-              <Github className="w-4 h-4 text-cyan-400 group-hover:rotate-12 transition-transform" />
-              <span>@Chinjuku</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
-          </div>
-        </div>
-
-        {/* ============================================================ */}
-        {/* 2. STATS OVERVIEW CARDS (TOTAL, ACTIVE DAYS, PEAK MONTH)     */}
-        {/* ============================================================ */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {/* Card 1: Total Commits */}
-          <div className="activity-stat-card p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
-                {selectedYear} Contributions
-              </span>
-              <Activity className="w-4 h-4 text-cyan-500 dark:text-starlight-cyan group-hover:scale-110 transition-transform" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
-              {loading ? (
-                <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
-              ) : (
-                stats.totalCommits.toLocaleString()
-              )}
-            </div>
-            <span className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 mt-1 block">
-              // Verified Commits & PRs
-            </span>
-          </div>
-
-          {/* Card 2: Active Days */}
-          <div className="activity-stat-card p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
-                Active Days
-              </span>
-              <Calendar className="w-4 h-4 text-purple-500 dark:text-nebula-purple group-hover:scale-110 transition-transform" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
-              {loading ? (
-                <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
-              ) : (
-                stats.activeDays
-              )}
-            </div>
-            <span className="text-[11px] font-mono text-purple-600 dark:text-nebula-glow mt-1 block">
-              // Days with Code Activity
-            </span>
-          </div>
-
-          {/* Card 3: Max Day Streak */}
-          <div className="activity-stat-card p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
-                Longest Streak
-              </span>
-              <Flame className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
-              {loading ? (
-                <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
-              ) : (
-                `${stats.maxDayStreak} Days`
-              )}
-            </div>
-            <span className="text-[11px] font-mono text-orange-600 dark:text-orange-400 mt-1 block">
-              // Consecutive Workload
-            </span>
-          </div>
-
-          {/* Card 4: Peak Activity Month Highlight Badge */}
-          <div className="activity-stat-card p-5 rounded-2xl bg-cyan-500/10 dark:bg-cyan-950/30 border border-cyan-500/30 dark:border-cyan-400/40 relative overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.15)] group">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300 uppercase tracking-wider flex items-center gap-1 font-bold">
-                <Award className="w-3.5 h-3.5 text-cyan-500" />
-                Peak Activity Month
-              </span>
-              <TrendingUp className="w-4 h-4 text-cyan-500 animate-pulse" />
-            </div>
-            <div className="text-xl sm:text-2xl font-black sci-fi-heading font-mono text-cyan-600 dark:text-cyan-300">
-              {loading ? (
-                <div className="h-8 w-24 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
-              ) : stats.peakMonth.count > 0 ? (
-                stats.peakMonth.name
-              ) : (
-                "In Progress"
-              )}
-            </div>
-            <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 mt-1 block">
-              {loading
-                ? "..."
-                : stats.peakMonth.count > 0
-                  ? `${stats.peakMonth.count} commits logged`
-                  : "Active cycle underway"}
-            </span>
-          </div>
-        </div>
-
-        {/* ============================================================ */}
-        {/* 3. MAIN SECTION: HEATMAP + YEAR SELECTOR TABS                */}
-        {/* ============================================================ */}
+        {/* 3. Heatmap & Year selector tabs */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
-          {/* Contribution Calendar Heatmap Container */}
-          <div className="activity-heatmap flex-1 p-6 sm:p-7 rounded-3xl sci-fi-glass border border-slate-200/80 dark:border-cyan-500/20 shadow-xl overflow-hidden relative">
-            <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
-                <span className="font-mono text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 font-bold">
-                  Annual Contribution Heatmap
-                </span>
-              </div>
+          <ActivityHeatmap
+            selectedYear={selectedYear}
+            loading={loading}
+            calendarGrid={calendarGrid}
+            scrollContainerRef={scrollContainerRef}
+            onCellHover={setHoveredCell}
+          />
 
-              {/* Legend */}
-              <div className="flex items-center gap-2 text-[11px] font-mono text-slate-500 dark:text-[#94a3b8]">
-                <span>Less</span>
-                <div className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-[3px] bg-slate-200 dark:bg-[#151c2c] border border-slate-300/60 dark:border-white/5" />
-                  <span className="w-3 h-3 rounded-[3px] bg-emerald-300 dark:bg-[#064e3b]" />
-                  <span className="w-3 h-3 rounded-[3px] bg-emerald-400 dark:bg-[#059669]" />
-                  <span className="w-3 h-3 rounded-[3px] bg-emerald-500 dark:bg-[#10b981]" />
-                  <span className="w-3 h-3 rounded-[3px] bg-emerald-600 dark:bg-[#34d399] shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                </div>
-                <span>More</span>
-              </div>
-            </div>
-
-            {/* Heatmap Matrix with Month Labels */}
-            {loading ? (
-              <div className="h-44 w-full flex flex-col items-center justify-center gap-3">
-                <RotateCw className="w-6 h-6 text-cyan-400 animate-spin" />
-                <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-                  Decrypting {selectedYear} Commit Telemetry...
-                </span>
-              </div>
-            ) : (
-              <div
-                ref={scrollContainerRef}
-                className="overflow-x-auto pb-4 pt-1 select-none scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
-              >
-                <div className="inline-block min-w-full">
-                  {/* Month Headers */}
-                  <div className="flex text-[10px] font-mono text-slate-500 dark:text-[#94a3b8] mb-2 pl-8">
-                    {calendarGrid.monthLabels.map((item, idx) => (
-                      <div
-                        key={idx}
-                        style={{
-                          width: `${Math.max(28, idx < calendarGrid.monthLabels.length - 1 ? (calendarGrid.monthLabels[idx + 1].weekIndex - item.weekIndex) * 15.5 : 45)}px`,
-                        }}
-                        className="shrink-0 font-medium"
-                      >
-                        {item.month}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Grid with Day-of-Week Labels */}
-                  <div className="flex gap-2">
-                    {/* Day labels column (Sun - Sat) */}
-                    <div className="flex flex-col justify-between text-[9px] font-mono text-slate-400 dark:text-slate-500 pr-1 py-0.5 h-[105px]">
-                      {DAY_LABELS.map((d, idx) => (
-                        <span key={idx} className="h-3 leading-3">
-                          {d.label}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* 53 Columns of Weeks */}
-                    <div className="flex gap-[3.5px]">
-                      {calendarGrid.weeks.map((week, weekIdx) => (
-                        <div
-                          key={weekIdx}
-                          className="flex flex-col gap-[3.5px]"
-                        >
-                          {week.map((cell, dayIdx) => {
-                            if (!cell) {
-                              return (
-                                <div
-                                  key={dayIdx}
-                                  className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] bg-transparent opacity-0 pointer-events-none"
-                                />
-                              );
-                            }
-
-                            const cellColor = getCellColor(
-                              cell.level,
-                              cell.count,
-                            );
-
-                            return (
-                              <div
-                                key={dayIdx}
-                                onMouseEnter={(e) => {
-                                  const rect =
-                                    e.currentTarget.getBoundingClientRect();
-                                  setHoveredCell({
-                                    date: cell.date,
-                                    count: cell.count,
-                                    x: rect.left + rect.width / 2,
-                                    y: rect.top,
-                                  });
-                                }}
-                                onMouseLeave={() => setHoveredCell(null)}
-                                className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] ${cellColor} transition-transform hover:scale-150 hover:z-20 cursor-pointer`}
-                              />
-                            );
-                          })}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Status readout line */}
-            <div className="mt-2 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] flex-wrap gap-2">
-              <span className="flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-cyan-500" />
-                <span>Cache-Control: 1-Hour Client-Side Storage</span>
-              </span>
-              <span>
-                Active Year:{" "}
-                <span className="font-bold text-slate-800 dark:text-slate-200">
-                  {selectedYear}
-                </span>
-              </span>
-            </div>
-          </div>
-
-          {/* Year Selector Tabs (Vertical on desktop, horizontal on mobile) */}
-          <div className="activity-year-tabs lg:w-48 shrink-0 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
-            <span className="text-xs font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1 hidden lg:block font-bold">
-              // Select Year
-            </span>
-            {YEARS.map((year) => {
-              const isSelected = selectedYear === year;
-              return (
-                <button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className={`px-4 py-3 rounded-2xl font-mono text-xs font-bold transition-all duration-300 flex items-center justify-between gap-3 cursor-pointer shrink-0 lg:shrink ${
-                    isSelected
-                      ? "bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-lg shadow-cyan-500/25 border border-cyan-400/40 scale-[1.02]"
-                      : "sci-fi-card text-slate-700 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-400 hover:border-cyan-500/40"
-                  }`}
-                >
-                  <span>{year}</span>
-                  {isSelected ? (
-                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-ping" />
-                  ) : (
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">
-                      Log
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <ActivityYearTabs
+            selectedYear={selectedYear}
+            onSelectYear={setSelectedYear}
+          />
         </div>
 
-        {/* ============================================================ */}
-        {/* 4. MONTHLY BREAKDOWN BAR CHART (JAN - DEC TELEMETRY)         */}
-        {/* ============================================================ */}
-        <div className="activity-chart p-6 sm:p-7 rounded-3xl sci-fi-card border border-slate-200/80 dark:border-white/10 relative overflow-hidden">
-          <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-purple-500 dark:text-nebula-purple" />
-              <h3 className="font-mono text-xs uppercase tracking-widest text-slate-800 dark:text-slate-200 font-bold">
-                Monthly Contribution Breakdown ({selectedYear})
-              </h3>
-            </div>
-            <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-              Peak:{" "}
-              <span className="font-bold text-cyan-600 dark:text-cyan-400">
-                {stats.peakMonth.name}
-              </span>{" "}
-              ({stats.peakMonth.count} commits)
-            </span>
-          </div>
-
-          {/* 12-Month Mini Distribution Bars */}
-          <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3 items-end h-32 pb-4">
-            {stats.monthlyTotals.map((count, idx) => {
-              const isPeak = idx === stats.peakMonth.index && count > 0;
-              const maxVal = Math.max(1, stats.peakMonth.count);
-              const heightPercent =
-                count > 0
-                  ? Math.max(12, Math.round((count / maxVal) * 100))
-                  : 6;
-
-              return (
-                <div
-                  key={idx}
-                  className="flex flex-col items-center gap-2 h-full justify-end group"
-                >
-                  {/* Tooltip on hover */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 whitespace-nowrap">
-                    {count}
-                  </div>
-
-                  {/* The Bar */}
-                  <div className="w-full bg-slate-100 dark:bg-white/5 rounded-t-lg h-24 flex items-end p-0.5 overflow-hidden">
-                    <div
-                      style={{ height: `${heightPercent}%` }}
-                      className={`w-full rounded-t-md transition-all duration-500 ${
-                        isPeak
-                          ? "bg-gradient-to-t from-purple-600 to-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)]"
-                          : count > 0
-                            ? "bg-gradient-to-t from-emerald-600 to-teal-400 dark:from-emerald-700 dark:to-teal-400"
-                            : "bg-slate-300 dark:bg-slate-800"
-                      }`}
-                    />
-                  </div>
-
-                  {/* Month Label */}
-                  <span
-                    className={`text-[10px] font-mono uppercase ${
-                      isPeak
-                        ? "font-bold text-cyan-600 dark:text-cyan-400"
-                        : "text-slate-500 dark:text-[#94a3b8]"
-                    }`}
-                  >
-                    {MONTH_NAMES[idx]}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* 4. Monthly breakdown chart */}
+        <ActivityMonthlyChart
+          selectedYear={selectedYear}
+          monthlyTotals={stats.monthlyTotals}
+          peakMonth={stats.peakMonth}
+        />
       </div>
 
-      {/* ============================================================ */}
-      {/* 5. FLOATING HUD TOOLTIP ON CELL HOVER                        */}
-      {/* ============================================================ */}
-      {hoveredCell && (
-        <div
-          style={{
-            position: "fixed",
-            left: `${hoveredCell.x}px`,
-            top: `${hoveredCell.y - 10}px`,
-            transform: "translate(-50%, -100%)",
-          }}
-          className="pointer-events-none z-50 animate-in fade-in zoom-in-95 duration-150"
-        >
-          <div className="bg-slate-900/95 dark:bg-[#070b14]/95 border border-cyan-500/50 rounded-xl px-3.5 py-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] backdrop-blur-md text-center min-w-[160px]">
-            <div className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider mb-0.5">
-              {hoveredCell.count === 0
-                ? "No Contributions"
-                : `${hoveredCell.count} ${hoveredCell.count === 1 ? "Contribution" : "Contributions"}`}
-            </div>
-            <div className="text-[11px] font-mono text-slate-300 font-medium">
-              {new Date(hoveredCell.date).toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </div>
-            {/* Triangular Indicator */}
-            <div className="w-2 h-2 bg-slate-900 dark:bg-[#070b14] border-r border-b border-cyan-500/50 rotate-45 mx-auto -mb-3 mt-1" />
-          </div>
-        </div>
-      )}
+      {/* 5. Floating HUD tooltip */}
+      <ActivityTooltip cell={hoveredCell} />
     </section>
   );
 };
