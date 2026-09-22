@@ -100,7 +100,7 @@ const About: React.FC = () => {
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top 75%",
-                    toggleActions: "play none none reverse",
+                    toggleActions: "restart none restart none",
                 },
             });
 

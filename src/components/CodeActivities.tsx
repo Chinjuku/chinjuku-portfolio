@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Activity,
   Calendar,
@@ -11,6 +13,8 @@ import {
   Award,
   RotateCw,
 } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface ContributionDay {
   date: string;
@@ -98,6 +102,81 @@ const CodeActivities: React.FC = () => {
   } | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // GSAP ScrollTrigger Component Animations (restarts cleanly every time you scroll into view)
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "restart none restart none",
+        },
+      });
+
+      // 1. Header elements
+      tl.fromTo(
+        ".activity-pill",
+        { y: -15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, ease: "power3.out" }
+      )
+        .fromTo(
+          ".activity-title",
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" },
+          "-=0.25"
+        )
+        .fromTo(
+          ".activity-desc",
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+          "-=0.3"
+        )
+        .fromTo(
+          ".activity-actions",
+          { y: 15, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.45, ease: "power2.out" },
+          "-=0.3"
+        )
+        // 2. 4 Stats overview cards (Staggered spring)
+        .fromTo(
+          ".activity-stat-card",
+          { y: 30, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.45,
+            stagger: 0.08,
+            ease: "back.out(1.2)",
+          },
+          "-=0.2"
+        )
+        // 3. Heatmap matrix & Year selector tabs
+        .fromTo(
+          ".activity-heatmap",
+          { y: 30, opacity: 0, scale: 0.98 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
+          "-=0.2"
+        )
+        .fromTo(
+          ".activity-year-tabs",
+          { x: 25, opacity: 0 },
+          { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
+          "-=0.35"
+        )
+        // 4. Monthly breakdown chart
+        .fromTo(
+          ".activity-chart",
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+          "-=0.25"
+        );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   // Fetch and cache contributions data with 1-hour localStorage TTL
   const fetchContributions = async (year: number, forceRefresh = false) => {
@@ -323,7 +402,7 @@ const CodeActivities: React.FC = () => {
   };
 
   return (
-    <section id="activity" className="py-24 px-6 relative z-10 overflow-hidden">
+    <section id="activity" ref={sectionRef} className="py-24 px-6 relative z-10 overflow-hidden">
       {/* Background Ambient Glows */}
       <div className="absolute top-1/4 -left-40 w-96 h-96 bg-nebula-purple/10 dark:bg-starlight-cyan/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-40 w-96 h-96 bg-starlight-cyan/10 dark:bg-nebula-purple/10 rounded-full blur-[120px] pointer-events-none" />
@@ -334,14 +413,14 @@ const CodeActivities: React.FC = () => {
         {/* ============================================================ */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-3">
+            <div className="activity-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-3">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
               <span>LIVE TELEMETRY // COMMITS</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black sci-fi-heading tracking-tight mb-3">
+            <h2 className="activity-title text-3xl sm:text-4xl md:text-5xl font-black sci-fi-heading tracking-tight mb-3">
               Code Activities
             </h2>
-            <p className="text-slate-600 dark:text-[#94a3b8] text-sm sm:text-base max-w-2xl leading-relaxed">
+            <p className="activity-desc text-slate-600 dark:text-[#94a3b8] text-sm sm:text-base max-w-2xl leading-relaxed">
               Continuous mission logs, version control frequency, and GitHub
               contribution telemetry tracking repository operations across
               chronological milestones.
@@ -349,7 +428,7 @@ const CodeActivities: React.FC = () => {
           </div>
 
           {/* GitHub Link & Cache Refresh Pill */}
-          <div className="flex items-center gap-3 self-start md:self-auto flex-wrap">
+          <div className="activity-actions flex items-center gap-3 self-start md:self-auto flex-wrap">
             <button
               onClick={handleManualRefresh}
               disabled={isRefreshing}
@@ -380,7 +459,7 @@ const CodeActivities: React.FC = () => {
         {/* ============================================================ */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {/* Card 1: Total Commits */}
-          <div className="p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
+          <div className="activity-stat-card p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
                 {selectedYear} Contributions
@@ -400,7 +479,7 @@ const CodeActivities: React.FC = () => {
           </div>
 
           {/* Card 2: Active Days */}
-          <div className="p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
+          <div className="activity-stat-card p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
                 Active Days
@@ -420,7 +499,7 @@ const CodeActivities: React.FC = () => {
           </div>
 
           {/* Card 3: Max Day Streak */}
-          <div className="p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
+          <div className="activity-stat-card p-5 rounded-2xl sci-fi-card relative overflow-hidden group">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
                 Longest Streak
@@ -440,7 +519,7 @@ const CodeActivities: React.FC = () => {
           </div>
 
           {/* Card 4: Peak Activity Month Highlight Badge */}
-          <div className="p-5 rounded-2xl bg-cyan-500/10 dark:bg-cyan-950/30 border border-cyan-500/30 dark:border-cyan-400/40 relative overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.15)] group">
+          <div className="activity-stat-card p-5 rounded-2xl bg-cyan-500/10 dark:bg-cyan-950/30 border border-cyan-500/30 dark:border-cyan-400/40 relative overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.15)] group">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300 uppercase tracking-wider flex items-center gap-1 font-bold">
                 <Award className="w-3.5 h-3.5 text-cyan-500" />
@@ -472,7 +551,7 @@ const CodeActivities: React.FC = () => {
         {/* ============================================================ */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Contribution Calendar Heatmap Container */}
-          <div className="flex-1 p-6 sm:p-7 rounded-3xl sci-fi-glass border border-slate-200/80 dark:border-cyan-500/20 shadow-xl overflow-hidden relative">
+          <div className="activity-heatmap flex-1 p-6 sm:p-7 rounded-3xl sci-fi-glass border border-slate-200/80 dark:border-cyan-500/20 shadow-xl overflow-hidden relative">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
@@ -599,7 +678,7 @@ const CodeActivities: React.FC = () => {
           </div>
 
           {/* Year Selector Tabs (Vertical on desktop, horizontal on mobile) */}
-          <div className="lg:w-48 shrink-0 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
+          <div className="activity-year-tabs lg:w-48 shrink-0 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
             <span className="text-xs font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1 hidden lg:block font-bold">
               // Select Year
             </span>
@@ -632,7 +711,7 @@ const CodeActivities: React.FC = () => {
         {/* ============================================================ */}
         {/* 4. MONTHLY BREAKDOWN BAR CHART (JAN - DEC TELEMETRY)         */}
         {/* ============================================================ */}
-        <div className="p-6 sm:p-7 rounded-3xl sci-fi-card border border-slate-200/80 dark:border-white/10 relative overflow-hidden">
+        <div className="activity-chart p-6 sm:p-7 rounded-3xl sci-fi-card border border-slate-200/80 dark:border-white/10 relative overflow-hidden">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-purple-500 dark:text-nebula-purple" />

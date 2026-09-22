@@ -1,5 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Code2, Cloud, Database, Globe, Sparkles } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface SkillItem {
   name: string;
@@ -191,6 +195,56 @@ const totalSkillCount = skillCategories.reduce(
 const Skills: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
+  // GSAP ScrollTrigger Component Animations (restarts cleanly every time you scroll into view)
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "restart none restart none",
+        },
+      });
+
+      // 1. Header (Subheading & Main Heading)
+      tl.fromTo(
+        ".skills-header",
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }
+      )
+        // 2. Marquee stream rows
+        .fromTo(
+          ".skills-marquee",
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
+          "-=0.25"
+        )
+        // 3. Telemetry divider
+        .fromTo(
+          ".skills-divider",
+          { scaleX: 0.8, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.45, ease: "power2.out" },
+          "-=0.3"
+        )
+        // 4. 4 Architectural Pillar Cards (Staggered spring)
+        .fromTo(
+          ".skills-pillar-card",
+          { y: 35, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            stagger: 0.09,
+            ease: "back.out(1.2)",
+          },
+          "-=0.2"
+        );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   // Flatten skills for rows
   const row1Skills = [
     ...skillCategories[0].skills,
@@ -211,7 +265,7 @@ const Skills: React.FC = () => {
 
       <div className="container mx-auto relative z-10 w-full px-4 max-w-7xl">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-10 md:mb-12">
+        <div className="skills-header text-center mb-8 sm:mb-10 md:mb-12">
           <h2 className="sci-fi-subheading mb-2 flex items-center justify-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-starlight-cyan animate-pulse" />
             The Arsenal
@@ -222,7 +276,7 @@ const Skills: React.FC = () => {
         </div>
 
         {/* Top Infinite Marquee Stream */}
-        <div className="space-y-3 sm:space-y-4 mb-10 sm:mb-12 md:mb-16">
+        <div className="skills-marquee space-y-3 sm:space-y-4 mb-10 sm:mb-12 md:mb-16">
           {/* Row 1 - Left Scroll */}
           <div className="relative w-full overflow-hidden group">
             <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-28 lg:w-36 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
@@ -281,7 +335,7 @@ const Skills: React.FC = () => {
         </div>
 
         {/* Section Telemetry Divider */}
-        <div className="flex items-center justify-center gap-3 mb-8 sm:mb-10 text-center">
+        <div className="skills-divider flex items-center justify-center gap-3 mb-8 sm:mb-10 text-center">
           <div className="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-white/10 to-transparent flex-1 max-w-xs" />
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 dark:bg-white/5 border border-gray-200/80 dark:border-white/10 shadow-sm backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -321,7 +375,7 @@ const Skills: React.FC = () => {
             return (
               <div
                 key={category.id}
-                className={`group relative rounded-2xl bg-white/70 dark:bg-space-dark/80 backdrop-blur-md border border-gray-200/80 dark:border-white/10 p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${accentBorder} flex flex-col justify-between`}
+                className={`skills-pillar-card group relative rounded-2xl bg-white/70 dark:bg-space-dark/80 backdrop-blur-md border border-gray-200/80 dark:border-white/10 p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${accentBorder} flex flex-col justify-between`}
               >
                 {/* Top Accent Gradient Line */}
                 <div
