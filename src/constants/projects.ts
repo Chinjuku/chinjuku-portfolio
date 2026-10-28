@@ -256,6 +256,64 @@ export const all_projects: Project[] = [
       "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop",
     finished_date: "2024-07-28",
   },
+  {
+    id: 16,
+    title: "Egg-e-egg-egg (Fresh Farm & LINE LIFF)",
+    description:
+      "Farm-to-table agricultural e-commerce platform and LINE LIFF mini-app connecting local farmers directly with consumers. Features a web storefront, seamless in-chat ordering & checkout via LINE LIFF, LINE Messaging API webhook notifications, and an admin back-office dashboard for inventory and order management.",
+    role: "Fullstack Dev",
+    tech: [
+      "NextJS",
+      "React",
+      "TypeScript",
+      "TailwindCSS",
+      "LINE LIFF",
+      "LINE Messaging API",
+      "Bun",
+    ],
+    color: "from-amber-400 to-emerald-500",
+    repos: "https://github.com/Chinjuku/egg-e-egg-egg",
+    web_url: "",
+    image:
+      "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop",
+    finished_date: "2026-10-27",
+  },
+  {
+    id: 17,
+    title: "GovBudget Tracking System",
+    description:
+      "Government budget management and encumbrance accounting system designed to control fiscal allotments, purchase order (PO) obligations, disbursement vouchers, budget returns, and action-plan project tracking. Features real-time budget ledger reporting and automated Excel/PDF document exports.",
+    role: "Fullstack Dev",
+    tech: [
+      "NextJS",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "TailwindCSS",
+      "TanStack Query",
+      "Zod",
+    ],
+    color: "from-blue-500 to-indigo-600",
+    repos: "https://github.com/Chinjuku/GovBudgetTrackingSystem",
+    web_url: "",
+    image:
+      "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1000&auto=format&fit=crop",
+    finished_date: "2026-10-27",
+  },
+  {
+    id: 18,
+    title: "Antigravity Discord Bridge",
+    description:
+      "Two-way remote control and notification bridge connecting Antigravity AI coding agents with Discord. Enables mobile-first developer workflows with interactive decision buttons, real-time task status embeds, multi-project auto-discovery, and remote CLI command execution (/ai, /review) directly from Discord.",
+    role: "Tooling & Backend Dev",
+    tech: ["Node.js", "JavaScript", "Discord.js", "Express", "CLI", "REST API"],
+    color: "from-indigo-400 to-purple-600",
+    repos: "https://github.com/Chinjuku/AntigravityDiscordBridge",
+    web_url: "",
+    image:
+      "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?q=80&w=1000&auto=format&fit=crop",
+    finished_date: "2026-10-28",
+  },
 ];
 
 export const projects: Project[] = all_projects.filter(
