@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
-import portrait from "../assets/profile-tech.jpg";
+import portrait from "../assets/profile-tech-cartoon.png";
 import { ABOUT_COPY, ABOUT_FACTS } from "../constants/about";
 import { useNavClick } from "../hooks";
 import { Magnetic, RevealText, TiltCard, usePrefersReducedMotion } from "./motion";
