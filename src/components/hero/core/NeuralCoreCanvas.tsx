@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState, type ReactNode } from "react";
+import React, { Component, useEffect, useRef, useState, type ErrorInfo, type ReactNode } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Environment, Lightformer } from "@react-three/drei";
+import { PerformanceMonitor } from "@react-three/drei";
+import { CoreFallback } from "../CoreFallback";
+import { CoreLighting } from "./CoreLighting";
 import type { CoreState } from "./scrollState";
 import { useQuality, useReducedMotion } from "./hooks";
 
-interface CoreCanvasProps {
+interface NeuralCoreCanvasProps {
   state: CoreState;
   children?: ReactNode;
   camera?: { position: [number, number, number]; fov: number };
@@ -33,11 +35,25 @@ const Settle: React.FC = () => {
   return null;
 };
 
+/** If WebGL context creation (or the scene) throws, show the static fallback. */
+class CanvasErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.warn("[hero] 3D core failed, showing fallback:", error.message, info.componentStack?.slice(0, 120));
+  }
+  render() {
+    return this.state.failed ? <CoreFallback className="h-full w-full" /> : this.props.children;
+  }
+}
+
 /**
  * Studio-lit, transparent R3F canvas shared by all concepts.
  * Reflections come from procedural Lightformers (no HDR download).
  */
-export const CoreCanvas: React.FC<CoreCanvasProps> = ({
+export const NeuralCoreCanvas: React.FC<NeuralCoreCanvasProps> = ({
   state,
   children,
   camera = { position: [0, 0, 6], fov: 35 },
@@ -49,6 +65,8 @@ export const CoreCanvas: React.FC<CoreCanvasProps> = ({
   const [visible, setVisible] = useState(true);
   const reduced = useReducedMotion();
   const quality = useQuality();
+  // adaptive pixel ratio: PerformanceMonitor steps between 1 and the device cap
+  const [dpr, setDpr] = useState(quality.dpr);
 
   // Pause rendering while offscreen.
   useEffect(() => {
@@ -73,26 +91,21 @@ export const CoreCanvas: React.FC<CoreCanvasProps> = ({
 
   return (
     <div ref={wrapperRef} className={className}>
+      <CanvasErrorBoundary>
       <Canvas
         frameloop={frameloop}
-        dpr={[1, quality.dpr]}
+        dpr={Math.min(dpr, quality.dpr)}
         camera={camera}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         aria-hidden="true"
         onPointerMissed={onPointerMissed}
       >
-        <ambientLight intensity={0.15} />
-        <directionalLight position={[4, 6, 5]} intensity={1.2} color="#F4F6FA" />
-        <Environment resolution={256} frames={1}>
-          {/* softbox studio: long strips give the chrome its Apple-like highlights */}
-          <Lightformer form="rect" intensity={3} position={[0, 5, -2]} scale={[10, 1.2, 1]} rotation-x={Math.PI / 2} />
-          <Lightformer form="rect" intensity={2} position={[-5, 1, -1]} scale={[8, 0.6, 1]} rotation-y={Math.PI / 2} />
-          <Lightformer form="rect" intensity={2} position={[5, -1, -1]} scale={[8, 0.6, 1]} rotation-y={-Math.PI / 2} />
-          <Lightformer form="ring" color="#8ABFFF" intensity={1.5} position={[0, 0, -6]} scale={3} />
-        </Environment>
+        <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(quality.dpr)} />
+        <CoreLighting />
         {reduced && <Settle key={settleKey} />}
         {children}
       </Canvas>
+      </CanvasErrorBoundary>
     </div>
   );
 };

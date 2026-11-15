@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HERO_COPY, HERO_STACK_LAYERS, type HeroLayerId } from "../constants/hero";
 import { HeroCtas, HeroLayerLabel, HeroLayerPanel } from "./hero/index";
+import { CoreFallback } from "./hero/CoreFallback";
 // import from the files directly: the core barrel re-exports the three.js
 // components, which must stay in the lazy HeroCoreScene chunk
 import { createCoreState } from "./hero/core/scrollState";
@@ -166,9 +167,7 @@ const Hero: React.FC = () => {
           >
             <div className="relative h-[52svh] md:col-span-7 md:h-[80vh]">
               <Suspense
-                fallback={
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(138,191,255,0.12),transparent_45%)]" />
-                }
+                fallback={<CoreFallback className="absolute inset-0" />}
               >
                 <HeroCoreScene
                   state={state}

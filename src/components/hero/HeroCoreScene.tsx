@@ -3,8 +3,10 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { CoreFallback } from "./CoreFallback";
 import {
-  CoreCanvas,
+  NeuralCoreCanvas,
+  hasWebGL,
   IntelligenceCore,
   layerExplodedY,
   type CoreLayerId,
@@ -55,8 +57,11 @@ const HeroCoreScene: React.FC<HeroCoreSceneProps> = ({
   onSelectLayer,
   onClose,
   className,
-}) => (
-  <CoreCanvas
+}) =>
+  !hasWebGL() ? (
+    <CoreFallback className={className} />
+  ) : (
+  <NeuralCoreCanvas
     state={state}
     className={className}
     camera={{ position: [0, 0, CAMERA_Z], fov: 35 }}
@@ -70,7 +75,7 @@ const HeroCoreScene: React.FC<HeroCoreSceneProps> = ({
       activeLayer={activeLayer}
       onSelectLayer={onSelectLayer}
     />
-  </CoreCanvas>
-);
+  </NeuralCoreCanvas>
+  );
 
 export default HeroCoreScene;
