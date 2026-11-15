@@ -314,6 +314,71 @@ export const all_projects: Project[] = [
       "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?q=80&w=1000&auto=format&fit=crop",
     finished_date: "2026-10-28",
   },
+  {
+    id: 19,
+    title: "StockPerfNoti",
+    description:
+      "Zero-cost, serverless US stock screener. A Cloudflare Worker answers a Discord /list slash command and a GitHub Actions job posts a Mon–Fri post-market report, filtering the TradingView scanner by 3-month performance, market cap, SMA50 and dollar volume.",
+    role: "Tooling & Backend Dev",
+    tech: ["TypeScript", "Cloudflare Workers", "GitHub Actions", "Discord API", "TradingView API"],
+    color: "from-emerald-400 to-cyan-600",
+    repos: "https://github.com/Chinjuku/StockPerfNoti",
+    web_url: "",
+    image: "",
+    finished_date: "2026-10-28",
+  },
+  {
+    id: 20,
+    title: "Lucent Design System",
+    description:
+      "Minimal-glass design system built on W3C design tokens (Style Dictionary v4) with a 3-tier token hierarchy, layered elevation and accessible Radix-based React components, generated through an AI-agent token and component pipeline.",
+    role: "Frontend & Design Systems",
+    tech: ["TypeScript", "React", "Radix UI", "Style Dictionary", "TailwindCSS"],
+    color: "from-slate-300 to-sky-500",
+    repos: "https://github.com/Chinjuku/lucent-design-system",
+    web_url: "",
+    image: "",
+    finished_date: "2026-09-01",
+  },
+  {
+    id: 21,
+    title: "TFT Trivia",
+    description:
+      "Fan-made Teamfight Tactics trivia and guessing game covering every set: four quiz modes (champion, item, trait, which set), attribute-comparison puzzles, challenge links with identical questions for friends, and a daily set. Static site with data pulled from CommunityDragon.",
+    role: "Frontend Dev",
+    tech: ["React", "TypeScript", "React Router", "Zod"],
+    color: "from-amber-400 to-orange-600",
+    repos: "https://github.com/Chinjuku/tft-trivia",
+    web_url: "https://chinjuku.github.io/tft-trivia/",
+    image: "",
+    finished_date: "2026-11-12",
+  },
+  {
+    id: 22,
+    title: "BeatDrop",
+    description:
+      "Thai and international song-guessing game from short snippets: reel-style mode, four-choice Song Guesser, daily challenge with leaderboard, plus artist, era and genre modes with Easy to Hard unlock timings.",
+    role: "Fullstack Dev",
+    tech: ["NextJS", "TypeScript", "React Query", "Upstash Redis", "PostgreSQL", "next-intl"],
+    color: "from-fuchsia-400 to-indigo-600",
+    repos: "https://github.com/Chinjuku/BeatDrop",
+    web_url: "https://beatdrop-self.vercel.app",
+    image: "",
+    finished_date: "2026-11-15",
+  },
+  {
+    id: 23,
+    title: "Sheet2Web Portfolio Tracker",
+    description:
+      "Investment portfolio tracker that turns spreadsheet holdings into a web dashboard, built with Next.js, Supabase and the Lucent design system, using decimal-safe calculations for positions and returns.",
+    role: "Fullstack Dev",
+    tech: ["NextJS", "TypeScript", "Supabase", "React Query", "Lucent Design System"],
+    color: "from-sky-400 to-blue-600",
+    repos: "https://github.com/Chinjuku/sheet2web-portfolio-tracker",
+    web_url: "https://sheet-portfolio-tracker.vercel.app",
+    image: "",
+    finished_date: "2026-11-15",
+  },
 ];
 
 export const projects: Project[] = all_projects.filter(
