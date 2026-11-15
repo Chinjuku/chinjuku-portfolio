@@ -14,16 +14,23 @@ interface HeroLayerLabelProps {
   id: HeroLayerId;
   /** floating = absolutely placed beside the Core (desktop); otherwise a grid cell */
   floating: boolean;
+  active?: boolean;
+  onSelect?: (id: HeroLayerId) => void;
 }
 
-export const HeroLayerLabel: React.FC<HeroLayerLabelProps> = ({ id, floating }) => {
+export const HeroLayerLabel: React.FC<HeroLayerLabelProps> = ({
+  id,
+  floating,
+  active = false,
+  onSelect,
+}) => {
   const layer = HERO_STACK_LAYERS.find((l) => l.id === id)!;
   const pos = LABEL_POS[id];
   const content = (
     <>
       <span
-        className={`font-mono text-[11px] tracking-[0.2em] ${
-          id === "ai" ? "text-core-icy" : "text-core-chrome"
+        className={`font-mono text-[11px] tracking-[0.2em] transition-colors ${
+          id === "ai" || active ? "text-core-icy" : "text-core-chrome group-hover:text-core-ink"
         }`}
       >
         {layer.label}
@@ -32,19 +39,36 @@ export const HeroLayerLabel: React.FC<HeroLayerLabelProps> = ({ id, floating }) 
     </>
   );
 
+  const common = {
+    type: "button" as const,
+    onClick: () => onSelect?.(id),
+    "aria-pressed": active,
+    "aria-label": `Open ${layer.label.toLowerCase()} layer`,
+  };
+
   if (!floating) {
-    return <div className="hero-layer-label border-t border-core-graphite pt-3">{content}</div>;
+    return (
+      <button
+        {...common}
+        className={`hero-layer-label group border-t pt-3 text-left transition-colors ${
+          active ? "border-core-icy" : "border-core-graphite"
+        }`}
+      >
+        {content}
+      </button>
+    );
   }
 
   return (
-    <div
-      className={`hero-layer-label pointer-events-none absolute flex w-52 -translate-y-1/2 items-start gap-3 ${
-        pos.side === "left" ? "left-0 flex-row-reverse text-right" : "right-0"
+    <button
+      {...common}
+      className={`hero-layer-label group absolute flex w-52 -translate-y-1/2 items-start gap-3 ${
+        pos.side === "left" ? "left-0 flex-row-reverse text-right" : "right-0 text-left"
       }`}
       style={{ top: pos.top }}
     >
-      <span className="mt-[7px] h-px w-10 shrink-0 bg-core-mist/50" />
-      <div>{content}</div>
-    </div>
+      <span className="mt-[7px] h-px w-10 shrink-0 bg-core-mist/50 transition-all group-hover:w-14 group-hover:bg-core-icy" />
+      <span>{content}</span>
+    </button>
   );
 };

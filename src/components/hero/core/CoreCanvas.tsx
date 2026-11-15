@@ -9,6 +9,10 @@ interface CoreCanvasProps {
   children?: ReactNode;
   camera?: { position: [number, number, number]; fov: number };
   className?: string;
+  /** called when a click lands on empty canvas (no 3D object hit) */
+  onPointerMissed?: () => void;
+  /** change this to re-run the reduced-motion settle frames (e.g. on selection) */
+  settleKey?: string | number;
 }
 
 /**
@@ -38,6 +42,8 @@ export const CoreCanvas: React.FC<CoreCanvasProps> = ({
   children,
   camera = { position: [0, 0, 6], fov: 35 },
   className = "",
+  onPointerMissed,
+  settleKey,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
@@ -73,6 +79,7 @@ export const CoreCanvas: React.FC<CoreCanvasProps> = ({
         camera={camera}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         aria-hidden="true"
+        onPointerMissed={onPointerMissed}
       >
         <ambientLight intensity={0.15} />
         <directionalLight position={[4, 6, 5]} intensity={1.2} color="#F4F6FA" />
@@ -83,7 +90,7 @@ export const CoreCanvas: React.FC<CoreCanvasProps> = ({
           <Lightformer form="rect" intensity={2} position={[5, -1, -1]} scale={[8, 0.6, 1]} rotation-y={-Math.PI / 2} />
           <Lightformer form="ring" color="#8ABFFF" intensity={1.5} position={[0, 0, -6]} scale={3} />
         </Environment>
-        {reduced && <Settle />}
+        {reduced && <Settle key={settleKey} />}
         {children}
       </Canvas>
     </div>
