@@ -158,13 +158,13 @@ const Experience: React.FC = () => {
           <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
             <div
               ref={laserLineRef}
-              className="w-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(6,182,212,0.8)]"
+              className="w-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(138,191,255,0.8)]"
             />
           </div>
 
           {/* Mobile Left-Aligned Rail Line */}
           <div className="md:hidden absolute left-4 sm:left-6 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
-            <div className="w-full h-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(6,182,212,0.8)]" />
+            <div className="w-full h-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(138,191,255,0.8)]" />
           </div>
 
           {/* Timeline Rows */}

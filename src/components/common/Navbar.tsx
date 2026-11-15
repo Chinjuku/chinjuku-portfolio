@@ -1,20 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Menu, X, Rocket, Sun, Moon, Monitor } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import { useTheme } from "../../context/ThemeContext";
 import { useActiveSection, useNavClick } from "../../hooks";
 import resumePdf from "../../assets/resume.pdf";
-
-const getThemeIcon = (theme: string) => {
-  if (theme === "light") return <Sun className="w-4 h-4 text-amber-400" />;
-  if (theme === "dark") return <Moon className="w-4 h-4 text-starlight-cyan" />;
-  return <Monitor className="w-4 h-4 text-nebula-glow" />;
-};
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { theme, setTheme } = useTheme();
   const location = useLocation();
   const handleNavClick = useNavClick();
 
@@ -22,30 +14,27 @@ const Navbar: React.FC = () => {
 
   const navLinks = useMemo(
     () => [
-      { name: "Mission", href: "#hero" },
+      { name: "Home", href: "#hero" },
       { name: "Skills", href: "#skills" },
-      { name: "Projects", href: "#projects" },
+      { name: "Work", href: "#projects" },
       { name: "Activity", href: "#activity" },
-      { name: "Log", href: "#experience" },
-      { name: "Profile", href: "#about" },
+      { name: "Experience", href: "#experience" },
+      { name: "About", href: "#about" },
       { name: "Contact", href: "#contact" },
-      { name: "Archives", href: "/projects", isRoute: true },
+      { name: "All Projects", href: "/projects", isRoute: true },
     ],
     [],
   );
 
   const sectionIds = useMemo(
-    () =>
-      navLinks.filter((l) => !l.isRoute).map((l) => l.href.replace("#", "")),
+    () => navLinks.filter((l) => !l.isRoute).map((l) => l.href.replace("#", "")),
     [navLinks],
   );
 
   const activeSection = useActiveSection(sectionIds, { offsetFactor: 0.35 });
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -54,141 +43,100 @@ const Navbar: React.FC = () => {
     window.open(resumePdf, "_blank");
   };
 
-  const toggleTheme = () => {
-    if (theme === "light") setTheme("dark");
-    else if (theme === "dark") setTheme("system");
-    else setTheme("light");
-  };
-
   const onLinkClick = (href: string) => {
     setIsOpen(false);
     handleNavClick(href);
   };
 
+  const isLinkActive = (href: string, isRoute?: boolean) =>
+    isRoute ? isArchivePage : !isArchivePage && activeSection === href.replace("#", "");
+
   return (
-    <header className="fixed top-4 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl select-none transition-all duration-300">
-      {/* Floating Glassmorphic Capsule Navbar */}
+    <header className="fixed left-1/2 top-4 z-50 w-[95%] max-w-6xl -translate-x-1/2 select-none sm:top-5">
       <nav
-        className={`w-full rounded-full px-4 sm:px-6 py-2 sm:py-2.5 transition-all duration-300 flex items-center justify-between border ${
+        className={`flex w-full items-center justify-between rounded-full border px-4 py-2 backdrop-blur-xl transition-all duration-300 sm:px-5 ${
           scrolled
-            ? "bg-white/90 dark:bg-space-black/90 backdrop-blur-2xl border-nebula-purple/30 dark:border-starlight-cyan/40 shadow-[0_14px_35px_rgba(0,0,0,0.12)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.85)] ring-1 ring-black/5 dark:ring-white/10"
-            : "bg-white/80 dark:bg-space-black/75 backdrop-blur-xl border-gray-200/80 dark:border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.7)]"
+            ? "border-white/10 bg-core-obsidian/80 shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
+            : "border-white/[0.06] bg-core-obsidian/50"
         }`}
         aria-label="Main Navigation"
       >
-        {/* Logo */}
         <button
           onClick={() => onLinkClick("#hero")}
-          className="flex items-center gap-2.5 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-nebula-purple/50 rounded-full py-1 pr-2"
-          title="Chinjuku Mission Control"
+          className="group flex items-center gap-2.5 rounded-full py-1 pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy/50"
+          title="Back to top"
         >
-          <div className="p-2 rounded-full bg-gradient-to-tr from-nebula-purple to-starlight-cyan group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-md shadow-nebula-purple/40">
-            <Rocket className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-base sm:text-lg font-extrabold tracking-widest text-space-black dark:text-white group-hover:text-nebula-purple dark:group-hover:text-starlight-cyan transition-colors">
-            CHINJUKU
+          <span className="relative flex h-6 w-6 items-center justify-center rounded-full border border-core-chrome/40 bg-gradient-to-b from-white/15 to-transparent">
+            <span className="h-1.5 w-1.5 rounded-full bg-core-icy shadow-[0_0_8px_rgba(138,191,255,0.9)] transition-transform group-hover:scale-125" />
           </span>
+          <span className="font-mono text-xs tracking-[0.3em] text-core-ink">CHINJUKU</span>
         </button>
 
-        {/* Desktop Nav Items with Active Scroll Spy Highlighting */}
-        <div className="hidden lg:flex items-center gap-1 xl:gap-1.5">
+        {/* Desktop links */}
+        <div className="hidden items-center gap-0.5 lg:flex">
           {navLinks.map((link) => {
-            const sectionId = link.href.replace("#", "");
-            const isActive = link.isRoute
-              ? isArchivePage
-              : !isArchivePage && activeSection === sectionId;
-
+            const active = isLinkActive(link.href, link.isRoute);
             return (
               <button
                 key={link.name}
                 onClick={() => onLinkClick(link.href)}
-                aria-current={isActive ? "page" : undefined}
-                className={`relative px-3.5 py-1.5 rounded-full text-xs font-mono font-medium transition-all duration-300 uppercase tracking-wider cursor-pointer flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nebula-purple/50 ${
-                  isActive
-                    ? "bg-gradient-to-r from-nebula-purple/15 to-starlight-cyan/15 dark:from-nebula-glow/25 dark:to-starlight-cyan/25 text-nebula-purple dark:text-starlight-cyan font-bold border border-nebula-purple/35 dark:border-starlight-cyan/40 shadow-[0_0_15px_rgba(124,58,237,0.2)]"
-                    : "text-gray-600 dark:text-gray-300 hover:text-space-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent"
+                aria-current={active ? "page" : undefined}
+                className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy/50 ${
+                  active ? "text-core-ink" : "text-core-mist hover:text-core-ink"
                 }`}
               >
-                {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-nebula-purple dark:bg-starlight-cyan animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-                )}
-                <span>{link.name}</span>
+                {active && <span className="h-1 w-1 rounded-full bg-core-icy" />}
+                {link.name}
               </button>
             );
           })}
         </div>
 
-        {/* Right Actions (Resume & Theme) */}
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden items-center lg:flex">
           <button
             onClick={handleOpenResume}
-            className="px-4 py-1.5 rounded-full bg-gradient-to-r from-nebula-purple to-nebula-glow hover:from-nebula-glow hover:to-starlight-blue text-white text-xs font-medium tracking-wider transition-all shadow-md shadow-nebula-purple/30 border border-white/20 hover:scale-105 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nebula-purple/50"
+            className="inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-4 py-1.5 text-xs font-medium text-core-obsidian transition-colors hover:bg-core-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy/50"
           >
             Resume
-          </button>
-
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/15 border border-gray-200 dark:border-white/15 transition-all text-gray-700 dark:text-white hover:scale-110 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nebula-purple/50"
-            aria-label="Toggle Theme"
-            title="Toggle Color Theme"
-          >
-            {getThemeIcon(theme)}
+            <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        {/* Mobile Hamburger & Theme Toggle */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full bg-black/5 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white focus-visible:outline-none"
-            aria-label="Toggle Theme"
-          >
-            {getThemeIcon(theme)}
-          </button>
-          <button
-            className="p-2 rounded-full bg-black/5 dark:bg-white/10 border border-gray-200 dark:border-white/20 text-gray-700 dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition-colors focus-visible:outline-none"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle Navigation Menu"
-          >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+        <button
+          className="rounded-full border border-white/10 p-2 text-core-ink transition-colors hover:bg-white/10 focus-visible:outline-none lg:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </nav>
 
-      {/* Mobile Glassmorphic Drawer Dropdown */}
+      {/* Mobile drawer */}
       {isOpen && (
-        <div className="mt-3 w-full rounded-3xl bg-white/95 dark:bg-space-black/95 backdrop-blur-2xl border border-gray-200 dark:border-white/20 shadow-2xl p-5 flex flex-col items-center gap-2.5 lg:hidden animate-in fade-in slide-in-from-top-3 duration-200">
+        <div className="mt-3 flex w-full flex-col gap-1 rounded-3xl border border-white/10 bg-core-obsidian/95 p-4 shadow-2xl backdrop-blur-2xl lg:hidden">
           {navLinks.map((link) => {
-            const sectionId = link.href.replace("#", "");
-            const isActive = link.isRoute
-              ? isArchivePage
-              : !isArchivePage && activeSection === sectionId;
-
+            const active = isLinkActive(link.href, link.isRoute);
             return (
               <button
                 key={link.name}
                 onClick={() => onLinkClick(link.href)}
-                aria-current={isActive ? "page" : undefined}
-                className={`w-full py-2.5 px-4 rounded-2xl text-center text-sm font-mono uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${
-                  isActive
-                    ? "bg-gradient-to-r from-nebula-purple/15 to-starlight-cyan/15 dark:from-nebula-glow/25 dark:to-starlight-cyan/25 text-nebula-purple dark:text-starlight-cyan font-bold border border-nebula-purple/35 dark:border-starlight-cyan/40 shadow-[0_0_12px_rgba(124,58,237,0.2)]"
-                    : "text-gray-700 dark:text-gray-200 hover:text-space-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10"
+                aria-current={active ? "page" : undefined}
+                className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-base transition-colors ${
+                  active ? "bg-white/[0.06] text-core-ink" : "text-core-mist hover:text-core-ink"
                 }`}
               >
-                {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-nebula-purple dark:bg-starlight-cyan animate-pulse" />
-                )}
-                <span>{link.name}</span>
+                {link.name}
+                {active && <span className="h-1.5 w-1.5 rounded-full bg-core-icy" />}
               </button>
             );
           })}
-          <div className="w-full h-px bg-gray-200 dark:bg-white/10 my-1" />
+          <div className="my-2 h-px w-full bg-white/10" />
           <button
             onClick={handleOpenResume}
-            className="w-full py-2.5 rounded-full bg-gradient-to-r from-nebula-purple to-nebula-glow text-white text-sm font-semibold tracking-wider shadow-lg shadow-nebula-purple/40"
+            className="w-full rounded-full bg-core-chrome py-3 text-sm font-medium text-core-obsidian"
           >
-            View Full Resume
+            View Resume
           </button>
         </div>
       )}

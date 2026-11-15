@@ -30,7 +30,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           </span>
           <Activity className="w-4 h-4 text-cyan-500 dark:text-starlight-cyan group-hover:scale-110 transition-transform" />
         </div>
-        <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
+        <div className="text-2xl sm:text-3xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono">
           {loading ? (
             <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : (
@@ -50,7 +50,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           </span>
           <Calendar className="w-4 h-4 text-purple-500 dark:text-nebula-purple group-hover:scale-110 transition-transform" />
         </div>
-        <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
+        <div className="text-2xl sm:text-3xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono">
           {loading ? (
             <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : (
@@ -70,7 +70,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           </span>
           <Flame className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
         </div>
-        <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
+        <div className="text-2xl sm:text-3xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono">
           {loading ? (
             <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : (
@@ -83,7 +83,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
       </div>
 
       {/* Card 4: Peak Activity Month Highlight Badge */}
-      <div className="activity-stat-card p-5 rounded-2xl bg-cyan-500/10 dark:bg-cyan-950/30 border border-cyan-500/30 dark:border-cyan-400/40 relative overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.15)] group">
+      <div className="activity-stat-card p-5 rounded-2xl bg-cyan-500/10 dark:bg-cyan-950/30 border border-cyan-500/30 dark:border-cyan-400/40 relative overflow-hidden shadow-[0_0_25px_rgba(138,191,255,0.15)] group">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-300 uppercase tracking-wider flex items-center gap-1 font-bold">
             <Award className="w-3.5 h-3.5 text-cyan-500" />
@@ -91,7 +91,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           </span>
           <TrendingUp className="w-4 h-4 text-cyan-500 animate-pulse" />
         </div>
-        <div className="text-xl sm:text-2xl font-black sci-fi-heading font-mono text-cyan-600 dark:text-cyan-300">
+        <div className="text-xl sm:text-2xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono text-cyan-600 dark:text-cyan-300">
           {loading ? (
             <div className="h-8 w-24 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : stats.peakMonth.count > 0 ? (

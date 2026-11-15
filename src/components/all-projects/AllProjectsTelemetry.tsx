@@ -80,7 +80,7 @@ export const AllProjectsTelemetry: React.FC<AllProjectsTelemetryProps> = ({
           onClick={() => onSelectYear("All")}
           className={`telemetry-card p-4 sm:p-5 rounded-2xl sci-fi-card cursor-pointer transition-all duration-300 relative group overflow-hidden will-change-transform ${
             selectedYear === "All"
-              ? "!border-nebula-purple dark:!border-starlight-cyan ring-1 ring-nebula-purple/50 dark:ring-starlight-cyan/50 shadow-[0_0_25px_rgba(124,58,237,0.2)] scale-[1.02]"
+              ? "!border-nebula-purple dark:!border-starlight-cyan ring-1 ring-nebula-purple/50 dark:ring-starlight-cyan/50 shadow-[0_0_25px_rgba(201,209,219,0.2)] scale-[1.02]"
               : "hover:scale-[1.02]"
           }`}
         >
@@ -92,7 +92,7 @@ export const AllProjectsTelemetry: React.FC<AllProjectsTelemetryProps> = ({
           </div>
 
           <div className="mb-2">
-            <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
+            <div className="text-2xl sm:text-3xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono">
               {totalProjects}{" "}
               <span className="text-xs font-normal text-gray-500 dark:text-gray-400 font-sans">
                 Projects
@@ -120,7 +120,7 @@ export const AllProjectsTelemetry: React.FC<AllProjectsTelemetryProps> = ({
               onClick={() => onSelectYear(stat.year.toString())}
               className={`telemetry-card p-4 sm:p-5 rounded-2xl sci-fi-card cursor-pointer transition-all duration-300 relative group overflow-hidden will-change-transform ${
                 isSelected
-                  ? "!border-nebula-purple dark:!border-starlight-cyan ring-1 ring-nebula-purple/50 dark:ring-starlight-cyan/50 shadow-[0_0_25px_rgba(6,182,212,0.2)] scale-[1.02]"
+                  ? "!border-nebula-purple dark:!border-starlight-cyan ring-1 ring-nebula-purple/50 dark:ring-starlight-cyan/50 shadow-[0_0_25px_rgba(138,191,255,0.2)] scale-[1.02]"
                   : "hover:scale-[1.02]"
               }`}
             >
@@ -136,7 +136,7 @@ export const AllProjectsTelemetry: React.FC<AllProjectsTelemetryProps> = ({
               </div>
 
               <div className="mb-2">
-                <div className="text-2xl sm:text-3xl font-black sci-fi-heading font-mono">
+                <div className="text-2xl sm:text-3xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono">
                   {stat.count}{" "}
                   <span className="text-xs font-normal text-gray-500 dark:text-gray-400 font-sans">
                     {stat.count === 1 ? "Project" : "Projects"}

@@ -13,17 +13,13 @@ export const ActivityHeader: React.FC<ActivityHeaderProps> = ({
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
       <div>
-        <div className="activity-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-600 dark:text-cyan-400 tracking-widest uppercase mb-3">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-          <span>LIVE TELEMETRY // COMMITS</span>
-        </div>
-        <h2 className="activity-title text-3xl sm:text-4xl md:text-5xl font-black sci-fi-heading tracking-tight mb-3">
+        <p className="activity-pill font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">Activity</p>
+        <h2 className="activity-title text-3xl sm:text-4xl md:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] tracking-tight mb-3">
           Code Activities
         </h2>
         <p className="activity-desc text-slate-600 dark:text-[#94a3b8] text-sm sm:text-base max-w-2xl leading-relaxed">
-          Continuous mission logs, version control frequency, and GitHub
-          contribution telemetry tracking repository operations across
-          chronological milestones.
+          Commits and pull requests from GitHub: how often I ship, month by
+          month and year by year.
         </p>
       </div>
 

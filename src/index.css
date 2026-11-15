@@ -23,21 +23,19 @@
   font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light;
-
-  /* Light Mode Scrollbar Variables */
-  --scrollbar-bg: #f3f4f6;
-  --scrollbar-thumb: #d1d5db;
-  --scrollbar-thumb-hover: #7c3aed;
+  /* dark-only site */
+  color-scheme: dark;
+  --scrollbar-bg: #080b12;
+  --scrollbar-thumb: #222b39;
+  --scrollbar-thumb-hover: #8abfff;
 }
 
 .dark {
   color-scheme: dark;
 
-  /* Dark Mode Scrollbar Variables */
-  --scrollbar-bg: #0b0b0f;
-  --scrollbar-thumb: #1e1e2e;
-  --scrollbar-thumb-hover: #7c3aed;
+  --scrollbar-bg: #080b12;
+  --scrollbar-thumb: #222b39;
+  --scrollbar-thumb-hover: #8abfff;
 }
 
 body {
@@ -45,24 +43,24 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  @apply bg-space-white dark:bg-space-black transition-colors duration-300;
+  @apply bg-core-obsidian text-core-ink antialiased;
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-white/50 dark:bg-white/5 backdrop-blur-lg border border-gray-200 dark:border-white/10 shadow-xl;
+    @apply bg-white/[0.03] backdrop-blur-lg border border-white/[0.08];
   }
 
   .sci-fi-glass {
-    @apply bg-white/70 dark:bg-space-dark/70 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 shadow-lg dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)];
+    @apply bg-core-obsidian/70 backdrop-blur-xl border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.55)];
   }
 
   .sci-fi-card {
-    @apply bg-white/80 dark:bg-space-light/40 backdrop-blur-md border border-gray-200/80 dark:border-white/10 hover:border-nebula-purple/50 dark:hover:border-starlight-cyan/50 shadow-sm hover:shadow-xl transition-all duration-300;
+    @apply bg-white/[0.025] backdrop-blur-md border border-white/[0.08] hover:border-core-icy/30 hover:bg-white/[0.04] transition-colors duration-300;
   }
 
   .sci-fi-badge {
-    @apply px-3 py-1 text-xs font-mono font-semibold rounded-full border border-nebula-purple/30 bg-nebula-purple/10 text-nebula-purple dark:border-starlight-cyan/30 dark:bg-starlight-cyan/10 dark:text-starlight-cyan tracking-wider;
+    @apply px-3 py-1 text-[11px] font-mono rounded-full border border-white/10 bg-white/[0.03] text-core-chrome tracking-wider;
   }
 
   .sci-fi-heading {
@@ -70,24 +68,24 @@ body {
   }
 
   .sci-fi-subheading {
-    @apply text-nebula-purple dark:text-nebula-glow font-mono font-medium tracking-widest uppercase text-xs sm:text-sm;
+    @apply text-core-icy font-mono font-normal tracking-[0.3em] uppercase text-[11px];
   }
 
+  /* chrome → icy: a quiet metallic sheen instead of a rainbow */
   .sci-fi-gradient-text {
-    @apply text-transparent bg-clip-text bg-gradient-to-r from-nebula-purple via-starlight-blue to-starlight-cyan dark:from-nebula-glow dark:via-starlight-sky dark:to-starlight-cyan;
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-core-ink via-core-chrome to-core-icy;
   }
 
   .sci-fi-btn-primary {
-    @apply px-6 py-2.5 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 bg-gradient-to-r from-nebula-purple to-starlight-blue hover:from-nebula-glow hover:to-starlight-cyan text-white shadow-lg shadow-nebula-purple/30 hover:shadow-starlight-cyan/40 hover:scale-[1.02] active:scale-[0.98];
+    @apply px-6 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 flex items-center justify-center gap-2 bg-core-chrome text-core-obsidian hover:bg-core-ink;
   }
 
   .sci-fi-btn-secondary {
-    @apply px-6 py-2.5 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 border border-gray-300 dark:border-white/20 bg-white/60 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 text-gray-800 dark:text-white shadow-sm hover:border-nebula-purple/50 dark:hover:border-starlight-cyan/50 hover:scale-[1.02] active:scale-[0.98];
+    @apply px-6 py-2.5 rounded-full text-sm font-medium transition-colors duration-300 flex items-center justify-center gap-2 border border-core-graphite text-core-ink hover:border-core-mist;
   }
 
   .text-glow {
-    text-shadow: 0 0 10px rgba(124, 58, 237, 0.5),
-      0 0 20px rgba(6, 182, 212, 0.3);
+    text-shadow: 0 0 18px rgba(138, 191, 255, 0.25);
   }
 
   .grain-overlay {
@@ -98,7 +96,7 @@ body {
     height: 100%;
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.05;
+    opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }

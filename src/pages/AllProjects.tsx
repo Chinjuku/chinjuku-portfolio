@@ -198,7 +198,7 @@ const AllProjects: React.FC = () => {
   return (
     <div className="relative w-full min-h-screen overflow-x-hidden bg-space-white dark:bg-space-black text-slate-900 dark:text-white transition-colors duration-300">
       {/* Ambient Background Glow for Light and Dark Modes */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-40 dark:opacity-25 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.12),_transparent_55%),radial-gradient(circle_at_bottom_right,_rgba(6,182,212,0.1),_transparent_50%)]" />
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-40 dark:opacity-25 bg-[radial-gradient(circle_at_top,_rgba(201,209,219,0.12),_transparent_55%),radial-gradient(circle_at_bottom_right,_rgba(138,191,255,0.1),_transparent_50%)]" />
 
       {/* 1. INITIAL SCROLL STAGE ("scroll แรกสุด") */}
       <AllProjectsSpotlight

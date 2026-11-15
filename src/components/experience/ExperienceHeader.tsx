@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, Activity, Calendar } from "lucide-react";
+import { Activity, Calendar } from "lucide-react";
 
 interface ExperienceHeaderProps {
   totalCount: number;
@@ -13,18 +13,13 @@ export const ExperienceHeader: React.FC<ExperienceHeaderProps> = ({
   return (
     <div className="experience-header text-center mb-16 sm:mb-20">
       {/* Sci-Fi HUD Clearance Badge */}
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 dark:bg-starlight-cyan/10 border border-cyan-500/30 dark:border-starlight-cyan/30 text-xs font-mono text-cyan-700 dark:text-starlight-cyan uppercase tracking-widest mb-3 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-        <Sparkles className="w-3.5 h-3.5 text-starlight-cyan" />
-        <span>MISSION HISTORY // CHRONOLOGICAL FLIGHT LOG</span>
-      </div>
+      <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">Experience</p>
 
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-black sci-fi-heading tracking-tight mb-3">
-        Activities & Experiences
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] tracking-tight mb-3">
+        Where I've worked
       </h2>
       <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-6 font-sans">
-        Chronological record of commercial development missions, enterprise
-        internships, and academic engineering operations.
+        Internships, part-time roles and the university events I built for.
       </p>
 
       {/* Telemetry Status Readout Badge */}
@@ -32,9 +27,9 @@ export const ExperienceHeader: React.FC<ExperienceHeaderProps> = ({
         <div className="flex items-center gap-2">
           <Activity className="w-3.5 h-3.5 text-nebula-purple dark:text-starlight-cyan animate-pulse" />
           <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400 uppercase">
-            Operations:{" "}
+            Roles:{" "}
             <span className="font-bold text-gray-900 dark:text-white">
-              {totalCount} Logged
+              {totalCount}
             </span>
           </span>
         </div>
@@ -42,7 +37,7 @@ export const ExperienceHeader: React.FC<ExperienceHeaderProps> = ({
         <div className="flex items-center gap-2">
           <Calendar className="w-3.5 h-3.5 text-purple-500 dark:text-nebula-glow" />
           <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400 uppercase">
-            Timeline:{" "}
+            Years:{" "}
             <span className="font-bold text-nebula-purple dark:text-starlight-cyan">
               {timelineSpan}
             </span>

@@ -59,9 +59,9 @@ export const ActivityMonthlyChart: React.FC<ActivityMonthlyChartProps> = ({
                   style={{ height: `${heightPercent}%` }}
                   className={`w-full rounded-t-md transition-all duration-500 ${
                     isPeak
-                      ? "bg-gradient-to-t from-purple-600 to-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.8)]"
+                      ? "bg-gradient-to-t from-purple-600 to-cyan-400 shadow-[0_0_12px_rgba(138,191,255,0.8)]"
                       : count > 0
-                        ? "bg-gradient-to-t from-emerald-600 to-teal-400 dark:from-emerald-700 dark:to-teal-400"
+                        ? "bg-gradient-to-t from-emerald-600 to-teal-400 dark:from-cyan-800 dark:to-cyan-300"
                         : "bg-slate-300 dark:bg-slate-800"
                   }`}
                 />

@@ -24,7 +24,7 @@ export const ActivityTooltip: React.FC<ActivityTooltipProps> = ({ cell }) => {
       }}
       className="pointer-events-none z-50 animate-in fade-in zoom-in-95 duration-150"
     >
-      <div className="bg-slate-900/95 dark:bg-[#070b14]/95 border border-cyan-500/50 rounded-xl px-3.5 py-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] backdrop-blur-md text-center min-w-[160px]">
+      <div className="bg-slate-900/95 dark:bg-[#070b14]/95 border border-cyan-500/50 rounded-xl px-3.5 py-2 shadow-[0_0_20px_rgba(138,191,255,0.4)] backdrop-blur-md text-center min-w-[160px]">
         <div className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider mb-0.5">
           {cell.count === 0
             ? "No Contributions"

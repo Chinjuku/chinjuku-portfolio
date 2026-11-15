@@ -10,24 +10,24 @@ interface ExperienceCardProps {
 const getExperienceCategory = (exp: Experience) => {
   if (exp.tags.some((t) => t.toLowerCase().includes("intern"))) {
     return {
-      label: "INTERNSHIP // ENTERPRISE",
+      label: "INTERNSHIP",
       color: "border-blue-500/30 text-blue-600 dark:text-starlight-blue bg-blue-500/10",
     };
   }
   if (exp.tags.some((t) => t.toLowerCase().includes("part-time"))) {
     return {
-      label: "PART-TIME // ACTIVE OPS",
+      label: "PART-TIME",
       color: "border-cyan-500/30 text-cyan-600 dark:text-starlight-cyan bg-cyan-500/10",
     };
   }
   if (exp.role.toLowerCase().includes("tech staff")) {
     return {
-      label: "TECH LEAD // ACADEMIC",
+      label: "UNIVERSITY EVENT",
       color: "border-purple-500/30 text-purple-600 dark:text-nebula-glow bg-purple-500/10",
     };
   }
   return {
-    label: "EVENT OPS // MANAGEMENT",
+    label: "EVENT STAFF",
     color: "border-amber-500/30 text-amber-600 dark:text-amber-400 bg-amber-500/10",
   };
 };
@@ -39,7 +39,7 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
   const category = getExperienceCategory(experience);
 
   return (
-    <div className="experience-card relative group sci-fi-card rounded-2xl p-5 sm:p-6 lg:p-7 border border-gray-200/90 dark:border-cyan-500/30 bg-white/95 dark:bg-[#0b0e1a]/95 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:shadow-cyan-500/15 dark:hover:shadow-[0_10px_35px_rgba(6,182,212,0.2)] transition-all duration-300 overflow-hidden will-change-transform">
+    <div className="experience-card relative group sci-fi-card rounded-2xl p-5 sm:p-6 lg:p-7 border border-gray-200/90 dark:border-cyan-500/30 bg-white/95 dark:bg-[#0b0e1a]/95 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:shadow-cyan-500/15 dark:hover:shadow-[0_10px_35px_rgba(138,191,255,0.2)] transition-all duration-300 overflow-hidden will-change-transform">
       {/* Directional Timeline Connector Accent on Desktop */}
       <div
         className={`hidden md:block absolute top-1/2 -translate-y-1/2 w-4 h-[2px] bg-gradient-to-r from-starlight-cyan to-nebula-purple pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity ${
@@ -64,7 +64,7 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
 
         <div className="flex items-center gap-1 text-[10px] font-mono text-gray-400 dark:text-gray-500">
           <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
-          <span className="hidden sm:inline">VERIFIED LOG</span>
+          <span className="hidden sm:inline">ROLE</span>
         </div>
       </div>
 

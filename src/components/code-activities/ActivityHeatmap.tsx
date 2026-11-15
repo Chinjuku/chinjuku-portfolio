@@ -25,15 +25,15 @@ const getCellColor = (level: number, count: number) => {
     return "bg-slate-200 dark:bg-[#151c2c] border border-slate-300/60 dark:border-white/5";
   }
   if (level === 1) {
-    return "bg-emerald-300 dark:bg-[#064e3b] border border-emerald-400/50 dark:border-emerald-600/40 shadow-[0_0_6px_rgba(5,150,105,0.25)]";
+    return "bg-emerald-300 dark:bg-[#1A3050] border border-emerald-400/50 dark:border-cyan-800/40 shadow-[0_0_6px_rgba(138,191,255,0.12)]";
   }
   if (level === 2) {
-    return "bg-emerald-400 dark:bg-[#059669] border border-emerald-500/60 dark:border-emerald-500/50 shadow-[0_0_8px_rgba(16,185,129,0.35)]";
+    return "bg-emerald-400 dark:bg-[#335E99] border border-emerald-500/60 dark:border-cyan-600/50 shadow-[0_0_8px_rgba(138,191,255,0.2)]";
   }
   if (level === 3) {
-    return "bg-emerald-500 dark:bg-[#10b981] border border-emerald-600/60 dark:border-emerald-400/60 shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+    return "bg-emerald-500 dark:bg-[#6EA8F0] border border-emerald-600/60 dark:border-cyan-400/60 shadow-[0_0_10px_rgba(138,191,255,0.3)]";
   }
-  return "bg-emerald-600 dark:bg-[#34d399] border border-emerald-700/70 dark:border-cyan-300/80 shadow-[0_0_12px_rgba(52,211,153,0.85)]";
+  return "bg-emerald-600 dark:bg-[#B5D5FF] border border-emerald-700/70 dark:border-cyan-300/80 shadow-[0_0_12px_rgba(181,213,255,0.5)]";
 };
 
 export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({
@@ -58,10 +58,10 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({
           <span>Less</span>
           <div className="flex items-center gap-1">
             <span className="w-3 h-3 rounded-[3px] bg-slate-200 dark:bg-[#151c2c] border border-slate-300/60 dark:border-white/5" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-300 dark:bg-[#064e3b]" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-400 dark:bg-[#059669]" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-500 dark:bg-[#10b981]" />
-            <span className="w-3 h-3 rounded-[3px] bg-emerald-600 dark:bg-[#34d399] shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-300 dark:bg-[#1A3050]" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-400 dark:bg-[#335E99]" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-500 dark:bg-[#6EA8F0]" />
+            <span className="w-3 h-3 rounded-[3px] bg-emerald-600 dark:bg-[#B5D5FF] shadow-[0_0_8px_rgba(181,213,255,0.5)]" />
           </div>
           <span>More</span>
         </div>
@@ -160,7 +160,7 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({
       <div className="mt-2 pt-3 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] flex-wrap gap-2">
         <span className="flex items-center gap-1.5">
           <Clock className="w-3 h-3 text-cyan-500" />
-          <span>Cache-Control: 1-Hour Client-Side Storage</span>
+          <span>Synced from GitHub · refreshed hourly</span>
         </span>
         <span>
           Active Year:{" "}

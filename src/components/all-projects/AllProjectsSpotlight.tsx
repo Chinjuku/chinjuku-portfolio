@@ -43,7 +43,7 @@ export const AllProjectsSpotlight: React.FC<AllProjectsSpotlightProps> = ({
       {/* 2. Luminous Cyan / Purple Lens Flare Ring (Light Theme & Dark Theme Adaptive) */}
       <div
         ref={lensRingRef}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 rounded-full border border-nebula-purple/90 dark:border-starlight-cyan/85 shadow-[0_0_50px_10px_rgba(124,58,237,0.45),inset_0_0_30px_5px_rgba(6,182,212,0.35)] dark:shadow-[0_0_50px_10px_rgba(6,182,212,0.8),inset_0_0_30px_5px_rgba(124,58,237,0.5)] transition-opacity duration-150"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 rounded-full border border-nebula-purple/90 dark:border-starlight-cyan/85 shadow-[0_0_50px_10px_rgba(201,209,219,0.45),inset_0_0_30px_5px_rgba(138,191,255,0.35)] dark:shadow-[0_0_50px_10px_rgba(138,191,255,0.8),inset_0_0_30px_5px_rgba(201,209,219,0.5)] transition-opacity duration-150"
         style={{
           width: "0vmax",
           height: "0vmax",
@@ -57,7 +57,7 @@ export const AllProjectsSpotlight: React.FC<AllProjectsSpotlightProps> = ({
         className="absolute inset-0 z-40 flex flex-col items-center justify-center pointer-events-none select-none px-4 text-center"
       >
         {/* Glowing Cyber Glyph */}
-        <div className="w-16 h-16 rounded-full bg-space-dark/90 border border-starlight-cyan/60 shadow-[0_0_30px_rgba(6,182,212,0.5)] flex items-center justify-center mb-5">
+        <div className="w-16 h-16 rounded-full bg-space-dark/90 border border-starlight-cyan/60 shadow-[0_0_30px_rgba(138,191,255,0.5)] flex items-center justify-center mb-5">
           <Sparkles className="w-7 h-7 text-starlight-cyan animate-pulse" />
         </div>
 
@@ -73,7 +73,7 @@ export const AllProjectsSpotlight: React.FC<AllProjectsSpotlightProps> = ({
 
         {/* Animated Mouse Scroll Indicator */}
         <div className="flex flex-col items-center gap-2 text-gray-400">
-          <div className="w-5 h-9 rounded-full border-2 border-starlight-cyan/70 flex items-start justify-center p-1 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+          <div className="w-5 h-9 rounded-full border-2 border-starlight-cyan/70 flex items-start justify-center p-1 shadow-[0_0_15px_rgba(138,191,255,0.4)]">
             <div className="w-1.5 h-2 rounded-full bg-starlight-cyan animate-bounce" />
           </div>
           <span className="text-[10px] font-mono tracking-widest text-gray-400 uppercase">
@@ -98,7 +98,7 @@ export const AllProjectsSpotlight: React.FC<AllProjectsSpotlightProps> = ({
           <Sparkles className="w-3.5 h-3.5 animate-spin" />
           <span>SECURITY CLEARANCE GRANTED // PROTOCOL 07</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black sci-fi-heading mb-4 tracking-tight">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-semibold sci-fi-heading tracking-[-0.03em] mb-4 tracking-tight">
           CENTRAL ARCHIVES
         </h1>
         <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-6 font-mono">

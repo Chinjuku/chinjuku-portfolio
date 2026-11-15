@@ -64,7 +64,7 @@ export const AllProjectsGrid: React.FC<AllProjectsGridProps> = ({
         {filteredProjects.map((project) => (
           <div
             key={project.id}
-            className="project-archive-card group relative sci-fi-card rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-all duration-300 flex flex-col hover:shadow-xl hover:shadow-gray-200/60 dark:hover:shadow-[0_10px_30px_rgba(124,58,237,0.15)] will-change-transform"
+            className="project-archive-card group relative sci-fi-card rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-all duration-300 flex flex-col hover:shadow-xl hover:shadow-gray-200/60 dark:hover:shadow-[0_10px_30px_rgba(201,209,219,0.15)] will-change-transform"
           >
             {/* Thumbnail Image */}
             <div className="h-52 overflow-hidden relative">

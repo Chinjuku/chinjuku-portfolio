@@ -77,7 +77,7 @@ export const AllProjectsHeader: React.FC<AllProjectsHeaderProps> = ({
             <Sparkles className="w-3.5 h-3.5" />
             <span>CENTRAL LOGS // CLASSIFIED OPERATIONS</span>
           </div>
-          <h1 className="archive-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black sci-fi-heading mb-3 tracking-tight">
+          <h1 className="archive-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold sci-fi-heading tracking-[-0.03em] mb-3 tracking-tight">
             Project Archives
           </h1>
           <p className="archive-desc text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-2xl leading-relaxed">

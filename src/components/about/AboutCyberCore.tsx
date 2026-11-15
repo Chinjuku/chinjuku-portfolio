@@ -46,14 +46,14 @@ export const AboutCyberCore: React.FC<AboutCyberCoreProps> = ({
 
               {/* CPU Icon */}
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-nebula-purple/20 to-starlight-cyan/20 border border-white/10 flex items-center justify-center mb-1.5 shadow-inner group-hover/core:rotate-6 transition-transform duration-500">
-                <Cpu className="w-7 h-7 sm:w-8 sm:h-8 text-nebula-purple dark:text-starlight-cyan drop-shadow-[0_0_12px_rgba(6,182,212,0.8)]" />
+                <Cpu className="w-7 h-7 sm:w-8 sm:h-8 text-nebula-purple dark:text-starlight-cyan drop-shadow-[0_0_12px_rgba(138,191,255,0.8)]" />
               </div>
 
               <span className="text-[10px] sm:text-[11px] font-mono font-black text-gray-900 dark:text-white tracking-widest uppercase">
-                FULLSTACK CORE
+                FULL-STACK × AI
               </span>
               <span className="text-[8px] sm:text-[9px] font-mono text-cyan-600 dark:text-starlight-cyan/90 mt-0.5 font-semibold">
-                DEPLOYED // OPTIMAL
+                BANGKOK, TH
               </span>
             </div>
 

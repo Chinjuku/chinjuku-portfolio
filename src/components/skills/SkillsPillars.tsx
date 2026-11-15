@@ -51,7 +51,7 @@ export const SkillsPillars: React.FC<SkillsPillarsProps> = ({ categories }) => {
                 <span
                   className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${accentBadge}`}
                 >
-                  {String(category.skills.length).padStart(2, "0")} NODES
+                  {String(category.skills.length).padStart(2, "0")} TOOLS
                 </span>
               </div>
 

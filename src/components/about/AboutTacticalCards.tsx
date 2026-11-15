@@ -40,7 +40,7 @@ export const AboutTacticalCards: React.FC = () => {
           </div>
           <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border border-cyan-500/20 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
-            Active Ops
+            Now
           </span>
         </div>
         <h4 className="font-bold text-sm sci-fi-heading font-mono mb-0.5">
@@ -52,42 +52,42 @@ export const AboutTacticalCards: React.FC = () => {
       </div>
 
       {/* Card 3: Opportunities (Highlight!) */}
-      <div className="about-card p-3.5 sm:p-4 rounded-xl bg-emerald-500/5 dark:bg-emerald-950/25 border border-emerald-500/30 dark:border-emerald-400/30 hover:border-emerald-500/60 transition-all group">
+      <div className="about-card p-3.5 sm:p-4 rounded-xl bg-cyan-500/5 dark:bg-cyan-950/25 border border-cyan-500/30 dark:border-cyan-400/30 hover:border-cyan-500/60 transition-all group">
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 dark:bg-emerald-400/15 flex items-center justify-center">
-              <Rocket className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-7 h-7 rounded-lg bg-cyan-500/10 dark:bg-cyan-400/15 flex items-center justify-center">
+              <Rocket className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
             </div>
-            <span className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">
-              Target Horizon
+            <span className="text-[11px] font-mono font-bold text-cyan-700 dark:text-cyan-300 uppercase tracking-wider">
+              Looking for
             </span>
           </div>
-          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-            Open for Hires
+          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping" />
+            Open
           </span>
         </div>
-        <h4 className="font-bold text-sm text-emerald-900 dark:text-emerald-200 font-mono mb-0.5">
+        <h4 className="font-bold text-sm text-cyan-900 dark:text-cyan-200 font-mono mb-0.5">
           Freelance & Part-time Dev
         </h4>
-        <p className="text-[11px] text-emerald-800/80 dark:text-emerald-300/80">
+        <p className="text-[11px] text-cyan-800/80 dark:text-cyan-300/80">
           Available for remote contracts, MVP launches & ongoing features
         </p>
       </div>
 
       {/* Card 4: Philosophy */}
-      <div className="about-card p-3.5 sm:p-4 rounded-xl sci-fi-card hover:border-amber-500/50 dark:hover:border-amber-400/50 transition-all group">
+      <div className="about-card p-3.5 sm:p-4 rounded-xl sci-fi-card hover:border-purple-500/50 dark:hover:border-purple-400/50 transition-all group">
         <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-amber-500/10 dark:bg-amber-400/10 flex items-center justify-center">
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
+            <div className="w-7 h-7 rounded-lg bg-purple-500/10 dark:bg-purple-400/10 flex items-center justify-center">
+              <Zap className="w-3.5 h-3.5 text-purple-500" />
             </div>
             <span className="text-[11px] font-mono font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Execution
+              How I work
             </span>
           </div>
-          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20">
-            Full Spectrum
+          <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20">
+            End to end
           </span>
         </div>
         <h4 className="font-bold text-sm sci-fi-heading font-mono mb-0.5">

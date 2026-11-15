@@ -130,16 +130,13 @@ const About: React.FC = () => {
         {/* Left Column: Story & Tactical Status */}
         <div className="flex-1 w-full max-w-2xl lg:max-w-none">
           {/* Header Pill */}
-          <div className="about-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 dark:bg-starlight-cyan/10 border border-cyan-500/30 dark:border-starlight-cyan/30 text-xs font-mono text-cyan-700 dark:text-starlight-cyan tracking-widest uppercase mb-3">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-            <span>PROFILE // MISSION LOG & BIO</span>
-          </div>
+          <p className="about-pill font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">About</p>
 
           {/* Headline */}
-          <h2 className="about-headline text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black sci-fi-heading mb-4 tracking-tight leading-tight">
-            Fullstack Developer <br />
+          <h2 className="about-headline text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] mb-4 tracking-tight leading-tight">
+            Full-stack × AI developer <br />
             <span className="sci-fi-gradient-text">
-              Engineering Modern Web Systems
+              building products end to end
             </span>
           </h2>
 
@@ -158,16 +155,16 @@ const About: React.FC = () => {
               <span className="font-semibold text-gray-900 dark:text-white">
                 King Mongkut's Institute of Technology Ladkrabang (KMITL)
               </span>
-              . Currently operating as a professional{" "}
+              . I work as a{" "}
               <span className="font-bold text-gray-900 dark:text-white">
-                Fullstack Developer
+                full-stack developer
               </span>
-              , architecting resilient web platforms, reactive frontend
-              interfaces, and scalable backend APIs.
+              , building web platforms, front ends and backend APIs, and
+              adding AI where it actually helps the product.
             </p>
             <p>
-              Focused on clean architecture and full-lifecycle delivery. Actively
-              looking for exciting projects—readily available for{" "}
+              I care about clean architecture and shipping the whole thing,
+              from schema to UI. Open to{" "}
               <span className="font-bold text-cyan-600 dark:text-starlight-cyan">
                 Freelance Development
               </span>
@@ -175,7 +172,7 @@ const About: React.FC = () => {
               <span className="font-bold text-nebula-purple dark:text-nebula-glow">
                 Part-time Engineering
               </span>
-              , and impactful collaborative products.
+              , and product teams that build with AI.
             </p>
           </div>
 
@@ -189,7 +186,7 @@ const About: React.FC = () => {
               className="sci-fi-btn-primary group cursor-pointer inline-flex items-center gap-2 text-xs sm:text-sm py-2 px-5"
             >
               <Send className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-              <span>Initiate Collaboration</span>
+              <span>Work with me</span>
               <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
             <a
@@ -197,7 +194,7 @@ const About: React.FC = () => {
               className="sci-fi-btn-secondary group inline-flex items-center gap-2 cursor-pointer text-xs sm:text-sm py-2 px-5"
             >
               <Layers className="w-3.5 h-3.5 text-nebula-purple dark:text-starlight-cyan" />
-              <span>Explore Projects Archive</span>
+              <span>See the work</span>
             </a>
           </div>
         </div>

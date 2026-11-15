@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Mail, Github, Linkedin, FileText, ArrowUpRight, Phone, Sparkles } from 'lucide-react';
+import { Mail, Github, Linkedin, FileText, ArrowUpRight, Phone } from 'lucide-react';
 import resumePdf from '../assets/resume.pdf';
 import { chinjukuContact } from '../constants/contact';
 
@@ -111,17 +111,14 @@ const Contact: React.FC = () => {
 
             <div className="container mx-auto px-6 text-center relative z-10">
                 {/* Subtitle Badge */}
-                <div className="inline-flex items-center gap-2 mb-4 px-3.5 py-1.5 rounded-full bg-nebula-purple/10 dark:bg-starlight-cyan/10 border border-nebula-purple/30 dark:border-starlight-cyan/30 text-xs font-mono text-nebula-purple dark:text-starlight-cyan uppercase tracking-widest">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Hail Frequencies Open // TRANSMISSION</span>
-                </div>
+                <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">Contact</p>
 
                 {/* Main Heading with Vertical Text Clip Slide-Down Animation */}
                 <h3
                     ref={headingRef}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black sci-fi-heading mb-14 tracking-tight"
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold sci-fi-heading tracking-[-0.03em] mb-14 tracking-tight"
                 >
-                    <KineticHeading text="Let's Build the Future" />
+                    <KineticHeading text="Let's build something intelligent." />
                 </h3>
 
                 {/* Contact Cards Grid */}
@@ -212,11 +209,11 @@ const Contact: React.FC = () => {
                 <footer className="border-t border-gray-200/80 dark:border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400 gap-4">
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="tracking-wider">MISSION CONTROL // STANDBY</span>
+                        <span className="tracking-wider">AVAILABLE FOR WORK</span>
                     </div>
                     <p>© {new Date().getFullYear()} Chinatip Wu (Chinjuku). All rights reserved.</p>
                     <p className="flex items-center gap-1.5">
-                        Architected with <span className="text-nebula-purple dark:text-starlight-cyan font-semibold">React</span> & <span className="text-starlight-blue dark:text-nebula-glow font-semibold">TypeScript</span>
+                        Built with <span className="text-nebula-purple dark:text-starlight-cyan font-semibold">React</span> & <span className="text-starlight-blue dark:text-nebula-glow font-semibold">TypeScript</span>
                     </p>
                 </footer>
             </div>
