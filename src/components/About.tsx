@@ -1,236 +1,153 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowUpRight, Layers, Send } from "lucide-react";
-import { techSatellites } from "../constants/about";
-import { AboutTacticalCards, AboutCyberCore } from "./about/index";
-import { Magnetic, RevealText, TiltCard } from "./motion";
+import { ArrowUpRight } from "lucide-react";
+import portrait from "../assets/profile-tech.jpg";
+import { ABOUT_COPY, ABOUT_FACTS } from "../constants/about";
+import { useNavClick } from "../hooks";
+import { Magnetic, RevealText, TiltCard, usePrefersReducedMotion } from "./motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** About: a real portrait, a two-line statement, two sentences and four facts. */
 const About: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const reduced = usePrefersReducedMotion();
+  const handleNavClick = useNavClick();
 
   useEffect(() => {
+    if (reduced) return;
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 75%",
-          toggleActions: "restart none restart none",
-        },
-      });
-
-      // 1. Header Pill
-      tl.fromTo(
-        ".about-pill",
-        { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
-      )
-        // 2. Headline
-        .fromTo(
-          ".about-headline",
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-          "-=0.3",
-        )
-        // 3. Story Bio
-        .fromTo(
-          ".about-bio",
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-          "-=0.3",
-        )
-        // 4. 4 Tactical Cards (Staggered spring)
-        .fromTo(
-          ".about-card",
-          { y: 30, opacity: 0, scale: 0.95 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.5,
-            stagger: 0.08,
-            ease: "back.out(1.2)",
-          },
-          "-=0.25",
-        )
-        // 5. Action CTA buttons
-        .fromTo(
-          ".about-actions",
-          { y: 15, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-          "-=0.2",
-        )
-        // 6. Center Cyber Core Entry
-        .fromTo(
-          ".about-core-center",
-          { scale: 0.65, opacity: 0, rotate: -25 },
-          {
-            scale: 1,
-            opacity: 1,
-            rotate: 0,
-            duration: 0.8,
-            ease: "back.out(1.2)",
-          },
-          0.2,
-        )
-        // 7. Radar Rings Entry
-        .fromTo(
-          ".about-radar-ring",
-          { scale: 0.75, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.7,
-            stagger: 0.1,
-            ease: "power2.out",
-          },
-          0.35,
-        )
-        // 8. Satellites Pop Outward
-        .fromTo(
-          ".about-satellite",
-          { scale: 0, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.5,
-            stagger: 0.06,
-            ease: "back.out(1.5)",
-          },
-          0.45,
-        );
-
-      // bio paragraphs brighten as they reach the reading line (scrubbed)
+      // portrait rises out of a mask and settles
       gsap.fromTo(
-        ".about-bio p",
-        { opacity: 0.25 },
+        ".about-portrait",
+        { clipPath: "inset(100% 0% 0% 0% round 28px)", scale: 1.08 },
         {
-          opacity: 1,
-          stagger: 0.35,
-          ease: "none",
-          scrollTrigger: { trigger: ".about-bio", start: "top 80%", end: "top 40%", scrub: true },
+          clipPath: "inset(0% 0% 0% 0% round 28px)",
+          scale: 1,
+          duration: 1.3,
+          ease: "power4.out",
+          clearProps: "clipPath",
+          scrollTrigger: { trigger: containerRef.current, start: "top 70%", once: true },
         },
       );
-
-      // radar rings turn with the scroll on top of their idle spin
-      gsap.to(".about-radar-ring", {
-        rotate: (i) => (i % 2 ? -120 : 120),
-        ease: "none",
-        scrollTrigger: { trigger: containerRef.current, start: "top bottom", end: "bottom top", scrub: true },
-      });
-
-      // Separate continuous sinusoidal floating for the inner elements (zero conflict)
-      techSatellites.forEach((sat, i) => {
-        gsap.to(`.about-sat-float-${i}`, {
-          y: i % 2 === 0 ? -8 : 8,
-          x: i % 3 === 0 ? 3 : -3,
-          duration: sat.floatDuration,
-          delay: sat.floatDelay,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
+      // the photo drifts inside its frame as the section scrolls
+      gsap.fromTo(
+        ".about-portrait img",
+        { yPercent: -6 },
+        {
+          yPercent: 6,
+          ease: "none",
+          scrollTrigger: { trigger: containerRef.current, start: "top bottom", end: "bottom top", scrub: true },
+        },
+      );
+      gsap.from(".about-bio p, .about-fact, .about-actions", {
+        y: 18,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.07,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ".about-bio", start: "top 85%", once: true },
       });
     }, containerRef);
-
     return () => ctx.revert();
-  }, []);
+  }, [reduced]);
 
   return (
     <section
       ref={containerRef}
-      className="min-h-screen flex items-center justify-center bg-space-white dark:bg-space-dark relative overflow-hidden py-14 sm:py-16 lg:py-0 transition-colors duration-300"
+      className="relative overflow-hidden bg-core-obsidian px-6 py-28 md:px-12 md:py-36"
     >
-      {/* Background Ambient Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-12 md:gap-16">
+        {/* portrait */}
+        <div className="md:col-span-5">
+          <TiltCard max={5} className="mx-auto max-w-sm rounded-[28px] md:max-w-none">
+            <figure className="about-portrait relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10">
+              <img
+                src={portrait}
+                alt={`${ABOUT_COPY.name}, smiling, in front of a dark studio backdrop`}
+                loading="lazy"
+                className="h-[112%] w-full -translate-y-[6%] object-cover saturate-[0.85] transition-[filter] duration-700 group-hover/tilt:saturate-100"
+              />
+              {/* icy rim light + fade for the caption */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_100%_0%,rgba(138,191,255,0.18),transparent_55%)]" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-core-obsidian/90 to-transparent" />
+              <figcaption className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-3">
+                <span>
+                  <span className="block text-base font-medium text-core-ink">{ABOUT_COPY.name}</span>
+                  <span className="mt-0.5 block font-mono text-[10px] tracking-[0.2em] text-core-mist">
+                    {ABOUT_COPY.location.toUpperCase()}
+                  </span>
+                </span>
+                <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-core-obsidian/60 px-2.5 py-1 font-mono text-[10px] tracking-[0.15em] text-core-chrome backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  OPEN FOR WORK
+                </span>
+              </figcaption>
+            </figure>
+          </TiltCard>
+        </div>
 
-      <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 xl:gap-16">
-        {/* Left Column: Story & Tactical Status */}
-        <div className="flex-1 w-full max-w-2xl lg:max-w-none">
-          {/* Header Pill */}
-          <p className="about-pill font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">About</p>
-
-          {/* Headline */}
-          <h2 className="about-headline text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] mb-4 tracking-tight leading-tight">
-            <RevealText as="span" className="block" text="Full-stack × AI developer" />
+        {/* statement + facts */}
+        <div className="md:col-span-7">
+          <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">{ABOUT_COPY.eyebrow}</p>
+          <h2 className="mt-5 text-[clamp(40px,5.2vw,80px)] font-semibold leading-[0.98] tracking-[-0.04em] text-core-ink">
+            <RevealText as="span" className="block" text={ABOUT_COPY.headlineLines[0]} />
             <RevealText
               as="span"
               className="block"
-              text="building products end to end"
-              accentWords={["building", "products", "end", "to", "end"]}
-              delay={0.15}
+              text={ABOUT_COPY.headlineLines[1]}
+              accentWords={["AI", "where", "it", "helps."]}
+              delay={0.12}
             />
           </h2>
 
-          {/* Story Bio */}
-          <div className="about-bio space-y-2.5 mb-5 text-gray-600 dark:text-gray-300 text-xs sm:text-sm md:text-base leading-relaxed">
-            <p>
-              Graduated in{" "}
-              <span className="font-bold text-gray-900 dark:text-white font-mono">
-                April 2026
-              </span>{" "}
-              with an{" "}
-              <span className="font-semibold text-nebula-purple dark:text-starlight-cyan">
-                IT (Software Engineering)
-              </span>{" "}
-              degree from{" "}
-              <span className="font-semibold text-gray-900 dark:text-white">
-                King Mongkut's Institute of Technology Ladkrabang (KMITL)
-              </span>
-              . I work as a{" "}
-              <span className="font-bold text-gray-900 dark:text-white">
-                full-stack developer
-              </span>
-              , building web platforms, front ends and backend APIs, and
-              adding AI where it actually helps the product.
-            </p>
-            <p>
-              I care about clean architecture and shipping the whole thing,
-              from schema to UI. Open to{" "}
-              <span className="font-bold text-cyan-600 dark:text-starlight-cyan">
-                Freelance Development
-              </span>
-              ,{" "}
-              <span className="font-bold text-nebula-purple dark:text-nebula-glow">
-                Part-time Engineering
-              </span>
-              , and product teams that build with AI.
-            </p>
+          <div className="about-bio mt-8 max-w-[52ch] space-y-3 text-base leading-relaxed text-core-mist md:text-lg">
+            {ABOUT_COPY.bio.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
           </div>
 
-          {/* 4 Tactical Status Cards */}
-          <AboutTacticalCards />
+          <dl className="mt-10 border-t border-core-graphite">
+            {ABOUT_FACTS.map((f) => (
+              <div
+                key={f.label}
+                className="about-fact grid grid-cols-[7.5rem_1fr] gap-4 border-b border-core-graphite py-3.5 sm:grid-cols-[9rem_1fr]"
+              >
+                <dt className="pt-0.5 font-mono text-[10px] tracking-[0.2em] text-core-mist">{f.label}</dt>
+                <dd className="text-sm text-core-ink md:text-[15px]">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
 
-          {/* Action Buttons */}
-          <div className="about-actions flex flex-wrap items-center gap-3">
+          <div className="about-actions mt-10 flex flex-wrap items-center gap-3">
             <Magnetic strength={0.25}>
-            <a
-              href="#contact"
-              className="sci-fi-btn-primary group cursor-pointer inline-flex items-center gap-2 text-xs sm:text-sm py-2 px-5"
-            >
-              <Send className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-              <span>Work with me</span>
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
+              <a
+                href="/#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick("#contact");
+                }}
+                className="sci-fi-btn-primary group"
+              >
+                Work with me
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
             </Magnetic>
             <Magnetic strength={0.25}>
-            <a
-              href="#projects"
-              className="sci-fi-btn-secondary group inline-flex items-center gap-2 cursor-pointer text-xs sm:text-sm py-2 px-5"
-            >
-              <Layers className="w-3.5 h-3.5 text-nebula-purple dark:text-starlight-cyan" />
-              <span>See the work</span>
-            </a>
+              <a
+                href="/#projects"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick("#projects");
+                }}
+                className="sci-fi-btn-secondary"
+              >
+                See the work
+              </a>
             </Magnetic>
           </div>
         </div>
-
-        {/* Right Column: Holographic Cyber Core & Floating Tech Satellites */}
-        <TiltCard max={12} glow={false} className="about-core-tilt">
-          <AboutCyberCore techSatellites={techSatellites} />
-        </TiltCard>
       </div>
     </section>
   );
