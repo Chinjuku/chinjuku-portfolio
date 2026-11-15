@@ -101,17 +101,23 @@ body {
   }
 }
 
-/* Experience timeline: nodes stay dim until the scrubbed line reaches them */
-.experience-node .node-core {
-  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
+/* Experience horizontal timeline: the role nearest the center lights up */
+.exp-horizontal .exp-slide:not(.is-active) {
+  opacity: 0.55;
 }
-.experience-node:not(.is-lit) .node-core {
-  opacity: 0.35;
-  filter: grayscale(1);
-  transform: scale(0.85);
+.exp-vertical .exp-slide {
+  width: 100%;
 }
-.experience-node:not(.is-lit) > div:not(.node-core) {
-  opacity: 0;
+.exp-slide.is-active .exp-dot {
+  background: #8abfff;
+  border-color: #8abfff;
+  box-shadow: 0 0 14px 3px rgba(138, 191, 255, 0.55);
+}
+.exp-slide.is-active .exp-year {
+  color: rgba(244, 246, 250, 0.9);
+}
+.exp-slide.is-active .exp-card {
+  border-color: rgba(138, 191, 255, 0.35);
 }
 
 /* Custom Scrollbar */
