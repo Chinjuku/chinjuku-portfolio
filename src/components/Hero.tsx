@@ -4,7 +4,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { HERO_COPY, HERO_STACK_LAYERS } from "../constants/hero";
 import { HeroCtas, HeroLayerLabel } from "./hero/index";
-import { createCoreState, useIsMobile, useReducedMotion } from "./hero/core";
+// import from the files directly: the core barrel re-exports the three.js
+// components, which must stay in the lazy HeroCoreScene chunk
+import { createCoreState } from "./hero/core/scrollState";
+import { useIsMobile, useReducedMotion } from "./hero/core/hooks";
 
 gsap.registerPlugin(ScrollTrigger);
 
