@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { usePrefersReducedMotion } from "../motion";
 import { TrendingUp } from "lucide-react";
 import { MONTH_NAMES } from "../../constants/codeActivities";
 
@@ -17,8 +19,30 @@ export const ActivityMonthlyChart: React.FC<ActivityMonthlyChartProps> = ({
   monthlyTotals,
   peakMonth,
 }) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const reduced = usePrefersReducedMotion();
+
+  useEffect(() => {
+    if (reduced || !rootRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".chart-bar",
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          duration: 0.9,
+          ease: "power4.out",
+          stagger: 0.05,
+          transformOrigin: "50% 100%",
+          scrollTrigger: { trigger: rootRef.current, start: "top 85%", once: true },
+        },
+      );
+    }, rootRef);
+    return () => ctx.revert();
+  }, [monthlyTotals, reduced]);
+
   return (
-    <div className="activity-chart p-6 sm:p-7 rounded-3xl sci-fi-card border border-slate-200/80 dark:border-white/10 relative overflow-hidden">
+    <div ref={rootRef} className="activity-chart p-6 sm:p-7 rounded-3xl sci-fi-card border border-slate-200/80 dark:border-white/10 relative overflow-hidden">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-purple-500 dark:text-nebula-purple" />
@@ -57,9 +81,9 @@ export const ActivityMonthlyChart: React.FC<ActivityMonthlyChartProps> = ({
               <div className="w-full bg-slate-100 dark:bg-white/5 rounded-t-lg h-24 flex items-end p-0.5 overflow-hidden">
                 <div
                   style={{ height: `${heightPercent}%` }}
-                  className={`w-full rounded-t-md transition-all duration-500 ${
+                  className={`chart-bar w-full rounded-t-md transition-all duration-500 ${
                     isPeak
-                      ? "bg-gradient-to-t from-purple-600 to-cyan-400 shadow-[0_0_12px_rgba(138,191,255,0.8)]"
+                      ? "bg-gradient-to-t from-cyan-600 to-core-ink shadow-[0_0_14px_rgba(138,191,255,0.6)]"
                       : count > 0
                         ? "bg-gradient-to-t from-emerald-600 to-teal-400 dark:from-cyan-800 dark:to-cyan-300"
                         : "bg-slate-300 dark:bg-slate-800"

@@ -1,5 +1,6 @@
 import React from "react";
 import type { SkillCategory } from "../../constants/skills";
+import { TiltCard } from "../motion";
 
 interface SkillsPillarsProps {
   categories: SkillCategory[];
@@ -33,9 +34,10 @@ export const SkillsPillars: React.FC<SkillsPillarsProps> = ({ categories }) => {
         }[category.accent];
 
         return (
-          <div
+          <TiltCard
             key={category.id}
-            className={`skills-pillar-card group relative rounded-2xl bg-white/70 dark:bg-space-dark/80 backdrop-blur-md border border-gray-200/80 dark:border-white/10 p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${accentBorder} flex flex-col justify-between`}
+            max={6}
+            className={`skills-pillar-card group relative rounded-2xl bg-white/70 dark:bg-space-dark/80 backdrop-blur-md border border-gray-200/80 dark:border-white/10 p-5 sm:p-6 transition-[border-color,box-shadow] duration-300 hover:shadow-xl ${accentBorder} flex flex-col justify-between`}
           >
             {/* Top Accent Gradient Line */}
             <div
@@ -66,10 +68,12 @@ export const SkillsPillars: React.FC<SkillsPillarsProps> = ({ categories }) => {
 
             {/* Skills Chips */}
             <div className="flex flex-wrap gap-1.5 pt-3 border-t border-gray-200/60 dark:border-white/5">
-              {category.skills.map((skill) => (
+              {category.skills.map((skill, i) => (
                 <span
                   key={skill.name}
-                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-mono font-medium bg-gray-100/90 dark:bg-white/5 border border-gray-200/80 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-nebula-purple/40 dark:hover:border-starlight-cyan/40 hover:text-nebula-purple dark:hover:text-starlight-cyan transition-colors"
+                  // chips lift one after another when the card is hovered
+                  style={{ transitionDelay: `${i * 35}ms` }}
+                  className="group-hover:-translate-y-0.5 group-hover:border-core-icy/30 inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-mono font-medium bg-gray-100/90 dark:bg-white/5 border border-gray-200/80 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-nebula-purple/40 dark:hover:border-starlight-cyan/40 hover:text-nebula-purple dark:hover:text-starlight-cyan transition-all duration-300"
                 >
                   <img
                     src={skill.icon}
@@ -81,7 +85,7 @@ export const SkillsPillars: React.FC<SkillsPillarsProps> = ({ categories }) => {
                 </span>
               ))}
             </div>
-          </div>
+          </TiltCard>
         );
       })}
     </div>

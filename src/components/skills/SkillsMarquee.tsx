@@ -17,7 +17,7 @@ export const SkillsMarquee: React.FC<SkillsMarqueeProps> = ({
         <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-28 lg:w-36 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-28 lg:w-36 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
 
-        <div className="flex w-max animate-scroll group-hover:[animation-play-state:paused] gap-2.5 sm:gap-3.5 md:gap-4 py-1.5">
+        <div className="skills-marquee-row flex w-max animate-scroll group-hover:[animation-play-state:paused] gap-2.5 sm:gap-3.5 md:gap-4 py-1.5">
           {[...row1Skills, ...row1Skills].map((skill, idx) => (
             <div
               key={`row1-${idx}`}
@@ -45,7 +45,7 @@ export const SkillsMarquee: React.FC<SkillsMarqueeProps> = ({
         <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-28 lg:w-36 bg-gradient-to-r from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-28 lg:w-36 bg-gradient-to-l from-space-white dark:from-space-dark to-transparent z-10 pointer-events-none" />
 
-        <div className="flex w-max animate-scroll-reverse group-hover:[animation-play-state:paused] gap-2.5 sm:gap-3.5 md:gap-4 py-1.5">
+        <div className="skills-marquee-row flex w-max animate-scroll-reverse group-hover:[animation-play-state:paused] gap-2.5 sm:gap-3.5 md:gap-4 py-1.5">
           {[...row2Skills, ...row2Skills].map((skill, idx) => (
             <div
               key={`row2-${idx}`}

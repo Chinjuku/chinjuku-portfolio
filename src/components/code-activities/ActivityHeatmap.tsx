@@ -1,4 +1,6 @@
-import React, { type RefObject } from "react";
+import React, { useEffect, useRef, type RefObject } from "react";
+import gsap from "gsap";
+import { usePrefersReducedMotion } from "../motion";
 import { Sparkles, RotateCw, Clock } from "lucide-react";
 import {
   type ContributionDay,
@@ -43,8 +45,32 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({
   scrollContainerRef,
   onCellHover,
 }) => {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const reduced = usePrefersReducedMotion();
+
+  // cells ripple in week by week when the heatmap (or a new year) appears
+  useEffect(() => {
+    if (reduced || loading || !rootRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".heat-cell",
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.45,
+          ease: "back.out(2.2)",
+          stagger: { each: 0.0016, from: "start" },
+          clearProps: "transform,opacity",
+          scrollTrigger: { trigger: rootRef.current, start: "top 85%", once: true },
+        },
+      );
+    }, rootRef);
+    return () => ctx.revert();
+  }, [calendarGrid, loading, reduced]);
+
   return (
-    <div className="activity-heatmap flex-1 p-6 sm:p-7 rounded-3xl sci-fi-glass border border-slate-200/80 dark:border-cyan-500/20 shadow-xl overflow-hidden relative">
+    <div ref={rootRef} className="activity-heatmap flex-1 p-6 sm:p-7 rounded-3xl sci-fi-glass border border-slate-200/80 dark:border-cyan-500/20 shadow-xl overflow-hidden relative">
       <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
@@ -144,7 +170,7 @@ export const ActivityHeatmap: React.FC<ActivityHeatmapProps> = ({
                             });
                           }}
                           onMouseLeave={() => onCellHover(null)}
-                          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] ${cellColor} transition-transform hover:scale-150 hover:z-20 cursor-pointer`}
+                          className={`heat-cell w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] ${cellColor} transition-transform hover:scale-150 hover:z-20 cursor-pointer`}
                         />
                       );
                     })}

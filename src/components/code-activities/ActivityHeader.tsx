@@ -1,4 +1,5 @@
 import React from "react";
+import { RevealText } from "../motion";
 import { RotateCw, Github, ExternalLink } from "lucide-react";
 
 interface ActivityHeaderProps {
@@ -14,9 +15,7 @@ export const ActivityHeader: React.FC<ActivityHeaderProps> = ({
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
       <div>
         <p className="activity-pill font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">Activity</p>
-        <h2 className="activity-title text-3xl sm:text-4xl md:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] tracking-tight mb-3">
-          Code Activities
-        </h2>
+        <RevealText as="h2" className="activity-title text-3xl sm:text-4xl md:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] tracking-tight mb-3" text="Shipping, every week." accentWords={["week."]} />
         <p className="activity-desc text-slate-600 dark:text-[#94a3b8] text-sm sm:text-base max-w-2xl leading-relaxed">
           Commits and pull requests from GitHub: how often I ship, month by
           month and year by year.

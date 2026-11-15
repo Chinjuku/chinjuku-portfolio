@@ -1,5 +1,6 @@
 import React from "react";
 import { Activity, Calendar, Flame, Award, TrendingUp } from "lucide-react";
+import { CountUp } from "../motion";
 
 interface ActivityStatsProps {
   selectedYear: number;
@@ -34,11 +35,11 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           {loading ? (
             <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : (
-            stats.totalCommits.toLocaleString()
+            <CountUp key={`c-${selectedYear}`} to={stats.totalCommits} />
           )}
         </div>
-        <span className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 mt-1 block">
-          // Verified Commits & PRs
+        <span className="text-[11px] font-mono text-core-mist mt-1 block">
+          Commits & pull requests
         </span>
       </div>
 
@@ -54,11 +55,11 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           {loading ? (
             <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : (
-            stats.activeDays
+            <CountUp key={`d-${selectedYear}`} to={stats.activeDays} />
           )}
         </div>
-        <span className="text-[11px] font-mono text-purple-600 dark:text-nebula-glow mt-1 block">
-          // Days with Code Activity
+        <span className="text-[11px] font-mono text-core-mist mt-1 block">
+          Days with commits
         </span>
       </div>
 
@@ -68,16 +69,18 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           <span className="text-[11px] font-mono text-slate-500 dark:text-[#94a3b8] uppercase tracking-wider">
             Longest Streak
           </span>
-          <Flame className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
+          <Flame className="w-4 h-4 text-core-icy group-hover:scale-110 transition-transform" />
         </div>
         <div className="text-2xl sm:text-3xl font-semibold sci-fi-heading tracking-[-0.03em] font-mono">
           {loading ? (
             <div className="h-8 w-20 bg-slate-200 dark:bg-white/10 rounded animate-pulse" />
           ) : (
-            `${stats.maxDayStreak} Days`
+            <>
+              <CountUp key={`s-${selectedYear}`} to={stats.maxDayStreak} /> Days
+            </>
           )}
         </div>
-        <span className="text-[11px] font-mono text-orange-600 dark:text-orange-400 mt-1 block">
+        <span className="text-[11px] font-mono text-core-mist mt-1 block">
           // Consecutive Workload
         </span>
       </div>
