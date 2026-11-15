@@ -12,7 +12,7 @@ import {
   createCoreState,
   useIsMobile,
   useReducedMotion,
-} from "./core";
+} from "../hero/core";
 
 gsap.registerPlugin(ScrollTrigger);
 

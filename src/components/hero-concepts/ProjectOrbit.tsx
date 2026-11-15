@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { Billboard, Edges, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import type { Project } from "../../constants/projects";
-import type { CoreState } from "./core";
+import type { CoreState } from "../hero/core";
 
 interface ProjectOrbitProps {
   projects: Project[];

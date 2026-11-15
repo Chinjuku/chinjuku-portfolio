@@ -37,6 +37,15 @@ export default {
           'border-light': 'rgba(226, 232, 240, 0.80)',
           'border-dark': 'rgba(255, 255, 255, 0.10)',
         },
+        // "Intelligence Core" palette (new hero; rest of site migrates later)
+        core: {
+          obsidian: '#080B12',
+          graphite: '#222B39',
+          chrome: '#C9D1DB',
+          icy: '#8ABFFF',
+          ink: '#F4F6FA',
+          mist: '#929EAF',
+        },
         cyber: {
           emerald: '#10B981',
           amber: '#F59E0B',
