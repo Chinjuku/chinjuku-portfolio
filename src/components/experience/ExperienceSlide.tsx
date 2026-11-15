@@ -17,7 +17,7 @@ interface ExperienceSlideProps {
 export const ExperienceSlide: React.FC<ExperienceSlideProps> = ({ experience, index }) => {
   const year = new Date(experience.finished_date).getFullYear();
   return (
-    <article className="exp-slide group w-[min(380px,82vw)] shrink-0 transition-opacity duration-500">
+    <article className="exp-slide group w-[min(380px,82vw)] shrink-0">
       {/* dot sits on the shared rail */}
       <div className="relative h-6">
         <span className="exp-dot absolute left-0 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border border-core-mist/60 bg-core-obsidian transition-all duration-500" />

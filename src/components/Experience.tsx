@@ -28,24 +28,34 @@ const Experience: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".exp-head > *", {
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.08,
-        ease: "power3.out",
-        scrollTrigger: { trigger: sectionRef.current, start: "top 75%", once: true },
-      });
+      // fromTo (not from): explicit end values, so a CSS transition or a
+      // StrictMode re-run can never be captured as the "to" state
+      gsap.fromTo(
+        ".exp-head > *",
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.08,
+          ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 75%", once: true },
+        },
+      );
 
       if (!horizontal) {
-        gsap.from(".exp-slide", {
-          y: 30,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: { trigger: trackRef.current, start: "top 85%", once: true },
-        });
+        gsap.fromTo(
+          ".exp-slide",
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: trackRef.current, start: "top 85%", once: true },
+          },
+        );
         return;
       }
 

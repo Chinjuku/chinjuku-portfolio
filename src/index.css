@@ -102,6 +102,9 @@ body {
 }
 
 /* Experience horizontal timeline: the role nearest the center lights up */
+.exp-horizontal .exp-slide {
+  transition: opacity 0.5s ease;
+}
 .exp-horizontal .exp-slide:not(.is-active) {
   opacity: 0.55;
 }
