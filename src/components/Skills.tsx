@@ -47,9 +47,9 @@ const Skills: React.FC = () => {
           { scaleX: 1, opacity: 1, duration: 0.45, ease: "power2.out" },
           "-=0.3",
         )
-        // 4. 4 Architectural Pillar Cards (Staggered spring)
+        // 4. stack rows, then their logos pop in one after another
         .fromTo(
-          ".skills-pillar-card",
+          ".skills-row",
           { y: 35, opacity: 0, scale: 0.95 },
           {
             y: 0,
@@ -60,15 +60,22 @@ const Skills: React.FC = () => {
             ease: "back.out(1.2)",
           },
           "-=0.2",
+        )
+        .fromTo(
+          ".skills-logo",
+          { scale: 0.6, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.35, stagger: 0.015, ease: "back.out(2)", clearProps: "transform" },
+          "-=0.35",
         );
 
       // the background word drifts against the scroll
       gsap.fromTo(
         ".skills-bg-word",
-        { yPercent: -30, xPercent: -46 },
+        // centered behind the section; only a gentle drift with scroll
+        { yPercent: -42, xPercent: -50 },
         {
-          yPercent: -70,
-          xPercent: -54,
+          yPercent: -58,
+          xPercent: -50,
           ease: "none",
           scrollTrigger: { trigger: sectionRef.current, start: "top bottom", end: "bottom top", scrub: true },
         },
