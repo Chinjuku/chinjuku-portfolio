@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { all_projects } from "../constants/projects";
 import { RepoModal } from "../components/common/RepoModal";
 import {
+  FeaturedCarousel,
   KIND_LABELS,
   ProjectCard,
   isAi,
@@ -28,6 +29,8 @@ const STATS = [
   },
 ];
 const KINDS: ProjectKind[] = ["all", "ai", "web", "other"];
+const CAROUSEL_COUNT = 5;
+const CAROUSEL_INTERVAL_MS = 9000;
 
 const chip = (active: boolean) =>
   `rounded-full px-3.5 py-1.5 text-xs transition-colors ${
@@ -49,7 +52,9 @@ const AllProjects: React.FC = () => {
       ),
     [year, kind],
   );
+  // unfiltered view: the latest projects rotate in the carousel, the rest fill the grid
   const showFeatured = year === "all" && kind === "all";
+  const gridProjects = showFeatured ? filtered.slice(CAROUSEL_COUNT) : filtered;
 
   const openRepos = (repos: string | string[]) => {
     if (Array.isArray(repos)) setModalRepos(repos);
@@ -147,16 +152,22 @@ const AllProjects: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p, i) => (
-              <ProjectCard
-                key={p.id}
-                project={p}
-                featured={showFeatured && i === 0}
-                onRepos={openRepos}
-              />
-            ))}
-          </div>
+          <>
+            {showFeatured && (
+              <div className="mt-6">
+                <FeaturedCarousel
+                  projects={filtered.slice(0, CAROUSEL_COUNT)}
+                  onRepos={openRepos}
+                  interval={CAROUSEL_INTERVAL_MS}
+                />
+              </div>
+            )}
+            <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {gridProjects.map((p) => (
+                <ProjectCard key={p.id} project={p} onRepos={openRepos} />
+              ))}
+            </div>
+          </>
         )}
       </div>
 
