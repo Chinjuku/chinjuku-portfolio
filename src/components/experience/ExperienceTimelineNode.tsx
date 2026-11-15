@@ -21,7 +21,7 @@ export const ExperienceTimelineNode: React.FC<ExperienceTimelineNodeProps> = ({
       <div className="absolute w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-nebula-purple/40 dark:border-starlight-cyan/40 animate-ping opacity-25 pointer-events-none" />
 
       {/* Central Cyber Node Core */}
-      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-[#0b0e1a] border-2 border-nebula-purple dark:border-starlight-cyan shadow-[0_0_15px_rgba(138,191,255,0.6)] flex items-center justify-center relative">
+      <div className="node-core w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-[#0b0e1a] border-2 border-nebula-purple dark:border-starlight-cyan shadow-[0_0_15px_rgba(138,191,255,0.6)] flex items-center justify-center relative">
         <span className="font-mono text-[10px] sm:text-[11px] font-black text-nebula-purple dark:text-starlight-cyan">
           {nodeNumber}
         </span>

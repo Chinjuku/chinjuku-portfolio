@@ -101,6 +101,19 @@ body {
   }
 }
 
+/* Experience timeline: nodes stay dim until the scrubbed line reaches them */
+.experience-node .node-core {
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
+}
+.experience-node:not(.is-lit) .node-core {
+  opacity: 0.35;
+  filter: grayscale(1);
+  transform: scale(0.85);
+}
+.experience-node:not(.is-lit) > div:not(.node-core) {
+  opacity: 0;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

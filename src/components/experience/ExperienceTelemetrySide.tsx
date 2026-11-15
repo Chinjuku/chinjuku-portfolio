@@ -25,7 +25,7 @@ export const ExperienceTelemetrySide: React.FC<ExperienceTelemetrySideProps> = (
       <p className="font-mono text-[11px] tracking-[0.2em] text-core-mist">
         {String(index + 1).padStart(2, "0")} · {experience.period.toUpperCase()}
       </p>
-      <p className="mt-2 text-6xl font-semibold tracking-[-0.04em] text-core-ink/10 lg:text-7xl">
+      <p className="exp-year mt-2 text-6xl font-semibold tracking-[-0.04em] text-core-ink/10 lg:text-7xl">
         {year}
       </p>
       <p className="mt-1 text-sm text-core-chrome">{experience.company}</p>

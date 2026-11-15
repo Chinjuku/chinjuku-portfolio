@@ -8,6 +8,7 @@ import {
   ExperienceCard,
   ExperienceTelemetrySide,
 } from "./experience/index";
+import { TiltCard } from "./motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -83,26 +84,54 @@ const Experience: React.FC = () => {
           );
         }
 
-        // Card slide from alternating sides (on mobile, slide in from right)
+        // Card wipes in from its side, de-blurring as it lands
         if (card) {
+          const fromSide = window.innerWidth < 768 || !isEven ? "right" : "left";
           tl.fromTo(
             card,
             {
               opacity: 0,
-              x: () => {
-                if (window.innerWidth < 768) return 40;
-                return isEven ? -60 : 60;
-              },
-              y: 15,
+              x: fromSide === "left" ? -40 : 40,
+              clipPath:
+                fromSide === "left"
+                  ? "inset(0% 100% 0% 0% round 16px)"
+                  : "inset(0% 0% 0% 100% round 16px)",
+              filter: "blur(10px)",
             },
             {
               opacity: 1,
               x: 0,
-              y: 0,
-              duration: 0.65,
-              ease: "back.out(1.15)",
+              clipPath: "inset(0% 0% 0% 0% round 16px)",
+              filter: "blur(0px)",
+              duration: 0.95,
+              ease: "power3.out",
+              clearProps: "clipPath,filter",
             },
             "-=0.35",
+          );
+        }
+
+        // node lights up when the scrubbed line reaches it
+        if (node) {
+          ScrollTrigger.create({
+            trigger: node,
+            start: "top 75%",
+            end: "max", // stay lit once passed; dims again only when scrolled back above
+            toggleClass: { targets: node, className: "is-lit" },
+          });
+        }
+
+        // the big year drifts against the scroll
+        const year = item.querySelector(".exp-year");
+        if (year) {
+          gsap.fromTo(
+            year,
+            { yPercent: 35 },
+            {
+              yPercent: -35,
+              ease: "none",
+              scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true },
+            },
           );
         }
 
@@ -155,11 +184,14 @@ const Experience: React.FC = () => {
         <div ref={timelineContainerRef} className="relative max-w-5xl mx-auto">
           {/* Central Cyber Energy Conduit Line */}
           {/* Desktop Line (Centered) */}
-          <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
+          <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-white/10 pointer-events-none">
             <div
               ref={laserLineRef}
-              className="w-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(138,191,255,0.8)]"
-            />
+              className="relative w-full bg-gradient-to-b from-transparent via-core-chrome to-core-icy"
+            >
+              {/* comet at the tip of the line */}
+              <span className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-core-ink shadow-[0_0_18px_5px_rgba(138,191,255,0.75)]" />
+            </div>
           </div>
 
           {/* Mobile Left-Aligned Rail Line */}
@@ -181,7 +213,9 @@ const Experience: React.FC = () => {
                 >
                   {/* Left (or Right) Content Card */}
                   <div className="w-full md:w-1/2">
-                    <ExperienceCard experience={exp} isEven={isEven} />
+                    <TiltCard max={4} glow={false} className="rounded-2xl">
+                      <ExperienceCard experience={exp} isEven={isEven} />
+                    </TiltCard>
                   </div>
 
                   {/* Center Node (Absolute position on mobile, flex centered on desktop) */}

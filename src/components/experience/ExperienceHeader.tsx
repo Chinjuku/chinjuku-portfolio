@@ -1,4 +1,5 @@
 import React from "react";
+import { RevealText } from "../motion";
 import { Activity, Calendar } from "lucide-react";
 
 interface ExperienceHeaderProps {
@@ -15,9 +16,7 @@ export const ExperienceHeader: React.FC<ExperienceHeaderProps> = ({
       {/* Sci-Fi HUD Clearance Badge */}
       <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy uppercase mb-4">Experience</p>
 
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] tracking-tight mb-3">
-        Where I've worked
-      </h2>
+      <RevealText as="h2" className="text-3xl sm:text-4xl md:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] tracking-tight mb-3" text="Where I've worked" accentWords={["worked"]} />
       <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-6 font-sans">
         Internships, part-time roles and the university events I built for.
       </p>

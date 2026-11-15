@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight, Layers, Send } from "lucide-react";
 import { techSatellites } from "../constants/about";
 import { AboutTacticalCards, AboutCyberCore } from "./about/index";
+import { Magnetic, RevealText, TiltCard } from "./motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -101,6 +102,25 @@ const About: React.FC = () => {
           0.45,
         );
 
+      // bio paragraphs brighten as they reach the reading line (scrubbed)
+      gsap.fromTo(
+        ".about-bio p",
+        { opacity: 0.25 },
+        {
+          opacity: 1,
+          stagger: 0.35,
+          ease: "none",
+          scrollTrigger: { trigger: ".about-bio", start: "top 80%", end: "top 40%", scrub: true },
+        },
+      );
+
+      // radar rings turn with the scroll on top of their idle spin
+      gsap.to(".about-radar-ring", {
+        rotate: (i) => (i % 2 ? -120 : 120),
+        ease: "none",
+        scrollTrigger: { trigger: containerRef.current, start: "top bottom", end: "bottom top", scrub: true },
+      });
+
       // Separate continuous sinusoidal floating for the inner elements (zero conflict)
       techSatellites.forEach((sat, i) => {
         gsap.to(`.about-sat-float-${i}`, {
@@ -134,10 +154,14 @@ const About: React.FC = () => {
 
           {/* Headline */}
           <h2 className="about-headline text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold sci-fi-heading tracking-[-0.03em] mb-4 tracking-tight leading-tight">
-            Full-stack × AI developer <br />
-            <span className="sci-fi-gradient-text">
-              building products end to end
-            </span>
+            <RevealText as="span" className="block" text="Full-stack × AI developer" />
+            <RevealText
+              as="span"
+              className="block"
+              text="building products end to end"
+              accentWords={["building", "products", "end", "to", "end"]}
+              delay={0.15}
+            />
           </h2>
 
           {/* Story Bio */}
@@ -181,6 +205,7 @@ const About: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="about-actions flex flex-wrap items-center gap-3">
+            <Magnetic strength={0.25}>
             <a
               href="#contact"
               className="sci-fi-btn-primary group cursor-pointer inline-flex items-center gap-2 text-xs sm:text-sm py-2 px-5"
@@ -189,6 +214,8 @@ const About: React.FC = () => {
               <span>Work with me</span>
               <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
+            </Magnetic>
+            <Magnetic strength={0.25}>
             <a
               href="#projects"
               className="sci-fi-btn-secondary group inline-flex items-center gap-2 cursor-pointer text-xs sm:text-sm py-2 px-5"
@@ -196,11 +223,14 @@ const About: React.FC = () => {
               <Layers className="w-3.5 h-3.5 text-nebula-purple dark:text-starlight-cyan" />
               <span>See the work</span>
             </a>
+            </Magnetic>
           </div>
         </div>
 
         {/* Right Column: Holographic Cyber Core & Floating Tech Satellites */}
-        <AboutCyberCore techSatellites={techSatellites} />
+        <TiltCard max={12} glow={false} className="about-core-tilt">
+          <AboutCyberCore techSatellites={techSatellites} />
+        </TiltCard>
       </div>
     </section>
   );
