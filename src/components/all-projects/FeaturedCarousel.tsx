@@ -189,8 +189,8 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
           </div>
 
           {/* controls */}
-          <div className="mt-8 flex items-center justify-between gap-4">
-            <div className="flex flex-1 items-center gap-2" role="tablist" aria-label="Choose project">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2" role="tablist" aria-label="Choose project">
               {projects.map((p, i) => (
                 <button
                   key={p.id}
@@ -200,7 +200,7 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
                   aria-label={`Show ${p.title}`}
                   onClick={() => go(i)}
                   className={`relative h-1 overflow-hidden rounded-full bg-white/10 transition-all duration-500 ${
-                    i === index ? "w-14" : "w-6 hover:bg-white/25"
+                    i === index ? "w-10 sm:w-14" : "w-4 hover:bg-white/25 sm:w-6"
                   }`}
                 >
                   {i === index && (

@@ -113,7 +113,7 @@ const AllProjects: React.FC = () => {
         </header>
 
         {/* filters */}
-        <div className="sticky top-24 z-30 mt-14 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-core-obsidian/80 p-3 backdrop-blur-xl">
+        <div className="z-30 mt-14 md:sticky md:top-24 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-core-obsidian/80 p-3 backdrop-blur-xl">
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by type">
             {KINDS.map((k) => (
               <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={chip(kind === k)}>
