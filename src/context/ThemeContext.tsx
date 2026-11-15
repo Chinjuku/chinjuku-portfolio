@@ -29,23 +29,13 @@ export function ThemeProvider({
         () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
     );
 
+    // The site is dark-only since the "Intelligence Core" re-theme. The API is
+    // kept so callers still work, but the document is always in dark mode.
     useEffect(() => {
         const root = window.document.documentElement;
-
-        root.classList.remove('light', 'dark');
-
-        if (theme === 'system') {
-            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-                .matches
-                ? 'dark'
-                : 'light';
-
-            root.classList.add(systemTheme);
-            return;
-        }
-
-        root.classList.add(theme);
-    }, [theme]);
+        root.classList.remove('light');
+        root.classList.add('dark');
+    }, []);
 
     const value = {
         theme,

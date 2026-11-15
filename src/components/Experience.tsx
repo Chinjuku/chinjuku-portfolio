@@ -1,209 +1,177 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { experiences } from "../constants/experiences";
-import {
-  ExperienceHeader,
-  ExperienceTimelineNode,
-  ExperienceCard,
-  ExperienceTelemetrySide,
-} from "./experience/index";
+import { ExperienceSlide } from "./experience/index";
+import { RevealText } from "./motion";
+import { useIsMobile, useReducedMotion } from "./hero/core/hooks";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const years = experiences.map((e) => new Date(e.finished_date).getFullYear());
+const SPAN = `${Math.min(...years)} – ${Math.max(...years)}`;
+
+/**
+ * Experience as a horizontal timeline (newest → oldest, left → right).
+ * Desktop pins the section and slides the track left with the scroll while
+ * the rail fills and the role closest to center lights up. Mobile and
+ * reduced motion get a plain vertical list.
+ */
 const Experience: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const timelineContainerRef = useRef<HTMLDivElement>(null);
-  const laserLineRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const isMobile = useIsMobile();
+  const reduced = useReducedMotion();
+  const horizontal = !isMobile && !reduced;
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Header Entrance
+      // fromTo (not from): explicit end values, so a CSS transition or a
+      // StrictMode re-run can never be captured as the "to" state
       gsap.fromTo(
-        ".experience-header",
-        { y: -25, opacity: 0 },
+        ".exp-head > *",
+        { y: 20, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.6,
+          duration: 0.8,
+          stagger: 0.08,
           ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "restart none restart none",
-          },
+          scrollTrigger: { trigger: sectionRef.current, start: "top 75%", once: true },
         },
       );
 
-      // 2. Central Laser Energy Conduit Scrub
-      if (laserLineRef.current && timelineContainerRef.current) {
+      if (!horizontal) {
         gsap.fromTo(
-          laserLineRef.current,
-          { height: "0%" },
+          ".exp-slide",
+          { y: 30, opacity: 0 },
           {
-            height: "100%",
-            ease: "none",
-            scrollTrigger: {
-              trigger: timelineContainerRef.current,
-              start: "top 75%",
-              end: "bottom 75%",
-              scrub: 0.5,
-            },
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: trackRef.current, start: "top 85%", once: true },
           },
         );
+        return;
       }
 
-      // 3. Staggered Alternating Slide-In for Experience Cards, Nodes & Opposite Telemetry Plates
-      const items = gsap.utils.toArray<HTMLElement>(".experience-timeline-row");
-      items.forEach((item, index) => {
-        const isEven = index % 2 === 0;
-        const card = item.querySelector(".experience-card");
-        const node = item.querySelector(".experience-node");
-        const telemetry = item.querySelector(".experience-telemetry");
+      const track = trackRef.current!;
+      const slides = gsap.utils.toArray<HTMLElement>(".exp-slide", track);
+      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: item,
-            start: "top 85%",
-            toggleActions: "restart none restart none",
+      const setActive = (progress: number) => {
+        const active = Math.round(progress * (slides.length - 1));
+        slides.forEach((s, i) => s.classList.toggle("is-active", i === active));
+        if (counterRef.current) {
+          counterRef.current.textContent = `${String(active + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
+        }
+      };
+      setActive(0);
+
+      const slide = gsap.to(track, {
+        x: () => -distance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: () => `+=${distance()}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (fillRef.current) fillRef.current.style.transform = `scaleX(${self.progress})`;
+            setActive(self.progress);
           },
-        });
+        },
+      });
 
-        // Node pop & ripple
-        if (node) {
-          tl.fromTo(
-            node,
-            { scale: 0.4, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              duration: 0.5,
-              ease: "back.out(1.5)",
-            },
-          );
-        }
-
-        // Card slide from alternating sides (on mobile, slide in from right)
-        if (card) {
-          tl.fromTo(
-            card,
-            {
-              opacity: 0,
-              x: () => {
-                if (window.innerWidth < 768) return 40;
-                return isEven ? -60 : 60;
-              },
-              y: 15,
-            },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              duration: 0.65,
-              ease: "back.out(1.15)",
-            },
-            "-=0.35",
-          );
-        }
-
-        // Opposite side Telemetry Plate clamps in simultaneously
-        if (telemetry) {
-          tl.fromTo(
-            telemetry,
-            {
-              opacity: 0,
-              x: isEven ? 50 : -50,
-              y: 15,
-            },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              duration: 0.65,
-              ease: "back.out(1.15)",
-            },
-            "-=0.55",
-          );
-        }
+      // each role rises in as it slides into view from the right
+      slides.forEach((s) => {
+        gsap.fromTo(
+          s.querySelector(".exp-card"),
+          { y: 40, opacity: 0.2, rotate: 1.5 },
+          {
+            y: 0,
+            opacity: 1,
+            rotate: 0,
+            ease: "none",
+            scrollTrigger: { trigger: s, containerAnimation: slide, start: "left 95%", end: "left 60%", scrub: true },
+          },
+        );
       });
     }, sectionRef);
-
+    ScrollTrigger.refresh();
     return () => ctx.revert();
-  }, []);
-
-  const timelineSpan = `${new Date(experiences[experiences.length - 1].finished_date).getFullYear()} - ${new Date(experiences[0].finished_date).getFullYear()}`;
+  }, [horizontal]);
 
   return (
-    <section
-      id="experience"
-      ref={sectionRef}
-      className="min-h-screen flex items-center justify-center bg-space-white dark:bg-space-black relative py-24 sm:py-28 overflow-hidden transition-colors duration-300"
-    >
-      {/* Background Ambient Elements */}
-      <div className="absolute top-1/3 -left-36 w-80 h-80 bg-nebula-purple/10 dark:bg-starlight-cyan/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/3 -right-36 w-80 h-80 bg-starlight-cyan/10 dark:bg-nebula-purple/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:32px_32px] pointer-events-none opacity-30 dark:opacity-40" />
-
-      <div className="container mx-auto px-4 sm:px-6 max-w-6xl relative z-10">
-        {/* Header Component */}
-        <ExperienceHeader
-          totalCount={experiences.length}
-          timelineSpan={timelineSpan}
-        />
-
-        {/* Central Timeline Container */}
-        <div ref={timelineContainerRef} className="relative max-w-5xl mx-auto">
-          {/* Central Cyber Energy Conduit Line */}
-          {/* Desktop Line (Centered) */}
-          <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
-            <div
-              ref={laserLineRef}
-              className="w-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(6,182,212,0.8)]"
+    // React-owned wrapper: the pin-spacer wraps <section>, so React removes this div
+    <div>
+      <section
+        ref={sectionRef}
+        aria-label="Experience"
+        className={`relative overflow-hidden bg-core-obsidian ${
+          horizontal ? "flex h-screen flex-col justify-center" : "py-24"
+        }`}
+      >
+        <div className="exp-head mx-auto flex w-full max-w-6xl flex-wrap items-end justify-between gap-6 px-6 md:px-12">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">EXPERIENCE</p>
+            <RevealText
+              as="h2"
+              className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-core-ink md:text-6xl"
+              text="Where I've worked"
+              accentWords={["worked"]}
             />
+            <p className="mt-3 max-w-md text-base text-core-mist">
+              Internships, part-time roles and the university events I built for.
+            </p>
           </div>
+          <dl className="flex gap-8 font-mono text-[10px] tracking-[0.2em] text-core-mist">
+            <div>
+              <dt>ROLES</dt>
+              <dd className="mt-1 text-2xl tracking-tight text-core-ink">{experiences.length}</dd>
+            </div>
+            <div>
+              <dt>YEARS</dt>
+              <dd className="mt-1 text-2xl tracking-tight text-core-ink">{SPAN}</dd>
+            </div>
+          </dl>
+        </div>
 
-          {/* Mobile Left-Aligned Rail Line */}
-          <div className="md:hidden absolute left-4 sm:left-6 top-4 bottom-4 w-1 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden pointer-events-none">
-            <div className="w-full h-full bg-gradient-to-b from-starlight-cyan via-nebula-purple to-starlight-blue shadow-[0_0_12px_rgba(6,182,212,0.8)]" />
-          </div>
-
-          {/* Timeline Rows */}
-          <div className="space-y-10 sm:space-y-14 md:space-y-16">
-            {experiences.map((exp, index) => {
-              const isEven = index % 2 === 0;
-
-              return (
-                <div
-                  key={exp.id}
-                  className={`experience-timeline-row relative flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-6 md:gap-10 pl-10 sm:pl-14 md:pl-0 ${
-                    isEven ? "md:flex-row" : "md:flex-row-reverse"
-                  }`}
-                >
-                  {/* Left (or Right) Content Card */}
-                  <div className="w-full md:w-1/2">
-                    <ExperienceCard experience={exp} isEven={isEven} />
-                  </div>
-
-                  {/* Center Node (Absolute position on mobile, flex centered on desktop) */}
-                  <div className="absolute left-0 md:relative md:left-auto md:w-0 flex items-center justify-center -translate-x-1/2 md:translate-x-0 top-3 md:top-auto">
-                    <ExperienceTimelineNode index={index} />
-                  </div>
-
-                  {/* Opposite Telemetry / HUD Milestone Plate on desktop */}
-                  <div className="hidden md:flex w-1/2">
-                    <ExperienceTelemetrySide
-                      experience={exp}
-                      index={index}
-                      isEven={isEven}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+        <div className={`relative mt-12 ${horizontal ? "" : "px-6"}`}>
+          {/* the rail the dots sit on (desktop) */}
+          {horizontal && (
+            <div aria-hidden="true" className="absolute left-0 right-0 top-3 h-px bg-core-graphite">
+              <div ref={fillRef} className="h-px origin-left scale-x-0 bg-gradient-to-r from-core-chrome to-core-icy" />
+            </div>
+          )}
+          <div
+            ref={trackRef}
+            className={
+              horizontal
+                ? "exp-horizontal flex w-max gap-10 pl-[max(3rem,calc((100vw-72rem)/2+3rem))] pr-[20vw]"
+                : "exp-vertical mx-auto flex max-w-xl flex-col gap-12"
+            }
+          >
+            {experiences.map((e, i) => (
+              <ExperienceSlide key={e.id} experience={e} index={i} />
+            ))}
           </div>
         </div>
-      </div>
-    </section>
+
+        {horizontal && (
+          <div className="mx-auto mt-10 flex w-full max-w-6xl items-center gap-4 px-6 font-mono text-[11px] tracking-[0.2em] text-core-mist md:px-12">
+            <span ref={counterRef}>01 / {String(experiences.length).padStart(2, "0")}</span>
+            <span className="text-core-mist/60">SCROLL →</span>
+          </div>
+        )}
+      </section>
+    </div>
   );
 };
 

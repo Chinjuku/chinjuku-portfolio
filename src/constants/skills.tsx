@@ -145,7 +145,9 @@ export const skillCategories: SkillCategory[] = [
       },
       {
         name: "AWS",
-        icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+        // the gh/ path returns 403 for this icon; the npm package works
+        icon: "https://cdn.jsdelivr.net/npm/devicon@2.16.0/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg",
+        darkInvert: true,
       },
       {
         name: "Git",

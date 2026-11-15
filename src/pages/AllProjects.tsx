@@ -1,256 +1,177 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowLeft } from "lucide-react";
 import { all_projects } from "../constants/projects";
 import { RepoModal } from "../components/common/RepoModal";
 import {
-  AllProjectsSpotlight,
-  AllProjectsHeader,
-  AllProjectsTelemetry,
-  AllProjectsFilter,
-  AllProjectsGrid,
+  FeaturedCarousel,
+  KIND_LABELS,
+  ProjectCard,
+  isAi,
+  matchesKind,
+  projectYear,
+  type ProjectKind,
 } from "../components/all-projects";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SORTED = [...all_projects].sort((a, b) => b.finished_date.localeCompare(a.finished_date));
+const YEARS = Array.from(new Set(SORTED.map(projectYear))).sort((a, b) => b - a);
+const STATS = [
+  { label: "PROJECTS", value: SORTED.length },
+  { label: "SINCE", value: Math.min(...YEARS) },
+  { label: "AI PROJECTS", value: SORTED.filter(isAi).length },
+  {
+    label: "TECHNOLOGIES",
+    value: new Set(SORTED.flatMap((p) => p.tech.map((t) => t.toLowerCase()))).size,
+  },
+];
+const KINDS: ProjectKind[] = ["all", "ai", "web", "other"];
+const CAROUSEL_COUNT = 5;
+const CAROUSEL_INTERVAL_MS = 9000;
+
+const chip = (active: boolean) =>
+  `rounded-full px-3.5 py-1.5 text-xs transition-colors ${
+    active
+      ? "bg-core-ink text-core-obsidian"
+      : "border border-white/10 text-core-mist hover:border-white/25 hover:text-core-ink"
+  }`;
+
 const AllProjects: React.FC = () => {
-  const [showRepoModal, setShowRepoModal] = useState(false);
-  const [selectedRepo, setSelectedRepo] = useState<string | string[] | null>(
-    null,
+  const pageRef = useRef<HTMLDivElement>(null);
+  const [year, setYear] = useState<number | "all">("all");
+  const [kind, setKind] = useState<ProjectKind>("all");
+  const [modalRepos, setModalRepos] = useState<string[] | null>(null);
+
+  const filtered = useMemo(
+    () =>
+      SORTED.filter(
+        (p) => (year === "all" || projectYear(p) === year) && matchesKind(p, kind),
+      ),
+    [year, kind],
   );
-  const [selectedYear, setSelectedYear] = useState<string>("All");
+  // unfiltered view: the latest projects rotate in the carousel, the rest fill the grid
+  const showFeatured = year === "all" && kind === "all";
+  const gridProjects = showFeatured ? filtered.slice(CAROUSEL_COUNT) : filtered;
 
-  const introStageRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const lensRingRef = useRef<HTMLDivElement>(null);
-  const hudCueRef = useRef<HTMLDivElement>(null);
-  const allContentRef = useRef<HTMLDivElement>(null);
-  const projectsGridRef = useRef<HTMLDivElement>(null);
-
-  // Get unique years sorted descending, ensuring 2026 is included
-  const years = useMemo(() => {
-    const yearSet = new Set(
-      all_projects.map((p) => new Date(p.finished_date).getFullYear()),
-    );
-    yearSet.add(2026);
-    return Array.from(yearSet).sort((a, b) => b - a);
-  }, []);
-
-  // Compute Project Summary by Year telemetry statistics
-  const yearStats = useMemo(() => {
-    const stats: Record<
-      number,
-      {
-        count: number;
-        techs: Set<string>;
-        liveCount: number;
-        repoCount: number;
-      }
-    > = {};
-
-    // Pre-seed all years including 2026
-    years.forEach((y) => {
-      stats[y] = { count: 0, techs: new Set(), liveCount: 0, repoCount: 0 };
-    });
-
-    all_projects.forEach((p) => {
-      const year = new Date(p.finished_date).getFullYear();
-      if (!stats[year]) {
-        stats[year] = {
-          count: 0,
-          techs: new Set(),
-          liveCount: 0,
-          repoCount: 0,
-        };
-      }
-      stats[year].count += 1;
-      p.tech.forEach((t) => stats[year].techs.add(t));
-      if (p.web_url) stats[year].liveCount += 1;
-      if (Array.isArray(p.repos)) {
-        stats[year].repoCount += p.repos.length;
-      } else if (p.repos) {
-        stats[year].repoCount += 1;
-      }
-    });
-
-    return Object.entries(stats)
-      .map(([yearStr, data]) => ({
-        year: parseInt(yearStr),
-        count: data.count,
-        techs:
-          data.count === 0 ? ["Active", "In Progress"] : Array.from(data.techs),
-        liveCount: data.liveCount,
-        repoCount: data.repoCount,
-      }))
-      .sort((a, b) => b.year - a.year);
-  }, [years]);
-
-  // Filter and sort projects
-  const filteredProjects = useMemo(() => {
-    return all_projects
-      .filter(
-        (project) =>
-          selectedYear === "All" ||
-          new Date(project.finished_date).getFullYear().toString() ===
-            selectedYear,
-      )
-      .sort(
-        (a, b) =>
-          new Date(b.finished_date).getTime() -
-          new Date(a.finished_date).getTime(),
-      );
-  }, [selectedYear]);
-
-  // Handle Year Card selection: update filter and scroll to projects grid
-  const handleYearCardClick = (year: string) => {
-    setSelectedYear(year);
-    if (projectsGridRef.current) {
-      projectsGridRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+  const openRepos = (repos: string | string[]) => {
+    if (Array.isArray(repos)) setModalRepos(repos);
+    else window.open(repos, "_blank", "noopener");
   };
 
-  const handleRepoClick = (repos: string | string[]) => {
-    if (Array.isArray(repos)) {
-      setSelectedRepo(repos);
-      setShowRepoModal(true);
-    } else {
-      window.open(repos, "_blank");
-    }
-  };
-
-  // Stage 1: The "Lens Flare" Spotlight Mask Scroll Sequence at the very top ("scroll แรกสุด")
+  // header entrance (once)
   useEffect(() => {
-    // Ensure starting from top on mount
-    window.scrollTo(0, 0);
-
     const ctx = gsap.context(() => {
-      const maskData = { r: 0 };
-
-      gsap.to(maskData, {
-        r: 150,
-        ease: "none",
-        scrollTrigger: {
-          trigger: introStageRef.current,
-          start: "top top",
-          end: "+=600",
-          pin: true,
-          scrub: 0.5,
-          onUpdate: (self) => {
-            const r = self.progress * 150;
-
-            if (overlayRef.current) {
-              if (r >= 145) {
-                overlayRef.current.style.opacity = "0";
-                overlayRef.current.style.visibility = "hidden";
-                overlayRef.current.style.pointerEvents = "none";
-              } else {
-                overlayRef.current.style.opacity = "1";
-                overlayRef.current.style.visibility = "visible";
-                overlayRef.current.style.maskImage = `radial-gradient(circle at 50% 50%, transparent ${r}%, black calc(${r}% + 1px))`;
-                overlayRef.current.style.webkitMaskImage = `radial-gradient(circle at 50% 50%, transparent ${r}%, black calc(${r}% + 1px))`;
-              }
-            }
-
-            if (lensRingRef.current) {
-              if (r <= 0.5 || r >= 142) {
-                lensRingRef.current.style.opacity = "0";
-              } else {
-                lensRingRef.current.style.width = `${r * 2.2}vmax`;
-                lensRingRef.current.style.height = `${r * 2.2}vmax`;
-                const ringOpacity =
-                  r > 80 ? Math.max(0, 1 - (r - 80) / 35) : Math.min(1, r / 12);
-                lensRingRef.current.style.opacity = `${ringOpacity}`;
-              }
-            }
-
-            if (hudCueRef.current) {
-              const textOpacity = Math.max(0, 1 - self.progress * 3.5);
-              hudCueRef.current.style.opacity = `${textOpacity}`;
-              hudCueRef.current.style.pointerEvents =
-                textOpacity > 0.05 ? "auto" : "none";
-            }
-          },
-        },
-      });
-    }, introStageRef);
-
+      gsap.from(".ap-head > *", { y: 28, opacity: 0, duration: 0.9, stagger: 0.08, ease: "power3.out" });
+    }, pageRef);
     return () => ctx.revert();
   }, []);
 
-  // Refresh ScrollTrigger when filtered project list length changes
+  // cards rise in as they enter; re-run whenever the filter changes the set
   useEffect(() => {
-    ScrollTrigger.refresh();
-  }, [filteredProjects]);
-
-  // Quick skip helper to jump past the initial spotlight stage directly into AllProject content
-  const bypassSpotlight = () => {
-    if (allContentRef.current) {
-      allContentRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
+    const ctx = gsap.context(() => {
+      gsap.set(".ap-card", { y: 32, opacity: 0 });
+      ScrollTrigger.batch(".ap-card", {
+        start: "top 92%",
+        once: true,
+        onEnter: (els) =>
+          gsap.to(els, { y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: "power3.out" }),
       });
-    }
-  };
+    }, pageRef);
+    ScrollTrigger.refresh();
+    return () => ctx.revert();
+  }, [filtered]);
 
   return (
-    <div className="relative w-full min-h-screen overflow-x-hidden bg-space-white dark:bg-space-black text-slate-900 dark:text-white transition-colors duration-300">
-      {/* Ambient Background Glow for Light and Dark Modes */}
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-40 dark:opacity-25 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.12),_transparent_55%),radial-gradient(circle_at_bottom_right,_rgba(6,182,212,0.1),_transparent_50%)]" />
+    <div ref={pageRef} className="min-h-screen bg-core-obsidian px-6 pb-32 pt-32 text-core-ink md:px-12">
+      <div className="mx-auto max-w-7xl">
+        <header className="ap-head">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-core-mist transition-colors hover:text-core-ink"
+          >
+            <ArrowLeft className="h-4 w-4" /> Home
+          </Link>
+          <p className="mt-10 font-mono text-[11px] tracking-[0.3em] text-core-icy">ALL PROJECTS</p>
+          <h1 className="mt-4 max-w-4xl text-5xl font-semibold leading-[0.98] tracking-[-0.04em] md:text-7xl lg:text-8xl">
+            Everything I&apos;ve built.
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-core-mist md:text-lg">
+            Full-stack products, AI features, tools and experiments, from university projects to
+            production apps.
+          </p>
+          <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-core-graphite pt-6 md:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <dt className="font-mono text-[10px] tracking-[0.2em] text-core-mist">{s.label}</dt>
+                <dd className="mt-1 text-3xl font-semibold tracking-tight">{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </header>
 
-      {/* 1. INITIAL SCROLL STAGE ("scroll แรกสุด") */}
-      <AllProjectsSpotlight
-        introStageRef={introStageRef}
-        overlayRef={overlayRef}
-        lensRingRef={lensRingRef}
-        hudCueRef={hudCueRef}
-        totalProjects={all_projects.length}
-        years={years}
-        onBypass={bypassSpotlight}
-      />
+        {/* filters */}
+        <div className="z-30 mt-14 md:sticky md:top-24 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-core-obsidian/80 p-3 backdrop-blur-xl">
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by type">
+            {KINDS.map((k) => (
+              <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={chip(kind === k)}>
+                {KIND_LABELS[k]}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by year">
+            <button type="button" aria-pressed={year === "all"} onClick={() => setYear("all")} className={chip(year === "all")}>
+              Any year
+            </button>
+            {YEARS.map((y) => (
+              <button key={y} type="button" aria-pressed={year === y} onClick={() => setYear(y)} className={chip(year === y)}>
+                {y}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* 2. ALL PROJECT CONTENT */}
-      <div
-        ref={allContentRef}
-        className="container mx-auto px-6 py-20 max-w-7xl relative z-10"
-      >
-        <AllProjectsHeader
-          totalProjects={all_projects.length}
-          years={years}
-        />
+        <p className="mt-6 font-mono text-[11px] tracking-[0.2em] text-core-mist" aria-live="polite">
+          {String(filtered.length).padStart(2, "0")} RESULT{filtered.length === 1 ? "" : "S"}
+        </p>
 
-        <AllProjectsTelemetry
-          selectedYear={selectedYear}
-          years={years}
-          yearStats={yearStats}
-          totalProjects={all_projects.length}
-          onSelectYear={handleYearCardClick}
-        />
-
-        <AllProjectsFilter
-          selectedYear={selectedYear}
-          years={years}
-          allProjects={all_projects}
-          filteredCount={filteredProjects.length}
-          onSelectYear={setSelectedYear}
-          projectsGridRef={projectsGridRef}
-        />
-
-        <AllProjectsGrid
-          filteredProjects={filteredProjects}
-          selectedYear={selectedYear}
-          onRepoClick={handleRepoClick}
-        />
+        {filtered.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-dashed border-white/10 p-16 text-center">
+            <p className="text-core-mist">No projects match these filters.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setKind("all");
+                setYear("all");
+              }}
+              className="mt-4 text-sm text-core-icy hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        ) : (
+          <>
+            {showFeatured && (
+              <div className="mt-6">
+                <FeaturedCarousel
+                  projects={filtered.slice(0, CAROUSEL_COUNT)}
+                  onRepos={openRepos}
+                  interval={CAROUSEL_INTERVAL_MS}
+                />
+              </div>
+            )}
+            <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {gridProjects.map((p) => (
+                <ProjectCard key={p.id} project={p} onRepos={openRepos} />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Shared Repository Modal */}
-      <RepoModal
-        isOpen={showRepoModal}
-        repos={selectedRepo}
-        onClose={() => setShowRepoModal(false)}
-      />
+      <RepoModal isOpen={modalRepos !== null} repos={modalRepos} onClose={() => setModalRepos(null)} />
     </div>
   );
 };

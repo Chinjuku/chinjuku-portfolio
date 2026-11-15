@@ -5,85 +5,52 @@ interface SkillsPillarsProps {
   categories: SkillCategory[];
 }
 
-export const SkillsPillars: React.FC<SkillsPillarsProps> = ({ categories }) => {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 max-w-6xl mx-auto">
-      {categories.map((category) => {
-        const accentBorder = {
-          cyan: "hover:border-starlight-cyan/60 group-hover:shadow-starlight-cyan/10",
-          purple:
-            "hover:border-nebula-purple/60 group-hover:shadow-nebula-purple/10",
-          pink: "hover:border-pink-500/60 group-hover:shadow-pink-500/10",
-          blue: "hover:border-starlight-blue/60 group-hover:shadow-starlight-blue/10",
-        }[category.accent];
-
-        const accentBadge = {
-          cyan: "border-starlight-cyan/30 text-starlight-cyan bg-starlight-cyan/10",
-          purple:
-            "border-nebula-purple/30 text-nebula-purple bg-nebula-purple/10",
-          pink: "border-pink-500/30 text-pink-500 bg-pink-500/10",
-          blue: "border-starlight-blue/30 text-starlight-blue bg-starlight-blue/10",
-        }[category.accent];
-
-        const accentGlow = {
-          cyan: "from-starlight-cyan/20 to-transparent",
-          purple: "from-nebula-purple/20 to-transparent",
-          pink: "from-pink-500/20 to-transparent",
-          blue: "from-starlight-blue/20 to-transparent",
-        }[category.accent];
-
-        return (
-          <div
-            key={category.id}
-            className={`skills-pillar-card group relative rounded-2xl bg-white/70 dark:bg-space-dark/80 backdrop-blur-md border border-gray-200/80 dark:border-white/10 p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${accentBorder} flex flex-col justify-between`}
-          >
-            {/* Top Accent Gradient Line */}
-            <div
-              className={`absolute top-0 left-6 right-6 h-[2px] bg-gradient-to-r ${accentGlow} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-            />
-
-            <div>
-              {/* Card Header */}
-              <div className="flex items-center justify-between mb-3.5">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200/80 dark:border-white/10 flex items-center justify-center shrink-0 shadow-inner">
-                  {category.icon}
-                </div>
+/**
+ * The stack as a quiet table: one row per category, logos only.
+ * Names show on hover/focus (and stay readable to screen readers).
+ */
+export const SkillsPillars: React.FC<SkillsPillarsProps> = ({ categories }) => (
+  <dl className="mx-auto max-w-5xl border-t border-core-graphite">
+    {categories.map((category) => (
+      <div
+        key={category.id}
+        className="skills-row group grid grid-cols-1 items-center gap-4 border-b border-core-graphite py-5 transition-colors hover:bg-white/[0.015] md:grid-cols-[16rem_1fr] md:gap-8"
+      >
+        <dt className="flex items-baseline gap-3">
+          <span className="text-base font-medium text-core-ink transition-colors group-hover:text-core-icy">
+            {category.title.replace(" & ", " and ")}
+          </span>
+          <span className="font-mono text-[10px] tracking-[0.2em] text-core-mist">
+            {String(category.skills.length).padStart(2, "0")}
+          </span>
+        </dt>
+        <dd>
+          <ul className="flex flex-wrap gap-2">
+            {category.skills.map((skill) => (
+              <li key={skill.name} className="skills-logo group/logo relative">
                 <span
-                  className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${accentBadge}`}
-                >
-                  {String(category.skills.length).padStart(2, "0")} NODES
-                </span>
-              </div>
-
-              {/* Title & Tagline */}
-              <h4 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white font-mono tracking-tight mb-1 group-hover:text-nebula-purple dark:group-hover:text-starlight-cyan transition-colors">
-                {category.title}
-              </h4>
-              <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mb-4 leading-relaxed">
-                {category.tagline}
-              </p>
-            </div>
-
-            {/* Skills Chips */}
-            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-gray-200/60 dark:border-white/5">
-              {category.skills.map((skill) => (
-                <span
-                  key={skill.name}
-                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-mono font-medium bg-gray-100/90 dark:bg-white/5 border border-gray-200/80 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:border-nebula-purple/40 dark:hover:border-starlight-cyan/40 hover:text-nebula-purple dark:hover:text-starlight-cyan transition-colors"
+                  tabIndex={0}
+                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.02] outline-none transition-all duration-300 hover:-translate-y-0.5 hover:border-core-icy/40 hover:bg-white/[0.05] focus-visible:border-core-icy/60"
                 >
                   <img
                     src={skill.icon}
                     alt={skill.name}
-                    className={`w-3 h-3 object-contain shrink-0 ${skill.darkInvert ? "dark:invert" : ""}`}
                     loading="lazy"
+                    className={`h-5 w-5 object-contain ${skill.darkInvert ? "invert" : ""}`}
                   />
-                  <span>{skill.name}</span>
                 </span>
-              ))}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+                {/* name tooltip */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-white/10 bg-core-obsidian px-2 py-1 font-mono text-[10px] text-core-chrome opacity-0 transition-opacity group-focus-within/logo:opacity-100 group-hover/logo:opacity-100"
+                >
+                  {skill.name}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </div>
+    ))}
+  </dl>
+);

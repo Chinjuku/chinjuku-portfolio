@@ -8,11 +8,13 @@ import {
   SkillsTelemetryDivider,
   SkillsPillars,
 } from "./skills/index";
+import { useScrollVelocityMarquee } from "./motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Skills: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  useScrollVelocityMarquee(sectionRef, ".skills-marquee-row");
 
   // GSAP ScrollTrigger Component Animations (restarts cleanly every time you scroll into view)
   useEffect(() => {
@@ -45,9 +47,9 @@ const Skills: React.FC = () => {
           { scaleX: 1, opacity: 1, duration: 0.45, ease: "power2.out" },
           "-=0.3",
         )
-        // 4. 4 Architectural Pillar Cards (Staggered spring)
+        // 4. stack rows, then their logos pop in one after another
         .fromTo(
-          ".skills-pillar-card",
+          ".skills-row",
           { y: 35, opacity: 0, scale: 0.95 },
           {
             y: 0,
@@ -58,7 +60,26 @@ const Skills: React.FC = () => {
             ease: "back.out(1.2)",
           },
           "-=0.2",
+        )
+        .fromTo(
+          ".skills-logo",
+          { scale: 0.6, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.35, stagger: 0.015, ease: "back.out(2)", clearProps: "transform" },
+          "-=0.35",
         );
+
+      // the background word drifts against the scroll
+      gsap.fromTo(
+        ".skills-bg-word",
+        // centered behind the section; only a gentle drift with scroll
+        { yPercent: -42, xPercent: -50 },
+        {
+          yPercent: -58,
+          xPercent: -50,
+          ease: "none",
+          scrollTrigger: { trigger: sectionRef.current, start: "top bottom", end: "bottom top", scrub: true },
+        },
+      );
     }, sectionRef);
 
     return () => ctx.revert();
@@ -79,6 +100,14 @@ const Skills: React.FC = () => {
       ref={sectionRef}
       className="min-h-screen flex flex-col justify-center bg-space-white dark:bg-space-dark relative overflow-hidden py-16 sm:py-20 md:py-28 transition-colors duration-300"
     >
+      {/* giant parallax word behind the content */}
+      <div
+        aria-hidden="true"
+        className="skills-bg-word pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap text-[22vw] font-semibold leading-none tracking-[-0.06em] text-white/[0.025]"
+      >
+        STACK
+      </div>
+
       {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 

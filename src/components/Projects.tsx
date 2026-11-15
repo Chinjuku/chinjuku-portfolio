@@ -1,341 +1,276 @@
-import React, { useRef, useLayoutEffect, useEffect, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { projects } from "../constants/projects";
+import { ArrowUpRight, Github } from "lucide-react";
+import { projects, type Project } from "../constants/projects";
 import { RepoModal } from "./common/RepoModal";
-import {
-  ProjectCardStack,
-  ProjectFooterControls,
-  ProjectObservatory,
-} from "./projects/index";
+import { useIsMobile, useReducedMotion } from "./hero/core/hooks";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const year = (p: Project) => p.finished_date.slice(0, 4);
+const pad = (n: number) => String(n).padStart(2, "0");
+
+interface ProjectActionsProps {
+  project: Project;
+  onRepos: (repos: string | string[]) => void;
+}
+
+const ProjectActions: React.FC<ProjectActionsProps> = ({ project, onRepos }) => (
+  <div className="flex flex-wrap gap-3">
+    {project.web_url && (
+      <a
+        href={project.web_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 rounded-full bg-core-chrome px-5 py-2.5 text-sm font-medium text-core-obsidian transition-colors hover:bg-core-ink"
+      >
+        Live demo <ArrowUpRight className="h-4 w-4" />
+      </a>
+    )}
+    <button
+      type="button"
+      onClick={() => onRepos(project.repos)}
+      className="inline-flex items-center gap-2 rounded-full border border-core-graphite px-5 py-2.5 text-sm font-medium text-core-ink transition-colors hover:border-core-mist"
+    >
+      <Github className="h-4 w-4" /> Source
+    </button>
+  </div>
+);
+
+const ProjectMeta: React.FC<{ project: Project }> = ({ project }) => (
+  <>
+    <p className="font-mono text-[11px] tracking-[0.2em] text-core-mist">
+      {project.role.toUpperCase()} · {year(project)}
+    </p>
+    <p className="mt-4 text-base leading-relaxed text-core-mist">{project.description}</p>
+    <ul className="mt-5 flex flex-wrap gap-1.5">
+      {project.tech.map((t) => (
+        <li
+          key={t}
+          className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[11px] text-core-chrome"
+        >
+          {t}
+        </li>
+      ))}
+    </ul>
+  </>
+);
+
+/**
+ * "Selected Work": desktop pins the section and steps through the featured
+ * projects with scroll (titles on the left, media + details on the right).
+ * Mobile and reduced motion get a simple stacked list.
+ */
 const Projects: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const orbitRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [showRepoModal, setShowRepoModal] = useState(false);
-  const [selectedRepos, setSelectedRepos] = useState<string | string[] | null>(
-    null,
-  );
+  const sectionRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<ScrollTrigger | null>(null);
+  const [active, setActive] = useState(0);
+  const [modalRepos, setModalRepos] = useState<string[] | null>(null);
+  const isMobile = useIsMobile();
+  const reduced = useReducedMotion();
+  const stacked = isMobile || reduced;
 
-  // Responsive window width tracking
-  const [windowWidth, setWindowWidth] = useState<number>(() =>
-    typeof window !== "undefined" ? window.innerWidth : 1200,
-  );
+  const openRepos = (repos: string | string[]) => {
+    if (Array.isArray(repos)) setModalRepos(repos);
+    else window.open(repos, "_blank", "noopener");
+  };
 
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const scrollTriggerInstanceRef = useRef<ScrollTrigger | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const touchStartYRef = useRef(0);
-  const touchCurrentYRef = useRef(0);
-
-  // Resize listener for fluid responsive orbit geometry
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    if (stacked) return;
+    const ctx = gsap.context(() => {
+      gsap.from(".work-head > *", {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 75%" },
+      });
 
-  const handleRepoClick = (repos: string | string[]) => {
-    setSelectedRepos(repos);
-    if (Array.isArray(repos)) {
-      setShowRepoModal(true);
-    } else {
-      window.open(repos, "_blank");
-    }
+      triggerRef.current = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: `+=${(projects.length - 1) * 80}%`,
+        pin: true,
+        snap: {
+          snapTo: 1 / (projects.length - 1),
+          inertia: false,
+          duration: { min: 0.2, max: 0.5 },
+          ease: "power2.inOut",
+        },
+        onUpdate: (self) => {
+          const next = Math.round(self.progress * (projects.length - 1));
+          setActive((prev) => (prev === next ? prev : next));
+        },
+      });
+    }, sectionRef);
+    ScrollTrigger.refresh();
+    return () => {
+      triggerRef.current = null;
+      ctx.revert();
+    };
+  }, [stacked]);
+
+  // crossfade + slow push-in on the media when the active project changes
+  useEffect(() => {
+    if (stacked) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".work-media-active",
+        { opacity: 0, scale: 1.06 },
+        { opacity: 1, scale: 1, duration: 0.9, ease: "power3.out" },
+      );
+      gsap.fromTo(
+        ".work-detail > *",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: "power3.out" },
+      );
+    }, sectionRef);
+    return () => ctx.revert();
+  }, [active, stacked]);
+
+  const goTo = (i: number) => {
+    const st = triggerRef.current;
+    if (!st) return;
+    window.scrollTo({
+      top: st.start + ((st.end - st.start) * i) / (projects.length - 1),
+      behavior: "smooth",
+    });
   };
 
-  // Smooth programmatic scroll to a project step
-  const scrollToProject = useCallback((targetIndex: number) => {
-    const totalProjects = projects.length;
-    const clampedIndex = Math.min(Math.max(targetIndex, 0), totalProjects - 1);
-    const st = scrollTriggerInstanceRef.current;
-    if (st) {
-      const progressTarget = clampedIndex / (totalProjects - 1);
-      const targetScroll = st.start + progressTarget * (st.end - st.start);
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
-    } else {
-      setActiveIndex(clampedIndex);
-    }
-  }, []);
-
-  // Swap trigger button & swipe handler
-  const triggerSwap = useCallback(
-    (direction: "up" | "down" = "up") => {
-      const totalProjects = projects.length;
-      const nextIndex =
-        direction === "up"
-          ? (activeIndex + 1) % totalProjects
-          : (activeIndex - 1 + totalProjects) % totalProjects;
-      scrollToProject(nextIndex);
-    },
-    [activeIndex, scrollToProject],
+  const header = (
+    <div className="work-head flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">SELECTED WORK</p>
+        <h2 className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-core-ink md:text-6xl">
+          Products, shipped.
+        </h2>
+      </div>
+      <Link
+        to="/projects"
+        className="inline-flex items-center gap-1.5 text-sm text-core-mist transition-colors hover:text-core-ink"
+      >
+        All projects <ArrowUpRight className="h-4 w-4" />
+      </Link>
+    </div>
   );
 
-  // Touch gesture handlers for mobile swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartYRef.current = e.touches[0].clientY;
-    touchCurrentYRef.current = e.touches[0].clientY;
-    setIsDragging(true);
-  };
+  const modal = (
+    <RepoModal isOpen={modalRepos !== null} repos={modalRepos} onClose={() => setModalRepos(null)} />
+  );
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    touchCurrentYRef.current = e.touches[0].clientY;
-  };
+  if (stacked) {
+    return (
+      <section className="bg-core-obsidian px-6 py-24 md:px-12">
+        {header}
+        <div className="mt-12 space-y-14">
+          {projects.map((p, i) => (
+            <article key={p.id}>
+              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10">
+                <img src={p.image} alt="" loading="lazy" className="h-full w-full object-cover opacity-80 saturate-[0.7]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-core-obsidian/80 to-transparent" />
+                <span className="absolute left-4 top-4 font-mono text-[11px] tracking-[0.2em] text-core-ink">
+                  {pad(i + 1)} / {pad(projects.length)}
+                </span>
+              </div>
+              <h3 className="mt-6 text-3xl font-semibold tracking-tight text-core-ink">{p.title}</h3>
+              <div className="mt-3">
+                <ProjectMeta project={p} />
+              </div>
+              <div className="mt-6">
+                <ProjectActions project={p} onRepos={openRepos} />
+              </div>
+            </article>
+          ))}
+        </div>
+        {modal}
+      </section>
+    );
+  }
 
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    const diff = touchCurrentYRef.current - touchStartYRef.current;
-    if (diff < -35) {
-      triggerSwap("up");
-    } else if (diff > 35) {
-      triggerSwap("down");
-    }
-  };
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const totalProjects = projects.length;
-      const totalOrbitRotation = (totalProjects - 1) * (360 / totalProjects);
-
-      // Set initial card states with depth and subtle drop shadow
-      cardsRef.current.forEach((card, idx) => {
-        if (!card) return;
-        if (idx === 0) {
-          gsap.set(card, { y: 0, scale: 1, opacity: 1, zIndex: 30 });
-        } else if (idx === 1) {
-          gsap.set(card, { y: 22, scale: 0.96, opacity: 0.88, zIndex: 20 });
-        } else if (idx === 2) {
-          gsap.set(card, { y: 44, scale: 0.92, opacity: 0.65, zIndex: 10 });
-        } else {
-          gsap.set(card, { y: 66, scale: 0.88, opacity: 0, zIndex: 5 });
-        }
-      });
-
-      // Unified Master Timeline pinned to scroll
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=3600",
-          pin: true,
-          scrub: 1,
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const index = Math.round(progress * (totalProjects - 1));
-            setActiveIndex(Math.min(Math.max(index, 0), totalProjects - 1));
-          },
-        },
-      });
-
-      scrollTriggerInstanceRef.current = tl.scrollTrigger ?? null;
-
-      // 1. Synchronized Orbit Rotation matching scroll
-      tl.to(
-        orbitRef.current,
-        {
-          rotation: totalOrbitRotation,
-          ease: "none",
-          duration: totalProjects - 1,
-        },
-        0,
-      );
-
-      // 2. Synchronized Card Swapping per project step
-      for (let i = 0; i < totalProjects - 1; i++) {
-        const stepStartTime = i;
-
-        // Active card i lifts smoothly upwards and out of view
-        const currentCard = cardsRef.current[i];
-        if (currentCard) {
-          tl.to(
-            currentCard,
-            {
-              y: "-130%",
-              rotation: -2.5,
-              opacity: 0,
-              ease: "power1.inOut",
-              duration: 0.85,
-            },
-            stepStartTime + 0.08,
-          );
-        }
-
-        // Next card i+1 steps up into front active position (y: 0, scale 1, opacity 1)
-        const nextCard = cardsRef.current[i + 1];
-        if (nextCard) {
-          tl.to(
-            nextCard,
-            {
-              y: 0,
-              scale: 1,
-              opacity: 1,
-              zIndex: 30,
-              ease: "power1.inOut",
-              duration: 0.85,
-            },
-            stepStartTime + 0.08,
-          );
-        }
-
-        // Card i+2 steps up into middle peek position (22px, scale 0.96, opacity 0.88)
-        if (i + 2 < totalProjects) {
-          const card2 = cardsRef.current[i + 2];
-          if (card2) {
-            tl.to(
-              card2,
-              {
-                y: 22,
-                scale: 0.96,
-                opacity: 0.88,
-                zIndex: 20,
-                ease: "power1.inOut",
-                duration: 0.85,
-              },
-              stepStartTime + 0.08,
-            );
-          }
-        }
-
-        // Card i+3 steps up into back deck position (44px, scale 0.92, opacity 0.65)
-        if (i + 3 < totalProjects) {
-          const card3 = cardsRef.current[i + 3];
-          if (card3) {
-            tl.to(
-              card3,
-              {
-                y: 44,
-                scale: 0.92,
-                opacity: 0.65,
-                zIndex: 10,
-                ease: "power1.inOut",
-                duration: 0.85,
-              },
-              stepStartTime + 0.08,
-            );
-          }
-        }
-      }
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  // Calculate dynamic responsive radius matching the orbit element width
-  const getPlanetRadius = useCallback(() => {
-    if (windowWidth >= 1280) return 440; // xl (orbit ~880px)
-    if (windowWidth >= 1024) return 360; // lg (orbit ~720px)
-    if (windowWidth >= 768) return 210; // md (orbit ~420px)
-    if (windowWidth >= 640) return 160; // sm (orbit ~320px)
-    return 130; // mobile (< 640px, orbit ~260px)
-  }, [windowWidth]);
-
-  // Calculate position for each planet along the circular track
-  const getPlanetStyle = (index: number) => {
-    const total = projects.length;
-    // Planet 0 starts at 180deg (9 o'clock), each next is 90deg counter-clockwise
-    const offsetAngle = 180 - index * (360 / total);
-    const radius = getPlanetRadius();
-
-    return {
-      transform: `rotate(${offsetAngle}deg) translate(${radius}px) rotate(-${offsetAngle}deg)`,
-    };
-  };
-
-  const activeProject = projects[activeIndex];
+  const current = projects[active];
 
   return (
-    <section
-      ref={containerRef}
-      className="relative h-screen w-full bg-space-white dark:bg-space-black overflow-hidden flex items-center transition-colors duration-300"
-    >
-      {/* Background Ambient Elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-nebula-purple/5 via-transparent to-transparent pointer-events-none" />
+    // React-owned wrapper so the pin-spacer never confuses React on unmount
+    <div>
+      <section
+        ref={sectionRef}
+        className="relative flex h-screen flex-col overflow-hidden bg-core-obsidian px-12 pb-12 pt-28"
+      >
+        {header}
 
-      <div className="container mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-12 items-center relative z-10 h-full pt-20 sm:pt-28 md:pt-36 lg:pt-0">
-        {/* Left Side: Modern Vertical Card-Stack Swap UI Component */}
-        <div className="flex flex-col justify-center h-full order-2 lg:order-1 relative z-20 w-full max-w-xl mx-auto lg:mx-0">
-          {/* Header telemetry info */}
-          <div className="flex items-center justify-between gap-3 mb-2 sm:mb-3 px-1">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-starlight-cyan animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-              <span className="sci-fi-subheading tracking-wider text-[11px] sm:text-xs">
-                MISSION LOG // CARD STACK
+        <div className="mt-10 grid flex-1 grid-cols-12 gap-10 overflow-hidden">
+          {/* project index */}
+          <nav aria-label="Featured projects" className="col-span-4 flex flex-col justify-center gap-2">
+            {projects.map((p, i) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-current={i === active ? "true" : undefined}
+                className="group flex items-baseline gap-4 py-2 text-left"
+              >
+                <span
+                  className={`font-mono text-[11px] tracking-[0.2em] transition-colors ${
+                    i === active ? "text-core-icy" : "text-core-mist/60"
+                  }`}
+                >
+                  {pad(i + 1)}
+                </span>
+                <span
+                  className={`text-3xl font-semibold tracking-[-0.02em] transition-all duration-500 xl:text-4xl ${
+                    i === active
+                      ? "translate-x-1 text-core-ink"
+                      : "text-core-ink/25 group-hover:text-core-ink/50"
+                  }`}
+                >
+                  {p.title}
+                </span>
+              </button>
+            ))}
+            <div className="mt-6 h-px w-full bg-core-graphite">
+              <div
+                className="h-px bg-core-icy transition-[width] duration-500"
+                style={{ width: `${((active + 1) / projects.length) * 100}%` }}
+              />
+            </div>
+          </nav>
+
+          {/* media + details */}
+          <div className="col-span-8 grid grid-cols-8 gap-8 overflow-hidden">
+            <div className="relative col-span-5 overflow-hidden rounded-2xl border border-white/10">
+              {projects.map((p, i) => (
+                <img
+                  key={p.id}
+                  src={p.image}
+                  alt={i === active ? `${p.title} preview` : ""}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  className={`absolute inset-0 h-full w-full object-cover ${
+                    i === active ? "work-media-active opacity-90 saturate-[0.7]" : "opacity-0"
+                  }`}
+                />
+              ))}
+              <div className="absolute inset-0 bg-gradient-to-tr from-core-obsidian/70 via-transparent to-transparent" />
+              <span className="absolute bottom-5 left-5 font-mono text-[11px] tracking-[0.2em] text-core-ink">
+                {pad(active + 1)} / {pad(projects.length)}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 font-mono text-xs text-gray-500 dark:text-gray-400">
-              <span className="text-nebula-purple dark:text-starlight-cyan font-bold">
-                0{activeIndex + 1}
-              </span>
-              <span>/</span>
-              <span>0{projects.length}</span>
+            <div key={current.id} className="work-detail col-span-3 flex flex-col justify-center">
+              <h3 className="text-2xl font-semibold tracking-tight text-core-ink">{current.title}</h3>
+              <div className="mt-3">
+                <ProjectMeta project={current} />
+              </div>
+              <div className="mt-8">
+                <ProjectActions project={current} onRepos={openRepos} />
+              </div>
             </div>
           </div>
-
-          {/* Vertical Card Stack Container */}
-          <ProjectCardStack
-            activeIndex={activeIndex}
-            projects={projects}
-            cardsRef={cardsRef}
-            onCardClick={scrollToProject}
-            onSwap={triggerSwap}
-            onRepoClick={handleRepoClick}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          />
-
-          {/* Bottom Deck Controls & Footer */}
-          <ProjectFooterControls
-            totalProjects={projects.length}
-            activeIndex={activeIndex}
-            onScrollToProject={scrollToProject}
-          />
         </div>
-
-        {/* Right Side: Tactical Radar Observatory */}
-        <ProjectObservatory
-          activeProject={activeProject}
-          activeIndex={activeIndex}
-          projects={projects}
-          orbitRef={orbitRef}
-          getPlanetStyle={getPlanetStyle}
-          onScrollToProject={scrollToProject}
-          onRepoClick={handleRepoClick}
-        />
-      </div>
-
-      {/* Scroll Progress Indicator */}
-      <div className="absolute bottom-10 right-6 sm:right-10 flex flex-col gap-2 z-20">
-        {projects.map((_, idx) => (
-          <button
-            key={idx}
-            type="button"
-            onClick={() => scrollToProject(idx)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
-              idx === activeIndex
-                ? "bg-starlight-cyan scale-150 shadow-[0_0_8px_rgba(6,182,212,0.8)]"
-                : "bg-gray-300 dark:bg-white/20 hover:bg-gray-400 dark:hover:bg-white/40"
-            }`}
-            aria-label={`Scroll indicator project ${idx + 1}`}
-          />
-        ))}
-      </div>
-
-      {/* Repository Modal */}
-      <RepoModal
-        isOpen={showRepoModal}
-        repos={selectedRepos}
-        onClose={() => setShowRepoModal(false)}
-      />
-    </section>
+      </section>
+      {modal}
+    </div>
   );
 };
 
