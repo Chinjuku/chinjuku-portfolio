@@ -1,7 +1,9 @@
 export const HERO_COPY = {
-  eyebrow: "FULL-STACK × AI DEVELOPER",
-  title: "Building ideas into intelligent systems.",
-  sub: "I design and build modern web applications, full-stack systems and AI-powered experiences.",
+  eyebrow: "FULL-STACK × AI DEVELOPER · BANGKOK",
+  title: "From schema to screen.",
+  /** deliberate line break for the display headline */
+  titleLines: ["From schema", "to screen."],
+  sub: "Hi, I'm Chinatip (Chinjuku). I build web apps end to end and add AI where it earns its place, like Gemini OCR in TripFlow and ML forecasting in FinTax.",
   ctaProjects: { label: "View Projects", href: "/projects" },
   ctaAbout: { label: "About Me", href: "#about" },
   explore: "Explore the work →",

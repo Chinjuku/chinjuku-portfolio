@@ -24,8 +24,8 @@ const computeQuality = (): Quality => {
   const isLow =
     window.innerWidth < 768 || (navigator.hardwareConcurrency ?? 8) <= 4;
   return isLow
-    ? { dpr: 1.25, transmissionRes: 256, samples: 3, isLow }
-    : { dpr: 1.75, transmissionRes: 384, samples: 4, isLow };
+    ? { dpr: 1.5, transmissionRes: 256, samples: 3, isLow }
+    : { dpr: 2, transmissionRes: 384, samples: 4, isLow };
 };
 
 export const useQuality = (): Quality => {

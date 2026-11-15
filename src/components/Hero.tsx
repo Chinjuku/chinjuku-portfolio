@@ -144,10 +144,17 @@ const Hero: React.FC = () => {
             <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">
               {HERO_COPY.eyebrow}
             </p>
-            <h1 className="mt-6 text-[clamp(44px,6vw,104px)] font-semibold leading-[0.98] tracking-[-0.035em] text-core-ink">
-              {HERO_COPY.title}
+            <h1
+              aria-label={HERO_COPY.title}
+              className="mt-6 text-[clamp(48px,6.4vw,116px)] font-semibold leading-[0.95] tracking-[-0.045em] text-core-ink"
+            >
+              {HERO_COPY.titleLines.map((line) => (
+                <span key={line} aria-hidden="true" className="block whitespace-nowrap">
+                  {line}
+                </span>
+              ))}
             </h1>
-            <p className="mt-6 max-w-[34ch] text-base leading-relaxed text-core-mist md:text-lg">
+            <p className="mt-6 max-w-[40ch] text-base leading-relaxed text-core-mist md:text-lg">
               {HERO_COPY.sub}
             </p>
             <HeroCtas className="mt-10" />
@@ -165,9 +172,8 @@ const Hero: React.FC = () => {
               >
                 <HeroCoreScene
                   state={state}
-                  // desktop canvas bleeds 12% past its box so the fly-in isn't
-                  // clipped; 0.5 at 1.24× height keeps the Core's on-screen size
-                  scale={isMobile ? 0.8 : 0.5}
+                  // desktop canvas bleeds 12% past its box so the fly-in isn't clipped
+                  scale={isMobile ? 0.8 : 0.6}
                   offsetX={isMobile ? 0 : 0.55}
                   activeLayer={activeLayer}
                   onSelectLayer={toggle}

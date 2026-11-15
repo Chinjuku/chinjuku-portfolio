@@ -1,16 +1,21 @@
 /**
- * TEMPORARY PLACEHOLDER — procedural geometry standing in for the final
- * Blender model. To swap: replace the shell/rings with a useGLTF model but
- * keep the same props and the per-layer groups (hit areas + inner details).
+ * The Intelligence Core — procedural stand-in for the final Blender model.
+ *
+ * Three rounded glass plates (Frontend / Backend / Data) stack around a
+ * central aperture; an AI orb sits in the middle and a beam of light runs
+ * through every layer. Each plate carries its own etching so the layers
+ * read at a glance. To swap in a GLB later, keep the same props and the
+ * per-layer groups (plate + etching + inner detail).
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
-import { MeshTransmissionMaterial } from "@react-three/drei";
+import { Edges } from "@react-three/drei";
 import * as THREE from "three";
 import type { CoreState } from "./scrollState";
-import { useQuality, useReducedMotion } from "./hooks";
+import { useReducedMotion } from "./hooks";
 import { AiLattice, BackendGraph, DataStack, FrontendPanels } from "./LayerDetails";
-import { EXPLODE_DISTANCE, RINGS, type CoreLayerId } from "./layers";
+import { EXPLODE_DISTANCE, PLATES, type CoreLayerId } from "./layers";
+import { createEtching, createPlateGeometry } from "./plateGeometry";
 
 interface IntelligenceCoreProps {
   state: CoreState;
@@ -20,9 +25,8 @@ interface IntelligenceCoreProps {
   onSelectLayer?: (id: CoreLayerId) => void;
 }
 
-const OBSIDIAN = new THREE.Color("#080B12");
 const ICY = new THREE.Color("#8ABFFF");
-const BLACK = new THREE.Color("#000000");
+const CHROME = new THREE.Color("#C9D1DB");
 
 const DETAILS: Record<CoreLayerId, React.FC> = {
   frontend: FrontendPanels,
@@ -30,6 +34,8 @@ const DETAILS: Record<CoreLayerId, React.FC> = {
   data: DataStack,
   ai: AiLattice,
 };
+// inner objects float just above their plate (AI wraps the orb)
+const DETAIL_LIFT: Record<CoreLayerId, number> = { frontend: 0.4, backend: 0.3, data: 0.38, ai: 0 };
 
 const useGlowTexture = () =>
   useMemo(() => {
@@ -51,32 +57,6 @@ const useGlowTexture = () =>
 const damp = (current: number, target: number, lambda: number, dt: number) =>
   THREE.MathUtils.damp(current, target, lambda, dt);
 
-/** Invisible, generous hit volume so thin rings are easy to click. */
-const HitArea: React.FC<{
-  children: React.ReactNode;
-  onOver: () => void;
-  onOut: () => void;
-  onClick: () => void;
-  enabled: boolean;
-}> = ({ children, onOver, onOut, onClick, enabled }) => (
-  <mesh
-    onPointerOver={(e: ThreeEvent<PointerEvent>) => {
-      if (!enabled) return;
-      e.stopPropagation();
-      onOver();
-    }}
-    onPointerOut={onOut}
-    onClick={(e: ThreeEvent<MouseEvent>) => {
-      if (!enabled) return;
-      e.stopPropagation();
-      onClick();
-    }}
-  >
-    {children}
-    <meshBasicMaterial transparent opacity={0} depthWrite={false} colorWrite={false} />
-  </mesh>
-);
-
 export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
   state,
   scale = 1,
@@ -84,23 +64,27 @@ export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
   onSelectLayer,
 }) => {
   const root = useRef<THREE.Group>(null);
-  const shell = useRef<THREE.Mesh>(null);
-  const ringGroups = useRef<(THREE.Group | null)[]>([]);
-  const ringMats = useRef<(THREE.MeshStandardMaterial | null)[]>([]);
+  const plateGroups = useRef<(THREE.Group | null)[]>([]);
+  const plateMats = useRef<(THREE.MeshPhysicalMaterial | null)[]>([]);
+  const etchMats = useRef<(THREE.LineBasicMaterial | null)[]>([]);
+  const edgeMats = useRef<(THREE.LineBasicMaterial | null)[]>([]);
   const detailGroups = useRef<Partial<Record<CoreLayerId, THREE.Group | null>>>({});
-  const orbit = useRef<THREE.Mesh>(null);
+  const beam = useRef<THREE.Group>(null);
+  const beamMat = useRef<THREE.MeshBasicMaterial>(null);
+  const orb = useRef<THREE.Mesh>(null);
+  const orbMat = useRef<THREE.MeshStandardMaterial>(null);
+  const gyro = useRef<THREE.Group>(null);
   const glow = useRef<THREE.Sprite>(null);
-  const coreMat = useRef<THREE.MeshStandardMaterial>(null);
-  const coreMesh = useRef<THREE.Mesh>(null);
-  const inner = useRef<THREE.Group>(null);
+  const orbit = useRef<THREE.Mesh>(null);
+  const floor = useRef<THREE.Mesh>(null);
   const reveal = useRef(0);
   const [hovered, setHovered] = useState<CoreLayerId | null>(null);
-  const quality = useQuality();
   const reduced = useReducedMotion();
   const glowTexture = useGlowTexture();
+  const plateGeometry = useMemo(() => createPlateGeometry(), []);
+  const etchings = useMemo(() => PLATES.map((p) => createEtching(p.id)), []);
   const interactive = Boolean(onSelectLayer);
 
-  // pointer cursor while hovering a layer; always reset on unmount
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "";
     return () => {
@@ -119,159 +103,211 @@ export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
 
     const g = root.current;
     if (g) {
-      // calmer motion while a layer is open so it can be read
-      const drift = t * 0.06 * (1 - r);
-      g.rotation.y = damp(g.rotation.y, state.rotateY + state.pointerX * 0.3 * (1 - r * 0.7) + drift, 3, dt);
-      g.rotation.x = damp(g.rotation.x, 0.18 * (1 - r) + state.pointerY * 0.15 * (1 - r), 3, dt);
+      // three-quarter view so the stack reads as stacked plates, calmer when a layer is open
+      const drift = reduced ? 0 : t * 0.08 * (1 - r);
+      g.rotation.y = damp(g.rotation.y, -0.6 + state.rotateY + state.pointerX * 0.35 * (1 - r * 0.7) + drift, 3, dt);
+      g.rotation.x = damp(g.rotation.x, 0.42 - r * 0.2 + state.pointerY * 0.12 * (1 - r), 3, dt);
     }
 
-    RINGS.forEach((ring, i) => {
-      const grp = ringGroups.current[i];
-      const mat = ringMats.current[i];
+    PLATES.forEach((plate, i) => {
+      const grp = plateGroups.current[i];
+      const mat = plateMats.current[i];
       if (!grp || !mat) return;
-      grp.position.y = step(grp.position.y, ring.y + (1 - i) * explode * EXPLODE_DISTANCE, 6);
-      const isActive = activeLayer === ring.id;
+      const bob = reduced ? 0 : Math.sin(t * 0.9 + i * 1.3) * 0.025 * (1 - r);
+      grp.position.y = step(grp.position.y, plate.y + (1 - i) * explode * EXPLODE_DISTANCE + bob, 6);
+      const isActive = activeLayer === plate.id;
       const dimmed = activeLayer !== null && !isActive;
-      grp.scale.setScalar(step(grp.scale.x, isActive ? 1.12 : 1, 6));
-      mat.opacity = step(mat.opacity, dimmed ? 0.15 : 1, 6);
-      mat.emissive.lerpColors(BLACK, ICY, hovered === ring.id || isActive ? 0.25 : 0);
-      const spin = grp.children[0];
-      if (spin) spin.rotation.z = t * (0.15 + i * 0.05) * (i % 2 ? -1 : 1) * (isActive ? 0.3 : 1);
+      const lit = hovered === plate.id || isActive;
+      grp.scale.setScalar(step(grp.scale.x, isActive ? 1.06 : 1, 6));
+      mat.opacity = step(mat.opacity, dimmed ? 0.12 : 1, 6);
+      const etch = etchMats.current[i];
+      if (etch) {
+        etch.opacity = step(etch.opacity, dimmed ? 0.05 : lit ? 0.95 : 0.4, 6);
+        etch.color.lerpColors(CHROME, ICY, lit ? 1 : 0);
+      }
+      const edge = edgeMats.current[i];
+      if (edge) {
+        edge.opacity = step(edge.opacity, dimmed ? 0.1 : 0.9, 6);
+        edge.color.lerpColors(CHROME, ICY, lit ? 1 : 0);
+      }
     });
 
     (Object.keys(DETAILS) as CoreLayerId[]).forEach((id) => {
       const d = detailGroups.current[id];
       if (!d) return;
-      const target = activeLayer === id ? 1.35 : 0;
-      const s = step(d.scale.x, target, 5);
+      const s = step(d.scale.x, activeLayer === id ? 1.35 : 0, 5);
       d.scale.setScalar(Math.max(s, 0.0001));
       d.visible = s > 0.01;
-      // details follow their ring's exploded position
-      const i = RINGS.findIndex((ring) => ring.id === id);
-      if (i >= 0) d.position.y = ringGroups.current[i]?.position.y ?? 0;
+      const i = PLATES.findIndex((p) => p.id === id);
+      d.position.y = (i >= 0 ? plateGroups.current[i]?.position.y ?? 0 : 0) + DETAIL_LIFT[id];
     });
 
-    if (shell.current) {
-      const s = 1 + state.focus * 1.6 + r * 0.25;
-      shell.current.scale.setScalar(s);
-      const mat = shell.current.material as THREE.Material;
-      mat.opacity = (1 - state.focus) * (1 - r * 0.85);
-      shell.current.visible = mat.opacity > 0.02;
+    // the beam stretches with the explode and breathes
+    if (beam.current) beam.current.scale.y = 1 + explode * 1.6;
+    if (beamMat.current) {
+      const aiOn = activeLayer === "ai" || hovered === "ai";
+      const base = activeLayer && !aiOn ? 0.12 : aiOn ? 0.75 : 0.4;
+      beamMat.current.opacity = base * (reduced ? 1 : 0.8 + Math.sin(t * 2.2) * 0.2);
     }
-    if (inner.current) inner.current.scale.setScalar(1 - state.focus * 0.55);
-    if (orbit.current) {
-      orbit.current.rotation.z = t * 0.1;
-      (orbit.current.material as THREE.MeshStandardMaterial).opacity = 1 - r * 0.8;
+    if (orb.current) {
+      const s = activeLayer === "ai" ? 0.5 : activeLayer ? 0.6 : 1;
+      orb.current.scale.setScalar(step(orb.current.scale.x, s, 5));
     }
-    if (coreMat.current) {
-      const aiFocus = activeLayer === "ai" || hovered === "ai";
-      coreMat.current.emissiveIntensity = step(coreMat.current.emissiveIntensity, aiFocus ? 2.2 : activeLayer ? 0.5 : 1.2, 5);
+    if (orbMat.current) {
+      const aiOn = activeLayer === "ai" || hovered === "ai";
+      orbMat.current.emissiveIntensity = step(orbMat.current.emissiveIntensity, aiOn ? 2.4 : activeLayer ? 0.5 : 1.4, 5);
     }
-    // shrink the glowing sphere when the AI layer opens so its lattice reads
-    if (coreMesh.current) {
-      const coreScale = activeLayer === "ai" ? 0.45 : activeLayer ? 0.55 : 1;
-      coreMesh.current.scale.setScalar(step(coreMesh.current.scale.x, coreScale, 5));
+    if (gyro.current && !reduced) {
+      gyro.current.rotation.x = t * 0.7;
+      gyro.current.rotation.y = t * 0.45;
     }
     if (glow.current) {
-      const pulse = 1 + Math.sin(t * 1.4) * 0.06;
-      glow.current.scale.setScalar((activeLayer === "ai" ? 1.5 : activeLayer ? 0.8 : 1.25) * pulse);
+      const pulse = reduced ? 1 : 1 + Math.sin(t * 1.4) * 0.06;
+      glow.current.scale.setScalar((activeLayer === "ai" ? 1.5 : activeLayer ? 0.7 : 1.1) * pulse);
+    }
+    if (orbit.current) {
+      if (!reduced) orbit.current.rotation.z = t * 0.1;
+      (orbit.current.material as THREE.MeshStandardMaterial).opacity = 0.9 - r * 0.75;
+    }
+    if (floor.current) {
+      floor.current.position.y = -(0.42 + explode * EXPLODE_DISTANCE) - 0.55;
+      (floor.current.material as THREE.MeshBasicMaterial).opacity = 0.35 * (1 - r * 0.6);
     }
   });
 
-  const hitProps = (id: CoreLayerId) => ({
-    enabled: interactive,
-    onOver: () => setHovered(id),
-    onOut: () => setHovered((h) => (h === id ? null : h)),
-    onClick: () => onSelectLayer?.(id),
+  const handlers = (id: CoreLayerId) => ({
+    onPointerOver: (e: ThreeEvent<PointerEvent>) => {
+      if (!interactive) return;
+      e.stopPropagation();
+      setHovered(id);
+    },
+    onPointerOut: () => setHovered((h) => (h === id ? null : h)),
+    onClick: (e: ThreeEvent<MouseEvent>) => {
+      if (!interactive) return;
+      e.stopPropagation();
+      onSelectLayer?.(id);
+    },
   });
 
   return (
     <group ref={root} scale={scale}>
-      {/* optical glass shell */}
-      <mesh ref={shell}>
-        <icosahedronGeometry args={[1.55, 1]} />
-        <MeshTransmissionMaterial
-          transparent
-          resolution={quality.transmissionRes}
-          samples={quality.samples}
-          thickness={0.35}
-          roughness={0.08}
-          background={OBSIDIAN}
-          ior={1.45}
-          chromaticAberration={0.03}
-          anisotropicBlur={0.08}
-          distortion={0.05}
-          distortionScale={0.3}
-          color="#F4F6FA"
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-          backside={false}
-        />
+      {/* soft light pool under the stack */}
+      <mesh ref={floor} rotation={[-Math.PI / 2, 0, 0]} scale={[3.2, 3.2, 1]}>
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial map={glowTexture} transparent depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      <group ref={inner}>
-        {/* chrome structural layers: frontend / backend / data */}
-        {RINGS.map((ring, i) => (
-          <group
-            key={ring.id}
-            ref={(el) => {
-              ringGroups.current[i] = el;
-            }}
-            position={[0, ring.y, 0]}
-          >
-            <mesh rotation={[Math.PI / 2, 0, 0]}>
-              <torusGeometry args={[ring.radius, ring.tube, 24, 128]} />
-              <meshStandardMaterial
+      {PLATES.map((plate, i) => (
+        <group
+          key={plate.id}
+          ref={(el) => {
+            plateGroups.current[i] = el;
+          }}
+          position={[0, plate.y, 0]}
+        >
+          <mesh geometry={plateGeometry} {...handlers(plate.id)}>
+            <meshPhysicalMaterial
+              ref={(m) => {
+                plateMats.current[i] = m;
+              }}
+              color="#C6D3E3"
+              transmission={1}
+              thickness={0.15}
+              roughness={0.04}
+              ior={1.3}
+              clearcoat={1}
+              clearcoatRoughness={0.04}
+              specularIntensity={1}
+              attenuationColor="#6EA8F0"
+              attenuationDistance={1.6}
+              envMapIntensity={2.2}
+              transparent
+            />
+            <Edges threshold={40}>
+              <lineBasicMaterial
                 ref={(m) => {
-                  ringMats.current[i] = m;
+                  edgeMats.current[i] = m;
                 }}
                 color="#C9D1DB"
-                metalness={1}
-                roughness={0.15}
                 transparent
+                opacity={0.9}
               />
-            </mesh>
-            <HitArea {...hitProps(ring.id)}>
-              <torusGeometry args={[ring.radius, 0.2, 8, 48]} />
-            </HitArea>
-          </group>
-        ))}
-
-        {/* per-layer inner objects, hidden until that layer is opened */}
-        {(Object.keys(DETAILS) as CoreLayerId[]).map((id) => {
-          const Detail = DETAILS[id];
-          return (
-            <group
-              key={id}
-              ref={(el) => {
-                detailGroups.current[id] = el;
+            </Edges>
+          </mesh>
+          <lineSegments geometry={etchings[i]}>
+            <lineBasicMaterial
+              ref={(m) => {
+                etchMats.current[i] = m;
               }}
-              scale={0.0001}
-              visible={false}
-            >
-              <Detail />
-            </group>
-          );
-        })}
+              color="#C9D1DB"
+              transparent
+              opacity={0.4}
+              depthWrite={false}
+            />
+          </lineSegments>
+        </group>
+      ))}
 
-        {/* thin tilted orbit ring */}
-        <mesh ref={orbit} rotation={[Math.PI / 2.6, 0.4, 0]}>
-          <torusGeometry args={[1.9, 0.008, 8, 160]} />
-          <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.25} transparent />
-        </mesh>
+      {/* per-layer inner objects, hidden until that layer is opened */}
+      {(Object.keys(DETAILS) as CoreLayerId[]).map((id) => {
+        const Detail = DETAILS[id];
+        return (
+          <group
+            key={id}
+            ref={(el) => {
+              detailGroups.current[id] = el;
+            }}
+            scale={0.0001}
+            visible={false}
+          >
+            <Detail />
+          </group>
+        );
+      })}
 
-        {/* AI core */}
-        <mesh ref={coreMesh}>
-          <sphereGeometry args={[0.22, 48, 48]} />
-          <meshStandardMaterial ref={coreMat} color="#8ABFFF" emissive="#8ABFFF" emissiveIntensity={1.2} />
+      {/* the beam of intelligence running through every aperture */}
+      <group ref={beam}>
+        <mesh>
+          <cylinderGeometry args={[0.018, 0.018, 1.6, 16, 1, true]} />
+          <meshBasicMaterial
+            ref={beamMat}
+            color="#B5D5FF"
+            transparent
+            opacity={0.4}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
         </mesh>
-        <HitArea {...hitProps("ai")}>
-          <sphereGeometry args={[0.42, 16, 16]} />
-        </HitArea>
-        <sprite ref={glow}>
-          <spriteMaterial map={glowTexture} transparent depthWrite={false} blending={THREE.AdditiveBlending} />
-        </sprite>
+        <mesh>
+          <cylinderGeometry args={[0.09, 0.09, 1.6, 24, 1, true]} />
+          <meshBasicMaterial color="#8ABFFF" transparent opacity={0.06} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
       </group>
+
+      {/* AI orb + gyroscope in the central aperture */}
+      <mesh ref={orb} {...handlers("ai")}>
+        <sphereGeometry args={[0.2, 48, 48]} />
+        <meshStandardMaterial ref={orbMat} color="#8ABFFF" emissive="#8ABFFF" emissiveIntensity={1.4} />
+      </mesh>
+      <group ref={gyro}>
+        <mesh>
+          <torusGeometry args={[0.3, 0.006, 8, 96]} />
+          <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.2} />
+        </mesh>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.34, 0.005, 8, 96]} />
+          <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.2} />
+        </mesh>
+      </group>
+      <sprite ref={glow}>
+        <spriteMaterial map={glowTexture} transparent depthWrite={false} blending={THREE.AdditiveBlending} />
+      </sprite>
+
+      {/* thin tilted orbit ring for silhouette */}
+      <mesh ref={orbit} rotation={[Math.PI / 2 - 0.12, 0, 0.18]}>
+        <torusGeometry args={[1.95, 0.006, 8, 200]} />
+        <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.25} transparent />
+      </mesh>
     </group>
   );
 };
