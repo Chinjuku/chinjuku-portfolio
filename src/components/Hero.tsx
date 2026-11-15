@@ -13,6 +13,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 const HeroCoreScene = lazy(() => import("./hero/HeroCoreScene"));
 
+// Pinned scroll bands (as timeline progress 0..1) for the layer walkthrough.
+const SCROLL_STEPS: HeroLayerId[] = ["frontend", "backend", "data", "ai"];
+const STEP_START = 0.14;
+const STEP_END = 0.86;
+const STEP_SIZE = (STEP_END - STEP_START) / SCROLL_STEPS.length;
+const SNAP_POINTS = [0, ...SCROLL_STEPS.map((_, i) => STEP_START + STEP_SIZE * (i + 0.5)), 1];
+
 /**
  * "The Intelligence Core" hero (Editorial layout).
  * - Scroll pins the hero and explodes the Core into its layers:
@@ -54,32 +61,59 @@ const Hero: React.FC = () => {
         delay: 0.15,
       });
 
+      // Scroll story: explode → open each layer in turn → reassemble.
+      // Each layer owns a band of the pinned scroll; entering a band opens
+      // that layer (clicks still work and win until the next band starts).
+      const stepAt = (p: number): HeroLayerId | null | undefined => {
+        if (p < STEP_START) return undefined; // overview: leave clicks alone
+        if (p >= STEP_END) return null;
+        const i = Math.min(SCROLL_STEPS.length - 1, Math.floor((p - STEP_START) / STEP_SIZE));
+        return SCROLL_STEPS[i];
+      };
+      let lastStep: HeroLayerId | null | undefined = undefined;
+
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           // mobile pins only the Core stage so the pinned area fits one screen
           trigger: isMobile ? stageRef.current : sectionRef.current,
           start: "top top",
-          end: "+=250%",
+          end: "+=480%",
           pin: true,
           scrub: 1,
+          snap: {
+            snapTo: SNAP_POINTS,
+            inertia: false, // snap from where the user stopped, not a velocity guess
+            duration: { min: 0.25, max: 0.6 },
+            delay: 0.08,
+            ease: "power2.inOut",
+          },
           // this pin sits above every other section's triggers; measure it first
           refreshPriority: 1,
           onUpdate: (self) => {
             state.progress = self.progress;
+            const step = stepAt(self.progress);
+            if (step !== lastStep) {
+              if (step !== undefined || lastStep !== undefined) setActiveLayer(step ?? null);
+              lastStep = step;
+            }
           },
-          // leaving the hero closes any opened layer
+          // leaving the hero (either direction) closes any opened layer
           onLeave: () => setActiveLayer(null),
+          onLeaveBack: () => {
+            lastStep = undefined;
+            setActiveLayer(null);
+          },
         },
       });
 
-      tl.to(state, { explode: 1, rotateY: 0.5, duration: 0.4, ease: "power2.inOut" }, 0)
-        .to(".hero-intro", { opacity: 0.55, duration: 0.3 }, 0.1)
-        .to(".hero-layer-label", { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.15 }, 0.4)
-        .to(".hero-layer-label", { autoAlpha: 0, y: -8, stagger: 0.03, duration: 0.1 }, 0.75)
-        .to(state, { explode: 0, rotateY: 0, duration: 0.2, ease: "power2.inOut" }, 0.78)
-        .to(".hero-intro", { opacity: 1, duration: 0.15 }, 0.8)
-        .to(".hero-explore", { autoAlpha: 1, y: 0, duration: 0.12 }, 0.88);
+      tl.to(state, { explode: 1, rotateY: 0.5, duration: 0.12, ease: "power2.inOut" }, 0)
+        .to(".hero-intro", { opacity: 0.55, duration: 0.1 }, 0.04)
+        .to(".hero-layer-label", { autoAlpha: 1, y: 0, stagger: 0.015, duration: 0.05 }, 0.06)
+        .to(".hero-layer-label", { autoAlpha: 0, y: -8, duration: 0.04 }, STEP_END)
+        .to(state, { explode: 0, rotateY: 0, duration: 0.08, ease: "power2.inOut" }, STEP_END + 0.01)
+        .to(".hero-intro", { opacity: 1, duration: 0.06 }, STEP_END + 0.03)
+        .to(".hero-explore", { autoAlpha: 1, y: 0, duration: 0.05 }, 0.94);
     }, sectionRef);
 
     // When this effect re-runs (mobile/desktop breakpoint), the new pin is
@@ -172,7 +206,7 @@ const Hero: React.FC = () => {
                   isOpen ? "opacity-0" : "opacity-100"
                 }`}
               >
-                {isMobile ? "TAP THE CORE TO LOOK INSIDE" : "CLICK A LAYER TO LOOK INSIDE"}
+                {isMobile ? "SCROLL OR TAP THE CORE TO LOOK INSIDE" : "SCROLL OR CLICK A LAYER TO LOOK INSIDE"}
               </p>
 
               <Link

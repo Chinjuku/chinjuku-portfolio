@@ -96,6 +96,7 @@ const Projects: React.FC = () => {
         pin: true,
         snap: {
           snapTo: 1 / (projects.length - 1),
+          inertia: false,
           duration: { min: 0.2, max: 0.5 },
           ease: "power2.inOut",
         },
