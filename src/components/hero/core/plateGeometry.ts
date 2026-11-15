@@ -19,7 +19,7 @@ export const createPlateGeometry = (): THREE.BufferGeometry => {
   hole.absarc(0, 0, PLATE_HOLE, 0, Math.PI * 2, true);
   shape.holes.push(hole);
   const g = new THREE.ExtrudeGeometry(shape, {
-    depth: 0.06,
+    depth: 0.04,
     bevelEnabled: true,
     bevelThickness: 0.025,
     bevelSize: 0.025,
@@ -31,7 +31,7 @@ export const createPlateGeometry = (): THREE.BufferGeometry => {
   return g;
 };
 
-const TOP = 0.062; // just above the plate's top face
+const TOP = 0.048; // just above the plate's top face
 
 const seg = (pts: [number, number][]): number[] => {
   const out: number[] = [];
@@ -48,20 +48,20 @@ export const createEtching = (id: "frontend" | "backend" | "data"): THREE.Buffer
   const v: number[] = [];
   if (id === "frontend") {
     // a tiny app layout: header bar, sidebar, content cards
-    v.push(...rect(-0.78, -0.8, 0.78, -0.6));
-    v.push(...rect(-0.78, -0.5, -0.52, 0.8));
-    v.push(...rect(0.52, -0.5, 0.78, 0.15));
-    v.push(...rect(-0.4, 0.55, 0.78, 0.8));
-    v.push(...rect(0.52, 0.25, 0.78, 0.45));
+    v.push(...rect(-0.86, -0.86, 0.86, -0.7));
+    v.push(...rect(-0.86, -0.6, -0.68, 0.86));
+    v.push(...rect(0.68, -0.6, 0.86, 0.2));
+    v.push(...rect(-0.5, 0.7, 0.86, 0.86));
+    v.push(...rect(0.68, 0.3, 0.86, 0.6));
   } else if (id === "backend") {
     // right-angled traces leaving the aperture, ending in pads
     const traces: [number, number][][] = [
-      [[0.46, 0], [0.64, 0], [0.64, 0.52], [0.82, 0.52]],
-      [[-0.46, 0], [-0.7, 0], [-0.7, -0.62], [-0.82, -0.62]],
-      [[0, 0.46], [0, 0.7], [-0.45, 0.7], [-0.45, 0.82]],
-      [[0, -0.46], [0, -0.66], [0.5, -0.66], [0.5, -0.82]],
-      [[0.33, 0.33], [0.52, 0.52], [0.52, 0.8]],
-      [[-0.33, -0.33], [-0.5, -0.5], [-0.82, -0.5]],
+      [[0.68, 0], [0.78, 0], [0.78, 0.55], [0.88, 0.55]],
+      [[-0.68, 0], [-0.8, 0], [-0.8, -0.66], [-0.88, -0.66]],
+      [[0, 0.68], [0, 0.8], [-0.45, 0.8], [-0.45, 0.88]],
+      [[0, -0.68], [0, -0.8], [0.5, -0.8], [0.5, -0.88]],
+      [[0.48, 0.48], [0.62, 0.62], [0.62, 0.88]],
+      [[-0.48, -0.48], [-0.62, -0.62], [-0.88, -0.62]],
     ];
     traces.forEach((t) => {
       v.push(...seg(t));

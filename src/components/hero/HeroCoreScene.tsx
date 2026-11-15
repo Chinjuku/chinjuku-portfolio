@@ -24,7 +24,7 @@ const CameraRig: React.FC<{ activeLayer: CoreLayerId | null; scale: number; offs
   const lookAt = useRef(new THREE.Vector3());
   useFrame(({ camera }, dt) => {
     const y = activeLayer ? layerExplodedY(activeLayer) * scale : 0;
-    const z = activeLayer ? (activeLayer === "ai" ? 4.2 : 4.4) : CAMERA_Z;
+    const z = activeLayer ? (activeLayer === "ai" ? 4.6 : 4.4) : CAMERA_Z;
     // shift the view so the opened layer sits left of the detail panel
     const x = activeLayer ? offsetX : 0;
     camera.position.x = THREE.MathUtils.damp(camera.position.x, x, 3.5, dt);

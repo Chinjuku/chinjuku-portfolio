@@ -2,12 +2,12 @@ import React from "react";
 import { HERO_STACK_LAYERS, type HeroLayerId } from "../../constants/hero";
 
 // Anchor positions (percent of the Core box) matched to the exploded layer
-// positions of IntelligenceCore at scale 0.62, camera z=6 / fov 35.
+// positions of IntelligenceCore (desktop scale 0.6, canvas bleeding 12%), camera z=6 / fov 35.
 const LABEL_POS: Record<HeroLayerId, { top: string; side: "left" | "right" }> = {
-  frontend: { top: "28%", side: "left" },
+  frontend: { top: "24%", side: "left" },
   backend: { top: "50%", side: "left" },
   ai: { top: "50%", side: "right" },
-  data: { top: "72%", side: "right" },
+  data: { top: "76%", side: "right" },
 };
 
 interface HeroLayerLabelProps {

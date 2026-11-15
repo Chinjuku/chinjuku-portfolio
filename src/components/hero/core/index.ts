@@ -5,3 +5,5 @@ export * from "./CoreLighting";
 export * from "./webgl";
 export * from "./IntelligenceCore";
 export * from "./layers";
+export * from "./neuralCore";
+export * from "./NeuralCoreModel";

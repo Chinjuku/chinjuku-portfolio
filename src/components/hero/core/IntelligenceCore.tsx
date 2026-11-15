@@ -2,7 +2,7 @@
  * The Intelligence Core — procedural stand-in for the final Blender model.
  *
  * Three rounded glass plates (Frontend / Backend / Data) stack around a
- * central aperture; an AI orb sits in the middle and a beam of light runs
+ * central aperture; the Neural AI Core sits in the middle and a beam runs
  * through every layer. Each plate carries its own etching so the layers
  * read at a glance. To swap in a GLB later, keep the same props and the
  * per-layer groups (plate + etching + inner detail).
@@ -12,8 +12,9 @@ import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Edges } from "@react-three/drei";
 import * as THREE from "three";
 import type { CoreState } from "./scrollState";
-import { useReducedMotion } from "./hooks";
-import { AiLattice, BackendGraph, DataStack, FrontendPanels } from "./LayerDetails";
+import { useQuality, useReducedMotion } from "./hooks";
+import { BackendGraph, DataStack, FrontendPanels } from "./LayerDetails";
+import { NeuralCoreModel } from "./NeuralCoreModel";
 import { EXPLODE_DISTANCE, PLATES, type CoreLayerId } from "./layers";
 import { createEtching, createPlateGeometry } from "./plateGeometry";
 
@@ -32,10 +33,11 @@ const DETAILS: Record<CoreLayerId, React.FC> = {
   frontend: FrontendPanels,
   backend: BackendGraph,
   data: DataStack,
-  ai: AiLattice,
+  // the Neural Core itself is the AI layer's detail (shell clears, network lights up)
+  ai: () => null,
 };
-// inner objects float just above their plate (AI wraps the orb)
-const DETAIL_LIFT: Record<CoreLayerId, number> = { frontend: 0.4, backend: 0.3, data: 0.38, ai: 0 };
+// inner objects float just above their plate (the AI layer is the Neural Core itself)
+const DETAIL_LIFT: Record<CoreLayerId, number> = { frontend: 0.4, backend: 0.32, data: 0.4, ai: 0 };
 
 const useGlowTexture = () =>
   useMemo(() => {
@@ -71,15 +73,12 @@ export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
   const detailGroups = useRef<Partial<Record<CoreLayerId, THREE.Group | null>>>({});
   const beam = useRef<THREE.Group>(null);
   const beamMat = useRef<THREE.MeshBasicMaterial>(null);
-  const orb = useRef<THREE.Mesh>(null);
-  const orbMat = useRef<THREE.MeshStandardMaterial>(null);
-  const gyro = useRef<THREE.Group>(null);
-  const glow = useRef<THREE.Sprite>(null);
   const orbit = useRef<THREE.Mesh>(null);
   const floor = useRef<THREE.Mesh>(null);
   const reveal = useRef(0);
   const [hovered, setHovered] = useState<CoreLayerId | null>(null);
   const reduced = useReducedMotion();
+  const quality = useQuality();
   const glowTexture = useGlowTexture();
   const plateGeometry = useMemo(() => createPlateGeometry(), []);
   const etchings = useMemo(() => PLATES.map((p) => createEtching(p.id)), []);
@@ -146,31 +145,15 @@ export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
     if (beam.current) beam.current.scale.y = 1 + explode * 1.6;
     if (beamMat.current) {
       const aiOn = activeLayer === "ai" || hovered === "ai";
-      const base = activeLayer && !aiOn ? 0.12 : aiOn ? 0.75 : 0.4;
+      const base = activeLayer && !aiOn ? 0.08 : aiOn ? 0.5 : 0.25;
       beamMat.current.opacity = base * (reduced ? 1 : 0.8 + Math.sin(t * 2.2) * 0.2);
-    }
-    if (orb.current) {
-      const s = activeLayer === "ai" ? 0.5 : activeLayer ? 0.6 : 1;
-      orb.current.scale.setScalar(step(orb.current.scale.x, s, 5));
-    }
-    if (orbMat.current) {
-      const aiOn = activeLayer === "ai" || hovered === "ai";
-      orbMat.current.emissiveIntensity = step(orbMat.current.emissiveIntensity, aiOn ? 2.4 : activeLayer ? 0.5 : 1.4, 5);
-    }
-    if (gyro.current && !reduced) {
-      gyro.current.rotation.x = t * 0.7;
-      gyro.current.rotation.y = t * 0.45;
-    }
-    if (glow.current) {
-      const pulse = reduced ? 1 : 1 + Math.sin(t * 1.4) * 0.06;
-      glow.current.scale.setScalar((activeLayer === "ai" ? 1.5 : activeLayer ? 0.7 : 1.1) * pulse);
     }
     if (orbit.current) {
       if (!reduced) orbit.current.rotation.z = t * 0.1;
-      (orbit.current.material as THREE.MeshStandardMaterial).opacity = 0.9 - r * 0.75;
+      (orbit.current.material as THREE.MeshStandardMaterial).opacity = 0.45 - r * 0.35;
     }
     if (floor.current) {
-      floor.current.position.y = -(0.42 + explode * EXPLODE_DISTANCE) - 0.55;
+      floor.current.position.y = -(0.72 + explode * EXPLODE_DISTANCE) - 0.55;
       (floor.current.material as THREE.MeshBasicMaterial).opacity = 0.35 * (1 - r * 0.6);
     }
   });
@@ -210,17 +193,17 @@ export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
               ref={(m) => {
                 plateMats.current[i] = m;
               }}
-              color="#C6D3E3"
+              color="#6F7D91"
               transmission={1}
-              thickness={0.15}
-              roughness={0.04}
+              thickness={0.12}
+              roughness={0.03}
               ior={1.3}
               clearcoat={1}
               clearcoatRoughness={0.04}
               specularIntensity={1}
               attenuationColor="#6EA8F0"
               attenuationDistance={1.6}
-              envMapIntensity={2.2}
+              envMapIntensity={1.3}
               transparent
             />
             <Edges threshold={40}>
@@ -284,28 +267,21 @@ export const IntelligenceCore: React.FC<IntelligenceCoreProps> = ({
         </mesh>
       </group>
 
-      {/* AI orb + gyroscope in the central aperture */}
-      <mesh ref={orb} {...handlers("ai")}>
-        <sphereGeometry args={[0.2, 48, 48]} />
-        <meshStandardMaterial ref={orbMat} color="#8ABFFF" emissive="#8ABFFF" emissiveIntensity={1.4} />
-      </mesh>
-      <group ref={gyro}>
-        <mesh>
-          <torusGeometry args={[0.3, 0.006, 8, 96]} />
-          <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.2} />
-        </mesh>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.34, 0.005, 8, 96]} />
-          <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.2} />
-        </mesh>
+      {/* the Neural AI Core in the central aperture (the AI layer) */}
+      <group scale={1.2}>
+      <NeuralCoreModel
+        state={state}
+        hovered={hovered === "ai"}
+        active={activeLayer === "ai"}
+        dimmed={activeLayer !== null && activeLayer !== "ai"}
+        low={quality.isLow}
+        handlers={handlers("ai")}
+      />
       </group>
-      <sprite ref={glow}>
-        <spriteMaterial map={glowTexture} transparent depthWrite={false} blending={THREE.AdditiveBlending} />
-      </sprite>
 
       {/* thin tilted orbit ring for silhouette */}
       <mesh ref={orbit} rotation={[Math.PI / 2 - 0.12, 0, 0.18]}>
-        <torusGeometry args={[1.95, 0.006, 8, 200]} />
+        <torusGeometry args={[1.7, 0.005, 8, 200]} />
         <meshStandardMaterial color="#C9D1DB" metalness={1} roughness={0.25} transparent />
       </mesh>
     </group>
