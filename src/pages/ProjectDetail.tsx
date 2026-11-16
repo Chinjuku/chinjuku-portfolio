@@ -57,7 +57,7 @@ const ProjectDetail: React.FC = () => {
 
   return (
     <div ref={pageRef} className="min-h-screen bg-core-obsidian pb-32 pt-32 text-core-ink">
-      <article className="mx-auto w-full max-w-7xl px-6 md:px-12">
+      <article className="mx-auto w-full max-w-7xl px-6 md:px-12 xl:max-w-[1440px] 2xl:max-w-[1600px] 2xl:px-16">
         <div className="pd-reveal flex items-center justify-between">
           <Link
             to="/projects"

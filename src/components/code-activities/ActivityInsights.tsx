@@ -53,7 +53,7 @@ export const ActivityInsights: React.FC<ActivityInsightsProps> = ({ year, onSele
             type="button"
             aria-pressed={y === year}
             onClick={() => onSelectYear(y)}
-            className={`rounded-full px-3.5 py-1.5 font-mono text-xs transition-colors ${
+            className={`inline-flex items-center rounded-full px-3.5 py-1.5 font-mono text-xs transition-colors [@media(pointer:coarse)]:min-h-[44px] [@media(pointer:coarse)]:px-4 ${
               y === year ? "bg-core-ink text-core-obsidian" : "border border-white/10 text-core-mist hover:text-core-ink"
             }`}
           >

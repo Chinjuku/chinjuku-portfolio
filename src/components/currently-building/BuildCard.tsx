@@ -11,7 +11,7 @@ const STATUS = {
 } as const;
 
 const btn =
-  "inline-flex items-center gap-1.5 rounded-full border border-core-graphite px-4 py-2 text-xs font-medium text-core-ink transition-colors hover:border-core-mist";
+  "inline-flex items-center gap-1.5 rounded-full border border-core-graphite px-4 py-2 text-xs [@media(pointer:coarse)]:min-h-[44px] [@media(pointer:coarse)]:text-sm font-medium text-core-ink transition-colors hover:border-core-mist";
 
 /** One project in progress: preview, what it is, what is being worked on, and links. */
 export const BuildCard: React.FC<{ item: BuildingItem }> = ({ item }) => {
@@ -62,7 +62,7 @@ export const BuildCard: React.FC<{ item: BuildingItem }> = ({ item }) => {
             <button
               type="button"
               onClick={() => setLive(true)}
-              className="hidden items-center gap-1.5 rounded-full bg-core-chrome px-4 py-2 text-xs font-medium text-core-obsidian transition-colors hover:bg-core-ink md:inline-flex"
+              className="hidden items-center gap-1.5 rounded-full bg-core-chrome px-4 py-2 text-xs [@media(pointer:coarse)]:min-h-[44px] [@media(pointer:coarse)]:text-sm font-medium text-core-obsidian transition-colors hover:bg-core-ink md:inline-flex"
             >
               <Play className="h-3.5 w-3.5" /> Try it here
             </button>
@@ -71,7 +71,7 @@ export const BuildCard: React.FC<{ item: BuildingItem }> = ({ item }) => {
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-4 py-2 text-xs font-medium text-core-obsidian md:hidden"
+              className="inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-4 py-2 text-xs [@media(pointer:coarse)]:min-h-[44px] [@media(pointer:coarse)]:text-sm font-medium text-core-obsidian md:hidden"
             >
               <Play className="h-3.5 w-3.5" /> Try it
             </a>

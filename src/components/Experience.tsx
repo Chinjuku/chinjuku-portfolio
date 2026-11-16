@@ -48,18 +48,44 @@ const Experience: React.FC = () => {
       );
 
       if (!horizontal) {
+        const slides = gsap.utils.toArray<HTMLElement>(".exp-slide");
+        if (reduced) {
+          slides.forEach((s) => s.classList.add("is-active"));
+          return;
+        }
+        // the rail draws itself down as you scroll through the roles
         gsap.fromTo(
-          ".exp-slide",
-          { y: 30, opacity: 0 },
+          ".exp-vfill",
+          { scaleY: 0 },
           {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            stagger: 0.1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: trackRef.current, start: "top 85%", once: true },
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: { trigger: trackRef.current, start: "top 60%", end: "bottom 60%", scrub: 0.6 },
           },
         );
+        slides.forEach((s) => {
+          // dot + year + card light up once the rail reaches them
+          ScrollTrigger.create({ trigger: s, start: "top 60%", toggleClass: "is-active" , end: "max" });
+          const yearEl = s.querySelector<HTMLElement>(".exp-year");
+          const year = Number(yearEl?.textContent);
+          const tl = gsap.timeline({ scrollTrigger: { trigger: s, start: "top 85%", once: true } });
+          tl.fromTo(s.querySelector(".exp-card"), { x: 48, opacity: 0, rotate: 1.5 }, { x: 0, opacity: 1, rotate: 0, duration: 0.8, ease: "power3.out" });
+          if (yearEl && year) {
+            const n = { v: year - 6 };
+            tl.fromTo(yearEl, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0).to(
+              n,
+              {
+                v: year,
+                duration: 0.9,
+                ease: "power2.out",
+                onUpdate: () => {
+                  yearEl.textContent = String(Math.round(n.v));
+                },
+              },
+              0,
+            );
+          }
+        });
         return;
       }
 
@@ -115,7 +141,7 @@ const Experience: React.FC = () => {
       triggerRef.current = null;
       ctx.revert();
     };
-  }, [horizontal]);
+  }, [horizontal, reduced]);
 
   const goTo = (i: number) => {
     const st = triggerRef.current;
@@ -173,9 +199,14 @@ const Experience: React.FC = () => {
             className={
               horizontal
                 ? "exp-horizontal flex w-max gap-10 pl-[calc(max(0px,(100%_-_80rem)/2)_+_3rem)] pr-[calc(max(0px,(100%_-_80rem)/2)_+_3rem)]"
-                : "exp-vertical mx-auto flex max-w-xl flex-col gap-12"
+                : "exp-vertical relative mx-auto flex max-w-xl flex-col gap-12 pl-6"
             }
           >
+            {!horizontal && (
+              <div aria-hidden="true" className="absolute bottom-0 left-[6px] top-3 w-px bg-core-graphite">
+                <div className="exp-vfill h-full w-px origin-top bg-gradient-to-b from-core-chrome to-core-icy" />
+              </div>
+            )}
             {experiences.map((e, i) => (
               <ExperienceSlide key={e.id} experience={e} index={i} />
             ))}

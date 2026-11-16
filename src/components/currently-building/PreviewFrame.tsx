@@ -63,18 +63,23 @@ export const PreviewFrame: React.FC<PreviewFrameProps> = ({ item, paused }) => {
       </div>
 
       {item.shots.length > 1 && (
-        <div className="flex justify-center gap-1.5 py-2.5" role="group" aria-label={`${item.name} screenshots`}>
+        <div className="flex justify-center" role="group" aria-label={`${item.name} screenshots`}>
           {item.shots.map((src, i) => (
+            // 44px hit area around a small visual dot
             <button
               key={src}
               type="button"
               onClick={() => setIndex(i)}
               aria-label={`Show screenshot ${i + 1}`}
               aria-current={i === index ? "true" : undefined}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index ? "w-6 bg-core-icy" : "w-1.5 bg-core-graphite hover:bg-core-mist"
-              }`}
-            />
+              className="group/dot flex h-11 min-w-[28px] items-center justify-center px-1"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-300 ${
+                  i === index ? "w-6 bg-core-icy" : "w-1.5 bg-core-graphite group-hover/dot:bg-core-mist"
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

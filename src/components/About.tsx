@@ -19,19 +19,45 @@ const About: React.FC = () => {
   useEffect(() => {
     if (reduced) return;
     const ctx = gsap.context(() => {
-      // portrait rises out of a mask and settles
-      gsap.fromTo(
-        ".about-portrait",
-        { clipPath: "inset(100% 0% 0% 0% round 28px)", scale: 1.08 },
-        {
-          clipPath: "inset(0% 0% 0% 0% round 28px)",
-          scale: 1,
-          duration: 1.3,
-          ease: "power4.out",
-          clearProps: "clipPath",
-          scrollTrigger: { trigger: containerRef.current, start: "top 70%", once: true },
-        },
-      );
+      // portrait: three glass layers slide away (the hero's layers, opened up)
+      const reveal = gsap.timeline({
+        scrollTrigger: { trigger: ".about-portrait", start: "top 75%", once: true },
+      });
+      reveal
+        .fromTo(".about-portrait", { scale: 1.06 }, { scale: 1, duration: 1.4, ease: "power3.out" }, 0)
+        .fromTo(
+          ".about-shard",
+          { xPercent: 0, opacity: 1 },
+          {
+            xPercent: (i: number) => (i % 2 === 0 ? -105 : 105),
+            opacity: 0.4,
+            duration: 1,
+            stagger: 0.12,
+            ease: "power3.inOut",
+          },
+          0.15,
+        )
+        .set(".about-shard", { autoAlpha: 0 });
+
+      // fact rows: a rule sweeps across, flashes icy, then the text lands
+      gsap.utils.toArray<HTMLElement>(".about-fact").forEach((row, i) => {
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: row, start: "top 90%", once: true },
+          delay: i * 0.08,
+        });
+        tl.fromTo(
+          row.querySelector(".about-rule"),
+          { scaleX: 0, backgroundColor: "#8abfff" },
+          { scaleX: 1, duration: 0.7, ease: "power3.inOut" },
+        )
+          .to(row.querySelector(".about-rule"), { backgroundColor: "#222B39", duration: 0.6 }, ">-0.1")
+          .fromTo(
+            row.querySelectorAll("dt, dd"),
+            { y: 10, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out" },
+            0.35,
+          );
+      });
       // the photo drifts inside its frame as the section scrolls
       gsap.fromTo(
         ".about-portrait img",
@@ -42,7 +68,7 @@ const About: React.FC = () => {
           scrollTrigger: { trigger: containerRef.current, start: "top bottom", end: "bottom top", scrub: true },
         },
       );
-      gsap.from(".about-bio p, .about-fact, .about-actions", {
+      gsap.from(".about-bio p, .about-actions", {
         y: 18,
         opacity: 0,
         duration: 0.7,
@@ -59,10 +85,10 @@ const About: React.FC = () => {
       ref={containerRef}
       className="relative overflow-hidden bg-core-obsidian py-28 md:py-36"
     >
-      <Container className="grid items-center gap-14 md:grid-cols-12 md:gap-16">
+      <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
         {/* portrait */}
-        <div className="md:col-span-5">
-          <TiltCard max={5} className="mx-auto max-w-sm rounded-[28px] md:max-w-none">
+        <div className="lg:col-span-5">
+          <TiltCard max={5} className="mx-auto max-w-sm rounded-[28px] md:max-w-md lg:max-w-none">
             <figure className="about-portrait relative aspect-[4/5] overflow-hidden rounded-[28px] border border-white/10">
               <img
                 src={portrait}
@@ -85,12 +111,23 @@ const About: React.FC = () => {
                   FULL-STACK × AI
                 </span>
               </figcaption>
+              {/* glass layers that slide away on reveal (hidden for reduced motion) */}
+              {!reduced && (
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid grid-rows-3">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="about-shard border-y border-white/10 bg-core-obsidian/70 backdrop-blur-xl [background-image:linear-gradient(110deg,transparent_30%,rgba(138,191,255,0.12)_50%,transparent_70%)]"
+                    />
+                  ))}
+                </div>
+              )}
             </figure>
           </TiltCard>
         </div>
 
         {/* statement + facts */}
-        <div className="md:col-span-7">
+        <div className="lg:col-span-7">
           <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">{ABOUT_COPY.eyebrow}</p>
           <h2 className="mt-5 text-[clamp(40px,5.2vw,80px)] font-semibold leading-[0.98] tracking-[-0.04em] text-core-ink">
             <RevealText as="span" className="block" text={ABOUT_COPY.headlineLines[0]} />
@@ -113,8 +150,9 @@ const About: React.FC = () => {
             {ABOUT_FACTS.map((f) => (
               <div
                 key={f.label}
-                className="about-fact grid grid-cols-[7.5rem_1fr] gap-4 border-b border-core-graphite py-3.5 sm:grid-cols-[9rem_1fr]"
+                className="about-fact relative grid grid-cols-[7.5rem_1fr] gap-4 py-3.5 sm:grid-cols-[9rem_1fr]"
               >
+                <span aria-hidden="true" className="about-rule absolute inset-x-0 bottom-0 h-px origin-left bg-core-graphite" />
                 <dt className="pt-0.5 font-mono text-[10px] tracking-[0.2em] text-core-mist">{f.label}</dt>
                 <dd className="text-sm text-core-ink md:text-[15px]">{f.value}</dd>
               </div>
