@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -9,10 +9,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
  * - Forces GSAP ScrollTrigger to recalculate trigger & pin coordinates accurately.
  * - Respects hash anchors (e.g. /#contact) if navigated with a specific target.
  */
+// the router owns scroll on navigation; don't let the browser restore it too
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+}
+
 const ScrollToTop: React.FC = () => {
     const { pathname, hash } = useLocation();
 
-    useEffect(() => {
+    // layout effect: reset before the browser paints the new page, so the
+    // destination never flashes at the old scroll offset and then jumps
+    useLayoutEffect(() => {
         // If navigating to a specific in-page anchor, smoothly scroll to it
         if (hash) {
             const element = document.querySelector(hash);

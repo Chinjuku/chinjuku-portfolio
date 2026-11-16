@@ -2,6 +2,7 @@ import React from "react";
 import type { Experience } from "../../constants/experiences";
 
 const kindOf = (e: Experience): string => {
+  if (e.tags.some((t) => /full-time/i.test(t))) return "FULL-TIME";
   if (e.tags.some((t) => /intern/i.test(t))) return "INTERNSHIP";
   if (e.tags.some((t) => /part-time/i.test(t))) return "PART-TIME";
   if (/registration|staff/i.test(e.role) && !/dev/i.test(e.role)) return "EVENT STAFF";
@@ -24,7 +25,7 @@ export const ExperienceSlide: React.FC<ExperienceSlideProps> = ({ experience, in
       </div>
       <div className="mt-4 flex items-baseline gap-3">
         <span className="font-mono text-[11px] tracking-[0.2em] text-core-mist">{String(index + 1).padStart(2, "0")}</span>
-        <span className="exp-year text-5xl font-semibold tracking-[-0.04em] text-core-ink/15 transition-colors duration-500">
+        <span className="exp-year text-5xl font-semibold tracking-[-0.04em] text-core-mist transition-colors duration-500">
           {year}
         </span>
       </div>

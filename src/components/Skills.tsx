@@ -9,6 +9,7 @@ import {
   SkillsPillars,
 } from "./skills/index";
 import { useScrollVelocityMarquee } from "./motion";
+import Container from "./common/Container";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -111,7 +112,7 @@ const Skills: React.FC = () => {
       {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
-      <div className="container mx-auto relative z-10 w-full px-4 max-w-7xl">
+      <Container className="relative z-10">
         {/* Section Header */}
         <SkillsHeader />
 
@@ -123,7 +124,7 @@ const Skills: React.FC = () => {
 
         {/* 4 Architectural Pillar Cards */}
         <SkillsPillars categories={skillCategories} />
-      </div>
+      </Container>
     </section>
   );
 };

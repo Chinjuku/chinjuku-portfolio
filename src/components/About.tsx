@@ -6,6 +6,7 @@ import portrait from "../assets/profile-tech-cartoon.png";
 import { ABOUT_COPY, ABOUT_FACTS } from "../constants/about";
 import { useNavClick } from "../hooks";
 import { Magnetic, RevealText, TiltCard, usePrefersReducedMotion } from "./motion";
+import Container from "./common/Container";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,9 +57,9 @@ const About: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden bg-core-obsidian px-6 py-28 md:px-12 md:py-36"
+      className="relative overflow-hidden bg-core-obsidian py-28 md:py-36"
     >
-      <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-12 md:gap-16">
+      <Container className="grid items-center gap-14 md:grid-cols-12 md:gap-16">
         {/* portrait */}
         <div className="md:col-span-5">
           <TiltCard max={5} className="mx-auto max-w-sm rounded-[28px] md:max-w-none">
@@ -80,8 +81,8 @@ const About: React.FC = () => {
                   </span>
                 </span>
                 <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-core-obsidian/60 px-2.5 py-1 font-mono text-[10px] tracking-[0.15em] text-core-chrome backdrop-blur-md">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  OPEN FOR WORK
+                  <span className="h-1.5 w-1.5 rounded-full bg-core-icy" />
+                  FULL-STACK × AI
                 </span>
               </figcaption>
             </figure>
@@ -123,32 +124,20 @@ const About: React.FC = () => {
           <div className="about-actions mt-10 flex flex-wrap items-center gap-3">
             <Magnetic strength={0.25}>
               <a
-                href="/#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick("#contact");
-                }}
-                className="sci-fi-btn-primary group"
-              >
-                Work with me
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </a>
-            </Magnetic>
-            <Magnetic strength={0.25}>
-              <a
                 href="/#projects"
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavClick("#projects");
                 }}
-                className="sci-fi-btn-secondary"
+                className="sci-fi-btn-primary group"
               >
                 See the work
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
             </Magnetic>
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

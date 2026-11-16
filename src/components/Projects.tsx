@@ -6,6 +6,7 @@ import { ArrowUpRight, Github } from "lucide-react";
 import { projects, type Project } from "../constants/projects";
 import { RepoModal } from "./common/RepoModal";
 import { useIsMobile, useReducedMotion } from "./hero/core/hooks";
+import Container from "./common/Container";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -39,22 +40,25 @@ const ProjectActions: React.FC<ProjectActionsProps> = ({ project, onRepos }) => 
   </div>
 );
 
+const projectKind = (p: Project) => `${p.role.toUpperCase()} · ${year(p)}`;
+
+const ProjectTags: React.FC<{ project: Project }> = ({ project }) => (
+  <ul className="flex flex-wrap gap-1.5">
+    {project.tech.map((t) => (
+      <li key={t} className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[11px] text-core-chrome">
+        {t}
+      </li>
+    ))}
+  </ul>
+);
+
 const ProjectMeta: React.FC<{ project: Project }> = ({ project }) => (
   <>
-    <p className="font-mono text-[11px] tracking-[0.2em] text-core-mist">
-      {project.role.toUpperCase()} · {year(project)}
-    </p>
+    <p className="font-mono text-[11px] tracking-[0.2em] text-core-mist">{projectKind(project)}</p>
     <p className="mt-4 text-base leading-relaxed text-core-mist">{project.description}</p>
-    <ul className="mt-5 flex flex-wrap gap-1.5">
-      {project.tech.map((t) => (
-        <li
-          key={t}
-          className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[11px] text-core-chrome"
-        >
-          {t}
-        </li>
-      ))}
-    </ul>
+    <div className="mt-5">
+      <ProjectTags project={project} />
+    </div>
   </>
 );
 
@@ -163,7 +167,8 @@ const Projects: React.FC = () => {
 
   if (stacked) {
     return (
-      <section className="bg-core-obsidian px-6 py-24 md:px-12">
+      <section className="bg-core-obsidian py-24">
+        <Container>
         {header}
         <div className="mt-12 space-y-14">
           {projects.map((p, i) => (
@@ -185,6 +190,7 @@ const Projects: React.FC = () => {
             </article>
           ))}
         </div>
+        </Container>
         {modal}
       </section>
     );
@@ -197,13 +203,14 @@ const Projects: React.FC = () => {
     <div>
       <section
         ref={sectionRef}
-        className="relative flex h-screen flex-col overflow-hidden bg-core-obsidian px-12 pb-12 pt-28"
+        className="relative flex h-screen flex-col overflow-hidden bg-core-obsidian pb-12 pt-28"
       >
+        <Container className="flex min-h-0 flex-1 flex-col">
         {header}
 
         <div className="mt-10 grid flex-1 grid-cols-12 gap-10 overflow-hidden">
           {/* project index */}
-          <nav aria-label="Featured projects" className="col-span-4 flex flex-col justify-center gap-2">
+          <nav aria-label="Featured projects" className="col-span-3 flex flex-col justify-start gap-2 pt-1">
             {projects.map((p, i) => (
               <button
                 key={p.id}
@@ -214,7 +221,7 @@ const Projects: React.FC = () => {
               >
                 <span
                   className={`font-mono text-[11px] tracking-[0.2em] transition-colors ${
-                    i === active ? "text-core-icy" : "text-core-mist/60"
+                    i === active ? "text-core-icy" : "text-core-mist"
                   }`}
                 >
                   {pad(i + 1)}
@@ -223,7 +230,7 @@ const Projects: React.FC = () => {
                   className={`text-3xl font-semibold tracking-[-0.02em] transition-all duration-500 xl:text-4xl ${
                     i === active
                       ? "translate-x-1 text-core-ink"
-                      : "text-core-ink/25 group-hover:text-core-ink/50"
+                      : "text-core-mist group-hover:text-core-ink"
                   }`}
                 >
                   {p.title}
@@ -238,9 +245,9 @@ const Projects: React.FC = () => {
             </div>
           </nav>
 
-          {/* media + details */}
-          <div className="col-span-8 grid grid-cols-8 gap-8 overflow-hidden">
-            <div className="relative col-span-5 overflow-hidden rounded-2xl border border-white/10">
+          {/* media on top, details underneath: one wide stage */}
+          <div className="col-span-9 flex min-h-0 flex-col gap-6">
+            <div className="relative min-h-[200px] flex-1 overflow-hidden rounded-2xl border border-white/10">
               {projects.map((p, i) => (
                 <img
                   key={p.id}
@@ -257,17 +264,22 @@ const Projects: React.FC = () => {
                 {pad(active + 1)} / {pad(projects.length)}
               </span>
             </div>
-            <div key={current.id} className="work-detail col-span-3 flex flex-col justify-center">
-              <h3 className="text-2xl font-semibold tracking-tight text-core-ink">{current.title}</h3>
-              <div className="mt-3">
-                <ProjectMeta project={current} />
+            <div key={current.id} className="work-detail grid shrink-0 grid-cols-12 gap-8">
+              <div className="col-span-5">
+                <h3 className="text-2xl font-semibold tracking-tight text-core-ink">{current.title}</h3>
+                <p className="mt-2 font-mono text-[11px] tracking-[0.2em] text-core-mist">{projectKind(current)}</p>
+                <div className="mt-4">
+                  <ProjectTags project={current} />
+                </div>
+                <div className="mt-5">
+                  <ProjectActions project={current} onRepos={openRepos} />
+                </div>
               </div>
-              <div className="mt-8">
-                <ProjectActions project={current} onRepos={openRepos} />
-              </div>
+              <p className="col-span-7 text-base leading-relaxed text-core-mist">{current.description}</p>
             </div>
           </div>
         </div>
+        </Container>
       </section>
       {modal}
     </div>

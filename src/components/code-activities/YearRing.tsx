@@ -6,13 +6,13 @@ import { usePrefersReducedMotion } from "../motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SIZE = 440;
+const SIZE = 560;
 const C = SIZE / 2;
-const INNER = 112; // Sunday track
-const STEP = 11; // radius step per weekday
+const INNER = 140; // Sunday track
+const STEP = 14; // radius step per weekday
 const OUTER = INNER + STEP * 6;
 const LEVEL_OPACITY = [0.3, 0.45, 0.65, 0.85, 1];
-const LEVEL_R = [1.7, 2.5, 3, 3.4, 3.9];
+const LEVEL_R = [2.2, 3.2, 3.8, 4.3, 5];
 
 interface YearRingProps {
   year: number;
@@ -110,14 +110,14 @@ export const YearRing: React.FC<YearRingProps> = ({
     <svg
       ref={rootRef}
       viewBox={`0 0 ${SIZE} ${SIZE}`}
-      className="h-auto w-full max-w-[520px] select-none"
+      className="h-auto w-full max-w-[640px] select-none"
       role="img"
       aria-label={`${total} contributions in ${year}`}
       onMouseLeave={() => onHoverMonth(null)}
     >
       {/* weekday tracks */}
       {Array.from({ length: 7 }, (_, d) => (
-        <circle key={d} cx={C} cy={C} r={INNER + d * STEP} fill="none" stroke="rgba(255,255,255,0.03)" />
+        <circle key={d} cx={C} cy={C} r={INNER + d * STEP} fill="none" stroke="rgba(255,255,255,0.05)" />
       ))}
 
       {/* month separators + labels */}
@@ -126,7 +126,7 @@ export const YearRing: React.FC<YearRingProps> = ({
         const mid = (startAngleOfMonth[m] + startAngleOfMonth[m + 1]) / 2;
         const [x0, y0] = polar(a, INNER - 10);
         const [x1, y1] = polar(a, OUTER + 10);
-        const [lx, ly] = polar(mid, OUTER + 26);
+        const [lx, ly] = polar(mid, OUTER + 30);
         const on = focus === null || focus === m;
         return (
           <g key={name}>
@@ -136,8 +136,8 @@ export const YearRing: React.FC<YearRingProps> = ({
               y={ly}
               textAnchor="middle"
               dominantBaseline="middle"
-              className={`font-mono text-[10px] tracking-[0.15em] transition-[fill] ${
-                focus === m ? "fill-core-icy" : on ? "fill-core-mist" : "fill-core-mist/40"
+              className={`font-mono text-[12px] tracking-[0.15em] transition-[fill] ${
+                focus === m ? "fill-core-icy" : on ? "fill-core-mist" : "fill-core-mist/75"
               }`}
             >
               {name.toUpperCase()}
@@ -159,7 +159,7 @@ export const YearRing: React.FC<YearRingProps> = ({
               cx={d.x}
               cy={d.y}
               r={LEVEL_R[d.level]}
-              fill={d.level === 0 ? "#3A4454" : "#8ABFFF"}
+              fill={d.level === 0 ? "#566174" : "#8ABFFF"}
               opacity={dim ? o * 0.25 : o}
               style={{ transition: "opacity 0.3s" }}
             >
@@ -188,10 +188,10 @@ export const YearRing: React.FC<YearRingProps> = ({
 
       {/* center readout */}
       <g className="pointer-events-none">
-        <text x={C} y={C - 8} textAnchor="middle" className="fill-core-ink text-[44px] font-semibold tracking-[-0.04em]">
+        <text x={C} y={C - 10} textAnchor="middle" className="fill-core-ink text-[56px] font-semibold tracking-[-0.04em]">
           {loading ? "—" : (focus === null ? total : monthlyTotals[focus]).toLocaleString()}
         </text>
-        <text x={C} y={C + 22} textAnchor="middle" className="fill-core-mist font-mono text-[10px] tracking-[0.2em]">
+        <text x={C} y={C + 26} textAnchor="middle" className="fill-core-mist font-mono text-[12px] tracking-[0.2em]">
           {focus === null ? `CONTRIBUTIONS · ${year}` : `${FULL_MONTH_NAMES[focus].toUpperCase()} ${year}`}
         </text>
       </g>
