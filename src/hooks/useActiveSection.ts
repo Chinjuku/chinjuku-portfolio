@@ -27,7 +27,8 @@ export const useActiveSection = (
 
         const checkActiveSection = () => {
             const viewportThreshold = window.innerHeight * offsetFactor;
-            let currentId = activeSection;
+            // null = no section on the threshold line: keep the current one
+            let currentId: string | null = null;
 
             // Check if user is scrolled to the very bottom of the page
             const isBottom =
@@ -64,7 +65,7 @@ export const useActiveSection = (
                 currentId = sectionIds[0];
             }
 
-            setActiveSection(currentId);
+            if (currentId !== null) setActiveSection(currentId);
             ticking = false;
         };
 
