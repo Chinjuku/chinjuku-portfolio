@@ -28,7 +28,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
         el.style.setProperty("--my", `${e.clientY - r.top}px`);
       }}
       className={`ap-card group relative flex overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] transition-colors duration-300 hover:border-white/20 ${
-        featured ? "flex-col md:col-span-2 md:flex-row" : "flex-col"
+        featured ? "flex-col md:col-span-2 md:flex-row" : "flex-row sm:flex-col"
       }`}
     >
       {/* cursor light */}
@@ -43,7 +43,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
 
       <div
         className={`relative overflow-hidden ${
-          featured ? "aspect-[16/10] md:aspect-auto md:w-3/5" : "aspect-[16/10]"
+          featured
+            ? "aspect-[16/10] md:aspect-auto md:w-3/5"
+            : "w-28 shrink-0 self-stretch sm:aspect-[16/10] sm:w-auto sm:self-auto"
         }`}
       >
         <ProjectCover
@@ -53,7 +55,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
         />
         <div className="absolute inset-0 bg-gradient-to-t from-core-obsidian/70 to-transparent" />
         {ai && (
-          <span className="absolute left-4 top-4 rounded-full border border-core-icy/40 bg-core-obsidian/60 px-2.5 py-1 font-mono text-[10px] tracking-[0.2em] text-core-icy backdrop-blur-md">
+          <span className="absolute left-2 top-2 rounded-full border border-core-icy/40 sm:left-4 sm:top-4 bg-core-obsidian/60 px-2.5 py-1 font-mono text-[10px] tracking-[0.2em] text-core-icy backdrop-blur-md">
             AI
           </span>
         )}
@@ -61,13 +63,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
 
       {/* z-[15] without `relative`: a flex item's z-index lifts the text above the cursor
           light (z-10) without becoming the containing block of the title's stretched ::after */}
-      <div className={`z-[15] flex flex-1 flex-col p-6 ${featured ? "md:justify-center md:p-10" : ""}`}>
+      <div className={`z-[15] flex min-w-0 flex-1 flex-col ${featured ? "p-6 md:justify-center md:p-10" : "p-4 sm:p-6"}`}>
         <p className="font-mono text-[10px] tracking-[0.2em] text-core-mist">
           {project.finished_date.slice(0, 4)} · {project.role.toUpperCase()}
         </p>
         <h3
           className={`mt-2 font-semibold tracking-tight text-core-ink ${
-            featured ? "text-3xl md:text-4xl" : "text-xl"
+            featured ? "text-3xl md:text-4xl" : "text-lg sm:text-xl"
           }`}
         >
           <Link
@@ -79,12 +81,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
         </h3>
         <p
           className={`mt-3 text-sm leading-relaxed text-core-mist ${
-            featured ? "line-clamp-5" : "line-clamp-3"
+            featured ? "line-clamp-5" : "line-clamp-2 sm:line-clamp-3"
           }`}
         >
           {project.description}
         </p>
-        <ul className="mt-4 flex flex-wrap gap-1.5">
+        <ul className={`mt-4 flex-wrap gap-1.5 ${featured ? "flex" : "hidden sm:flex"}`}>
           {project.tech.slice(0, featured ? 8 : 4).map((t) => (
             <li
               key={t}
@@ -99,7 +101,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
             </li>
           )}
         </ul>
-        <div className="mt-auto flex flex-wrap gap-2 pt-6">
+        {/* phone: the whole card opens the case study; demo/source live there */}
+        <div className={`mt-auto flex-wrap gap-2 pt-6 ${featured ? "flex" : "hidden sm:flex"}`}>
           {project.web_url && (
             <a
               href={project.web_url}

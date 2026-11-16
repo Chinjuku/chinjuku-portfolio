@@ -18,8 +18,8 @@ export const ProfileAura: React.FC<ProfileAuraProps> = ({
     if (!ctx) return;
 
     let animationId: number;
-    let width = (canvas.width = 620);
-    let height = (canvas.height = 620);
+    const width = (canvas.width = 620);
+    const height = (canvas.height = 620);
     const cx = width / 2;
     const cy = height / 2;
 

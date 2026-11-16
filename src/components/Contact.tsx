@@ -239,7 +239,7 @@ const Contact: React.FC = () => {
                 </div>
 
                 {/* Polished Cyber-Cosmos Mission Footer */}
-                <footer className="border-t border-gray-200/80 dark:border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400 gap-4">
+                <footer className="border-t border-gray-200/80 dark:border-white/10 pt-8 flex flex-col lg:flex-row items-center justify-between text-xs font-mono text-gray-500 dark:text-gray-400 gap-4">
                     <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="tracking-wider">BANGKOK, TH</span>

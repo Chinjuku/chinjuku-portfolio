@@ -35,7 +35,7 @@ const CAROUSEL_COUNT = 5;
 const CAROUSEL_INTERVAL_MS = 9000;
 
 const chip = (active: boolean) =>
-  `rounded-full px-3.5 py-1.5 text-xs transition-colors ${
+  `inline-flex items-center rounded-full px-3.5 py-1.5 text-xs transition-colors [@media(pointer:coarse)]:min-h-[44px] [@media(pointer:coarse)]:px-4 ${
     active
       ? "bg-core-ink text-core-obsidian"
       : "border border-white/10 text-core-mist hover:border-white/25 hover:text-core-ink"

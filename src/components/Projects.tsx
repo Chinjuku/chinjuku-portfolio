@@ -25,7 +25,7 @@ const ProjectActions: React.FC<ProjectActionsProps> = ({ project, onRepos }) => 
         href={project.web_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-full bg-core-chrome px-5 py-2.5 text-sm font-medium text-core-obsidian transition-colors hover:bg-core-ink"
+        className="inline-flex items-center gap-2 rounded-full bg-core-chrome min-h-[44px] px-5 py-2.5 text-sm font-medium text-core-obsidian transition-colors hover:bg-core-ink"
       >
         Live demo <ArrowUpRight className="h-4 w-4" />
       </a>
@@ -33,7 +33,7 @@ const ProjectActions: React.FC<ProjectActionsProps> = ({ project, onRepos }) => 
     <button
       type="button"
       onClick={() => onRepos(project.repos)}
-      className="inline-flex items-center gap-2 rounded-full border border-core-graphite px-5 py-2.5 text-sm font-medium text-core-ink transition-colors hover:border-core-mist"
+      className="inline-flex items-center gap-2 rounded-full border border-core-graphite min-h-[44px] px-5 py-2.5 text-sm font-medium text-core-ink transition-colors hover:border-core-mist"
     >
       <Github className="h-4 w-4" /> Source
     </button>
@@ -350,7 +350,7 @@ const Projects: React.FC = () => {
                     onClick={() => scrollToSlide(i)}
                     aria-label={`Show ${p.title}`}
                     aria-current={i === slide ? "true" : undefined}
-                    className="flex h-6 w-6 items-center justify-center"
+                    className="flex h-11 w-7 items-center justify-center"
                   >
                     <span
                       className={`block h-1.5 rounded-full transition-all duration-300 ${

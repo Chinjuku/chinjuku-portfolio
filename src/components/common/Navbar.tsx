@@ -39,6 +39,19 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // open drawer: Esc closes it and the page behind stops scrolling
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setIsOpen(false);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen]);
+
   const onLinkClick = (href: string) => {
     setIsOpen(false);
     handleNavClick(href);
@@ -48,6 +61,16 @@ const Navbar: React.FC = () => {
     isRoute ? isArchivePage : !isArchivePage && activeSection === href.replace("#", "");
 
   return (
+    <>
+    {/* dim backdrop behind the mobile drawer; tap it to close (outside the
+        transformed header so `fixed` covers the viewport) */}
+    <div
+      aria-hidden="true"
+      onClick={() => setIsOpen(false)}
+      className={`fixed inset-0 z-[45] bg-core-obsidian/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+        isOpen ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
+    />
     <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-3rem)] max-w-[74rem] xl:max-w-[84rem] 2xl:max-w-[92rem] -translate-x-1/2 md:w-[calc(100%-6rem)] select-none sm:top-5">
       <nav
         className={`flex w-full items-center justify-between rounded-full border px-4 py-2 backdrop-blur-xl transition-all duration-300 sm:px-5 ${
@@ -92,7 +115,7 @@ const Navbar: React.FC = () => {
         <div aria-hidden="true" className="hidden w-28 lg:block" />
 
         <button
-          className="rounded-full border border-white/10 p-2 text-core-ink transition-colors hover:bg-white/10 focus-visible:outline-none lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-core-ink transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy lg:hidden"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle navigation menu"
           aria-expanded={isOpen}
@@ -123,6 +146,7 @@ const Navbar: React.FC = () => {
         </div>
       )}
     </header>
+    </>
   );
 };
 
