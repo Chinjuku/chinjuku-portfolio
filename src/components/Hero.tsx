@@ -134,9 +134,10 @@ const Hero: React.FC = () => {
       <section
         ref={sectionRef}
         aria-label="Introduction"
-        className="relative flex flex-col overflow-hidden bg-core-obsidian px-6 pt-24 text-core-ink md:h-screen md:px-12 md:pb-10"
+        className="relative flex flex-col overflow-hidden bg-core-obsidian pt-24 text-core-ink md:h-screen md:pb-10"
       >
-        <div className="grid flex-1 grid-cols-1 items-center gap-6 md:grid-cols-12 md:gap-8">
+        {/* same edges as every other section (shared Container sizing) */}
+        <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-6 px-6 md:grid-cols-12 md:gap-8 md:px-12">
           <div
             className={`hero-intro transition-[filter] duration-500 md:col-span-5 ${
               isOpen ? "md:blur-[2px]" : ""
@@ -216,7 +217,7 @@ const Hero: React.FC = () => {
 
               <Link
                 to={HERO_COPY.ctaProjects.href}
-                className="hero-explore absolute bottom-0 left-1/2 -translate-x-1/2 whitespace-nowrap text-sm text-core-chrome underline-offset-8 hover:underline"
+                className="hero-explore absolute bottom-0 right-0 whitespace-nowrap text-sm text-core-chrome underline-offset-8 hover:underline"
               >
                 {HERO_COPY.explore}
               </Link>

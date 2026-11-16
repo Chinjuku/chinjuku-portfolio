@@ -30,7 +30,7 @@ const CurrentlyBuilding: React.FC = () => {
           <div>
             <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">NOW</p>
             <h2 id="now-title" className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-core-ink md:text-6xl">
-              Currently Building
+              Currently building
             </h2>
           </div>
           <p className="font-mono text-[11px] tracking-[0.2em] text-core-mist">UPDATED {updated.toUpperCase()}</p>

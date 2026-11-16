@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight, Github } from "lucide-react";
 import { projects, type Project } from "../constants/projects";
 import { RepoModal } from "./common/RepoModal";
-import { useIsMobile, useReducedMotion } from "./hero/core/hooks";
+import { useReducedMotion } from "./hero/core/hooks";
 import Container from "./common/Container";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -72,9 +72,16 @@ const Projects: React.FC = () => {
   const triggerRef = useRef<ScrollTrigger | null>(null);
   const [active, setActive] = useState(0);
   const [modalRepos, setModalRepos] = useState<string[] | null>(null);
-  const isMobile = useIsMobile();
+  // the pinned three-column stage needs a laptop-wide screen; tablets get the stacked list
+  const [narrow, setNarrow] = useState(() => window.matchMedia("(max-width: 1023px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
   const reduced = useReducedMotion();
-  const stacked = isMobile || reduced;
+  const stacked = narrow || reduced;
 
   const openRepos = (repos: string | string[]) => {
     if (Array.isArray(repos)) setModalRepos(repos);
@@ -176,7 +183,7 @@ const Projects: React.FC = () => {
               <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10">
                 <img src={p.image} alt="" loading="lazy" className="h-full w-full object-cover opacity-80 saturate-[0.7]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-core-obsidian/80 to-transparent" />
-                <span className="absolute left-4 top-4 font-mono text-[11px] tracking-[0.2em] text-core-ink">
+                <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-core-obsidian/80 px-2.5 py-1 font-mono text-[11px] tracking-[0.2em] text-core-ink backdrop-blur-md">
                   {pad(i + 1)} / {pad(projects.length)}
                 </span>
               </div>

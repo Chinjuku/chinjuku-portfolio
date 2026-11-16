@@ -153,7 +153,7 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
             </div>
           ))}
           <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-r from-transparent via-transparent to-core-obsidian/60" />
-          <span className="absolute left-5 top-5 z-30 font-mono text-[11px] tracking-[0.2em] text-core-ink">
+          <span className="absolute bottom-5 left-5 z-30 rounded-full border border-white/10 bg-core-obsidian/80 px-2.5 py-1 font-mono text-[11px] tracking-[0.2em] text-core-ink backdrop-blur-md">
             LATEST · {pad(index + 1)} / {pad(count)}
           </span>
         </div>

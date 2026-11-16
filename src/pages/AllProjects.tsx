@@ -95,8 +95,9 @@ const AllProjects: React.FC = () => {
   }
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-core-obsidian px-6 pb-32 pt-32 text-core-ink md:px-12">
-      <div className="mx-auto max-w-7xl">
+    <div ref={pageRef} className="min-h-screen bg-core-obsidian pb-32 pt-32 text-core-ink">
+      {/* same edges as Home and the case-study pages */}
+      <div className="mx-auto w-full max-w-7xl px-6 md:px-12">
         <header className="ap-head">
           <Link
             to="/"

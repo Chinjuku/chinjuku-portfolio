@@ -99,7 +99,7 @@ const Skills: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen flex flex-col justify-center bg-space-white dark:bg-space-dark relative overflow-hidden py-16 sm:py-20 md:py-28 transition-colors duration-300"
+      className="flex flex-col bg-space-white dark:bg-space-dark relative overflow-hidden py-16 sm:py-20 md:py-28 transition-colors duration-300"
     >
       {/* giant parallax word behind the content */}
       <div

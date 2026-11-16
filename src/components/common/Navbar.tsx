@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
     isRoute ? isArchivePage : !isArchivePage && activeSection === href.replace("#", "");
 
   return (
-    <header className="fixed left-1/2 top-4 z-50 w-[95%] max-w-6xl -translate-x-1/2 select-none sm:top-5">
+    <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-3rem)] max-w-[74rem] -translate-x-1/2 md:w-[calc(100%-6rem)] select-none sm:top-5">
       <nav
         className={`flex w-full items-center justify-between rounded-full border px-4 py-2 backdrop-blur-xl transition-all duration-300 sm:px-5 ${
           scrolled

@@ -103,13 +103,13 @@ const ProjectDetail: React.FC = () => {
 
         <div className="mt-14 grid gap-12 lg:grid-cols-12 lg:gap-16">
           {/* gallery stays in view while the write-up scrolls on large screens */}
-          <div className="pd-reveal lg:col-span-5">
+          <div className="pd-reveal min-w-0 lg:col-span-5">
             <div className="lg:sticky lg:top-28">
               <ProjectGallery project={project} />
             </div>
           </div>
 
-          <div className="pd-reveal lg:col-span-7">
+          <div className="pd-reveal min-w-0 lg:col-span-7">
             <section className={`${row} border-t-0 pt-0`}>
               <h2 className={label}>OVERVIEW</h2>
               <div className="space-y-4 text-base leading-relaxed text-core-chrome md:text-lg">
