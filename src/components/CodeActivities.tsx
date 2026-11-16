@@ -15,13 +15,71 @@ const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frida
 
 gsap.registerPlugin(ScrollTrigger);
 
+const INITIAL_YEAR = 2026;
+const cacheKeys = (year: number) => {
+  const key = `${CACHE_PREFIX}${year}`;
+  return { key, timestamp: `${key}_timestamp` };
+};
+
+/** The cached year if it is still fresh, else null. Synchronous, so it can seed state. */
+const readFreshCache = (year: number): YearActivityData | null => {
+  const { key, timestamp } = cacheKeys(year);
+  try {
+    const cached = localStorage.getItem(key);
+    const ts = localStorage.getItem(timestamp);
+    if (cached && ts && Date.now() - parseInt(ts, 10) < CACHE_DURATION) {
+      return JSON.parse(cached) as YearActivityData;
+    }
+  } catch (e) {
+    console.warn("LocalStorage read error:", e);
+  }
+  return null;
+};
+
+/**
+ * Loads a year's contributions: fresh cache, then the API (cached on success),
+ * then a stale cache, then a generated skeleton. Never throws; holds no React state.
+ */
+const loadContributions = async (year: number, forceRefresh = false): Promise<YearActivityData> => {
+  if (!forceRefresh) {
+    const fresh = readFreshCache(year);
+    if (fresh) return fresh;
+  }
+  const { key, timestamp } = cacheKeys(year);
+  try {
+    const res = await fetch(`https://github-contributions-api.jogruber.de/v4/Chinjuku?y=${year}`, {
+      headers: forceRefresh ? { "Cache-Control": "no-cache" } : undefined,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: YearActivityData = await res.json();
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+      localStorage.setItem(timestamp, Date.now().toString());
+    } catch (e) {
+      console.warn("LocalStorage write error:", e);
+    }
+    return data;
+  } catch (err) {
+    console.warn(`Failed to fetch GitHub contributions for ${year}:`, err);
+    try {
+      const stale = localStorage.getItem(key);
+      if (stale) return JSON.parse(stale) as YearActivityData;
+    } catch {
+      // stale cache unreadable: fall through to the generated skeleton
+    }
+    return generateFallbackYearData(year);
+  }
+};
+
 const CodeActivities: React.FC = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(2026);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [activityData, setActivityData] = useState<YearActivityData | null>(
-    null,
+  const [selectedYear, setSelectedYear] = useState<number>(INITIAL_YEAR);
+  // seeded from a fresh cache so a cached year renders without a loading flash
+  const [activityData, setActivityData] = useState<YearActivityData | null>(() =>
+    readFreshCache(INITIAL_YEAR),
   );
+  const [loading, setLoading] = useState<boolean>(() => activityData === null);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const yearRef = useRef(INITIAL_YEAR); // latest selected year, read by async callbacks
   const [hoverMonth, setHoverMonth] = useState<number | null>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -44,79 +102,38 @@ const CodeActivities: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  const fetchContributions = async (year: number, forceRefresh = false) => {
-    const cacheKey = `${CACHE_PREFIX}${year}`;
-    const timestampKey = `${cacheKey}_timestamp`;
-
-    // Check localStorage cache if not forced
-    if (!forceRefresh) {
-      try {
-        const cached = localStorage.getItem(cacheKey);
-        const timestampStr = localStorage.getItem(timestampKey);
-        if (cached && timestampStr) {
-          const age = Date.now() - parseInt(timestampStr, 10);
-          if (age < CACHE_DURATION) {
-            const parsed = JSON.parse(cached);
-            setActivityData(parsed);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch (e) {
-        console.warn("LocalStorage read error:", e);
-      }
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `https://github-contributions-api.jogruber.de/v4/Chinjuku?y=${year}`,
-        {
-          headers: forceRefresh ? { "Cache-Control": "no-cache" } : undefined,
-        },
-      );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data: YearActivityData = await res.json();
-
-      // Save to localStorage
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-        localStorage.setItem(timestampKey, Date.now().toString());
-      } catch (e) {
-        console.warn("LocalStorage write error:", e);
-      }
-
-      setActivityData(data);
-    } catch (err) {
-      console.warn(`Failed to fetch GitHub contributions for ${year}:`, err);
-      // Fallback 1: Stale cache
-      try {
-        const stale = localStorage.getItem(cacheKey);
-        if (stale) {
-          setActivityData(JSON.parse(stale));
-          setLoading(false);
-          return;
-        }
-      } catch {
-        // stale cache unreadable: fall through to the generated skeleton
-      }
-
-      // Fallback 2: Generate skeleton structure
-      setActivityData(generateFallbackYearData(year));
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
-    }
-  };
-
+  // Load the selected year. State is only set once the data arrives, and a
+  // superseded request (the user switched years meanwhile) is ignored.
   useEffect(() => {
-    fetchContributions(selectedYear);
+    let alive = true;
+    loadContributions(selectedYear).then((data) => {
+      if (!alive) return;
+      setActivityData(data);
+      setLoading(false);
+    });
+    return () => {
+      alive = false;
+    };
   }, [selectedYear]);
 
-  // Manual refresh action
+  const selectYear = (year: number) => {
+    yearRef.current = year;
+    setHoverMonth(null);
+    const cached = readFreshCache(year);
+    if (cached) setActivityData(cached);
+    setLoading(cached === null);
+    setSelectedYear(year);
+  };
+
+  // Manual refresh action: bypass the cache
   const handleManualRefresh = () => {
+    const year = selectedYear;
     setIsRefreshing(true);
-    fetchContributions(selectedYear, true);
+    loadContributions(year, true).then((data) => {
+      setIsRefreshing(false);
+      // only apply if the user is still looking at that year
+      if (yearRef.current === year) setActivityData(data);
+    });
   };
 
   // Calculate aggregated metrics
@@ -219,10 +236,7 @@ const CodeActivities: React.FC = () => {
           <div className="md:col-span-5">
             <ActivityInsights
               year={selectedYear}
-              onSelectYear={(y) => {
-                setHoverMonth(null);
-                setSelectedYear(y);
-              }}
+              onSelectYear={selectYear}
               stats={stats}
               hoverMonth={hoverMonth}
               loading={loading}
