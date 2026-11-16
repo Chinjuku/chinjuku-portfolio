@@ -4,6 +4,7 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import Home from "./pages/Home";
 import AllProjects from "./pages/AllProjects";
 import ProjectDetail from "./pages/ProjectDetail";
+import { LikeOrbit, SiteStatsProvider } from "./components/stats";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,18 +13,22 @@ gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   return (
-    <main className="bg-space-white dark:bg-space-black min-h-screen text-space-black dark:text-white selection:bg-nebula-purple selection:text-white transition-colors duration-300">
-      <div className="grain-overlay" />
+    <SiteStatsProvider>
+      <main className="bg-space-white dark:bg-space-black min-h-screen text-space-black dark:text-white selection:bg-nebula-purple selection:text-white transition-colors duration-300">
+        <div className="grain-overlay" />
 
-      <ScrollToTop />
-      <Navbar />
+        <ScrollToTop />
+        <Navbar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<AllProjects />} />
-        <Route path="/projects/:slug" element={<ProjectDetail />} />
-      </Routes>
-    </main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<AllProjects />} />
+          <Route path="/projects/:slug" element={<ProjectDetail />} />
+        </Routes>
+
+        <LikeOrbit />
+      </main>
+    </SiteStatsProvider>
   );
 }
 
