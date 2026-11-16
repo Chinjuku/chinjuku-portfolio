@@ -111,6 +111,14 @@ body {
 .exp-vertical .exp-slide {
   width: 100%;
 }
+/* vertical: the dot sits on the left rail instead of above the year */
+.exp-vertical .exp-dot {
+  left: -24px;
+}
+.exp-vertical .exp-year,
+.exp-vertical .exp-card {
+  transition: color 0.5s ease, border-color 0.5s ease;
+}
 .exp-slide.is-active .exp-dot {
   background: #8abfff;
   border-color: #8abfff;

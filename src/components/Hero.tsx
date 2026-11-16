@@ -137,18 +137,18 @@ const Hero: React.FC = () => {
         className="relative flex flex-col overflow-hidden bg-core-obsidian pt-24 text-core-ink md:h-screen md:pb-10"
       >
         {/* same edges as every other section (shared Container sizing) */}
-        <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-6 px-6 md:grid-cols-12 md:gap-8 md:px-12">
+        <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-6 px-6 md:grid-cols-12 md:gap-8 md:px-12 xl:max-w-[1440px] 2xl:max-w-[1600px] 2xl:px-16">
           <div
-            className={`hero-intro transition-[filter] duration-500 md:col-span-5 ${
-              isOpen ? "md:blur-[2px]" : ""
+            className={`hero-intro transition-[filter] duration-500 md:col-span-6 lg:col-span-5 ${
+              isOpen ? "md:blur-[2px] md:max-lg:invisible" : ""
             }`}
           >
-            <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">
+            <p className="font-mono text-[11px] tracking-[0.2em] text-core-icy lg:tracking-[0.3em]">
               {HERO_COPY.eyebrow}
             </p>
             <h1
               aria-label={HERO_COPY.title}
-              className="mt-6 text-[clamp(48px,6.4vw,116px)] font-semibold leading-[0.95] tracking-[-0.045em] text-core-ink"
+              className="mt-6 text-[clamp(44px,5.4vw,96px)] lg:text-[clamp(44px,4.2vw,96px)] font-semibold leading-[0.95] tracking-[-0.045em] text-core-ink"
             >
               {HERO_COPY.titleLines.map((line) => (
                 <span key={line} aria-hidden="true" className="block whitespace-nowrap">
@@ -156,7 +156,7 @@ const Hero: React.FC = () => {
                 </span>
               ))}
             </h1>
-            <p className="mt-6 max-w-[40ch] text-base leading-relaxed text-core-mist md:text-lg">
+            <p className="mt-6 max-w-[40ch] text-base leading-relaxed text-core-mist lg:text-lg">
               {HERO_COPY.sub}
             </p>
             <HeroCtas className="mt-10" />
@@ -166,7 +166,7 @@ const Hero: React.FC = () => {
             ref={stageRef}
             className="flex h-[100svh] flex-col justify-center gap-6 pb-10 md:contents"
           >
-            <div className="relative h-[52svh] md:col-span-7 md:h-[80vh]">
+            <div className="relative h-[52svh] md:col-span-6 md:h-[56vh] lg:col-span-7 lg:h-[80vh]">
               <Suspense
                 fallback={<CoreFallback className="absolute inset-0" />}
               >
@@ -203,12 +203,12 @@ const Hero: React.FC = () => {
                   id={activeLayer}
                   onClose={close}
                   onSelect={select}
-                  className="absolute right-0 top-1/2 w-80 -translate-y-1/2"
+                  className="absolute right-full top-1/2 mr-6 w-72 -translate-y-1/2 lg:right-0 lg:mr-0 lg:w-80"
                 />
               )}
 
               <p
-                className={`pointer-events-none absolute bottom-0 left-0 font-mono text-[10px] tracking-[0.2em] text-core-mist transition-opacity duration-300 md:bottom-2 ${
+                className={`pointer-events-none absolute bottom-7 left-0 font-mono text-[10px] tracking-[0.2em] text-core-mist transition-opacity duration-300 md:bottom-9 lg:bottom-2 ${
                   isOpen ? "opacity-0" : "opacity-100"
                 }`}
               >
