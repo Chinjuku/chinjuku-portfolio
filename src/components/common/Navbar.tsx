@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const handleNavClick = useNavClick();
 
-  const isArchivePage = location.pathname.startsWith("/projects");
+  const onHome = location.pathname === "/";
 
   const navLinks = useMemo(
     () => [
@@ -22,6 +22,7 @@ const Navbar: React.FC = () => {
       { name: "About", href: "#about" },
       { name: "Contact", href: "#contact" },
       { name: "All Projects", href: "/projects", isRoute: true },
+      { name: "Personality", href: "/personality", isRoute: true },
     ],
     [],
   );
@@ -58,7 +59,8 @@ const Navbar: React.FC = () => {
   };
 
   const isLinkActive = (href: string, isRoute?: boolean) =>
-    isRoute ? isArchivePage : !isArchivePage && activeSection === href.replace("#", "");
+    // หน้า route (เช่น /projects, /personality) active ตาม path; anchor active เฉพาะบนหน้าแรก
+    isRoute ? location.pathname.startsWith(href) : onHome && activeSection === href.replace("#", "");
 
   return (
     <>
@@ -100,7 +102,7 @@ const Navbar: React.FC = () => {
                 key={link.name}
                 onClick={() => onLinkClick(link.href)}
                 aria-current={active ? "page" : undefined}
-                className={`relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy/50 ${
+                className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-1.5 text-[13px] transition-colors xl:px-3 duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy/50 ${
                   active ? "text-core-ink" : "text-core-mist hover:text-core-ink"
                 }`}
               >
@@ -112,7 +114,8 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* keeps the links centered now that the right-hand slot is empty */}
-        <div aria-hidden="true" className="hidden w-28 lg:block" />
+        {/* spacer แสดงเฉพาะจอกว้าง: ที่ lg เมนู 10 อันต้องใช้พื้นที่เต็ม */}
+        <div aria-hidden="true" className="hidden w-28 xl:block" />
 
         <button
           className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-core-ink transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy lg:hidden"
