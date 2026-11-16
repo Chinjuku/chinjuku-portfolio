@@ -3,6 +3,7 @@ import Hero from "../components/Hero";
 import Skills from "../components/Skills";
 import Projects from "../components/Projects";
 import CodeActivities from "../components/CodeActivities";
+import CurrentlyBuilding from "../components/CurrentlyBuilding";
 import Experience from "../components/Experience";
 import About from "../components/About";
 import Contact from "../components/Contact";
@@ -21,6 +22,10 @@ const Home: React.FC = () => {
 
       <div id="projects">
         <Projects />
+      </div>
+
+      <div id="now">
+        <CurrentlyBuilding />
       </div>
 
       <div id="activity">

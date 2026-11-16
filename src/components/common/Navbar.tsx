@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useActiveSection, useNavClick } from "../../hooks";
-import resumePdf from "../../assets/resume.pdf";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,13 +9,14 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const handleNavClick = useNavClick();
 
-  const isArchivePage = location.pathname === "/projects";
+  const isArchivePage = location.pathname.startsWith("/projects");
 
   const navLinks = useMemo(
     () => [
       { name: "Home", href: "#hero" },
       { name: "Skills", href: "#skills" },
       { name: "Work", href: "#projects" },
+      { name: "Now", href: "#now" },
       { name: "Activity", href: "#activity" },
       { name: "Experience", href: "#experience" },
       { name: "About", href: "#about" },
@@ -38,10 +38,6 @@ const Navbar: React.FC = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleOpenResume = () => {
-    window.open(resumePdf, "_blank");
-  };
 
   const onLinkClick = (href: string) => {
     setIsOpen(false);
@@ -92,15 +88,8 @@ const Navbar: React.FC = () => {
           })}
         </div>
 
-        <div className="hidden items-center lg:flex">
-          <button
-            onClick={handleOpenResume}
-            className="inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-4 py-1.5 text-xs font-medium text-core-obsidian transition-colors hover:bg-core-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-core-icy/50"
-          >
-            Resume
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        {/* keeps the links centered now that the right-hand slot is empty */}
+        <div aria-hidden="true" className="hidden w-28 lg:block" />
 
         <button
           className="rounded-full border border-white/10 p-2 text-core-ink transition-colors hover:bg-white/10 focus-visible:outline-none lg:hidden"
@@ -131,13 +120,6 @@ const Navbar: React.FC = () => {
               </button>
             );
           })}
-          <div className="my-2 h-px w-full bg-white/10" />
-          <button
-            onClick={handleOpenResume}
-            className="w-full rounded-full bg-core-chrome py-3 text-sm font-medium text-core-obsidian"
-          >
-            View Resume
-          </button>
         </div>
       )}
     </header>
