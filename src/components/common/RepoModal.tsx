@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X, ExternalLink } from "lucide-react";
 
 interface RepoModalProps {
@@ -29,10 +29,25 @@ export const RepoModal: React.FC<RepoModalProps> = ({
   repos,
   onClose,
 }) => {
-  if (!isOpen || !repos || !Array.isArray(repos)) return null;
+  const visible = isOpen && Array.isArray(repos);
+
+  // Esc closes. Capture phase + stopPropagation so a dialog underneath
+  // (e.g. the project drawer, which listens in the bubble phase) stays open.
+  useEffect(() => {
+    if (!visible) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      e.stopPropagation();
+      onClose();
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [visible, onClose]);
+
+  if (!visible || !repos || !Array.isArray(repos)) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+    <div className="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
       <div className="sci-fi-glass rounded-2xl p-6 max-w-sm w-full relative animate-in fade-in zoom-in-95 duration-200">
         <button
           onClick={onClose}

@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowLeft } from "lucide-react";
 import { all_projects } from "../constants/projects";
 import { RepoModal } from "../components/common/RepoModal";
+import { Odometer } from "../components/motion";
 import {
   FeaturedCarousel,
   KIND_LABELS,
   ProjectCard,
   isAi,
   matchesKind,
+  projectBySlug,
   projectYear,
   type ProjectKind,
 } from "../components/all-projects";
@@ -44,6 +46,10 @@ const AllProjects: React.FC = () => {
   const [year, setYear] = useState<number | "all">("all");
   const [kind, setKind] = useState<ProjectKind>("all");
   const [modalRepos, setModalRepos] = useState<string[] | null>(null);
+
+  // legacy drawer links (?project=<slug>) now go to the case-study page
+  const [params] = useSearchParams();
+  const legacySlug = params.get("project");
 
   const filtered = useMemo(
     () =>
@@ -84,6 +90,10 @@ const AllProjects: React.FC = () => {
     return () => ctx.revert();
   }, [filtered]);
 
+  if (legacySlug && projectBySlug(legacySlug)) {
+    return <Navigate to={`/projects/${legacySlug}`} replace />;
+  }
+
   return (
     <div ref={pageRef} className="min-h-screen bg-core-obsidian px-6 pb-32 pt-32 text-core-ink md:px-12">
       <div className="mx-auto max-w-7xl">
@@ -106,7 +116,9 @@ const AllProjects: React.FC = () => {
             {STATS.map((s) => (
               <div key={s.label}>
                 <dt className="font-mono text-[10px] tracking-[0.2em] text-core-mist">{s.label}</dt>
-                <dd className="mt-1 text-3xl font-semibold tracking-tight">{s.value}</dd>
+                <dd className="mt-1 text-3xl font-semibold tracking-tight">
+                  <Odometer value={s.value} />
+                </dd>
               </div>
             ))}
           </dl>

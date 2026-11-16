@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
-import { ArrowUpRight, Github } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, ArrowUpRight, Github } from "lucide-react";
 import type { Project } from "../../constants/projects";
 import { isAi } from "./projectKinds";
 import { ProjectCover } from "./ProjectCover";
@@ -18,6 +19,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
   return (
     <article
       ref={ref}
+      data-slug={project.slug}
       onMouseMove={(e) => {
         const el = ref.current;
         if (!el) return;
@@ -57,7 +59,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
         )}
       </div>
 
-      <div className={`relative z-20 flex flex-1 flex-col p-6 ${featured ? "md:justify-center md:p-10" : ""}`}>
+      {/* z-[15] without `relative`: a flex item's z-index lifts the text above the cursor
+          light (z-10) without becoming the containing block of the title's stretched ::after */}
+      <div className={`z-[15] flex flex-1 flex-col p-6 ${featured ? "md:justify-center md:p-10" : ""}`}>
         <p className="font-mono text-[10px] tracking-[0.2em] text-core-mist">
           {project.finished_date.slice(0, 4)} · {project.role.toUpperCase()}
         </p>
@@ -66,7 +70,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
             featured ? "text-3xl md:text-4xl" : "text-xl"
           }`}
         >
-          {project.title}
+          <Link
+            to={`/projects/${project.slug}`}
+            className="after:absolute after:inset-0 after:z-20 after:content-[''] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-core-icy"
+          >
+            {project.title}
+          </Link>
         </h3>
         <p
           className={`mt-3 text-sm leading-relaxed text-core-mist ${
@@ -96,7 +105,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
               href={project.web_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-4 py-2 text-xs font-medium text-core-obsidian transition-colors hover:bg-core-ink"
+              className="relative z-30 inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-4 py-2 text-xs font-medium text-core-obsidian transition-colors hover:bg-core-ink"
             >
               Live demo <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
@@ -104,10 +113,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, featured = fa
           <button
             type="button"
             onClick={() => onRepos(project.repos)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-core-graphite px-4 py-2 text-xs font-medium text-core-ink transition-colors hover:border-core-mist"
+            className="relative z-30 inline-flex items-center gap-1.5 rounded-full border border-core-graphite px-4 py-2 text-xs font-medium text-core-ink transition-colors hover:border-core-mist"
           >
             <Github className="h-3.5 w-3.5" /> Source
           </button>
+          <span
+            aria-hidden="true"
+            className="inline-flex items-center gap-1.5 px-2 py-2 text-xs font-medium text-core-mist transition-colors group-hover:text-core-ink"
+          >
+            Details <ArrowRight className="h-3.5 w-3.5" />
+          </span>
         </div>
       </div>
     </article>
