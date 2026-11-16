@@ -65,12 +65,12 @@ export const ActivityInsights: React.FC<ActivityInsightsProps> = ({ year, onSele
       <dl className={`mt-8 border-t border-core-graphite transition-opacity ${loading ? "opacity-40" : ""}`}>
         {rows.map(([label, value]) => (
           <div key={label} className="grid grid-cols-[9rem_1fr] items-baseline gap-4 border-b border-core-graphite py-3.5">
-            <dt className="font-mono text-[10px] tracking-[0.2em] text-core-mist">{label}</dt>
+            <dt className="font-mono text-[11px] tracking-[0.2em] text-core-mist">{label}</dt>
             <dd className="text-base text-core-ink">{value}</dd>
           </div>
         ))}
       </dl>
-      <p className="mt-4 font-mono text-[10px] tracking-[0.15em] text-core-mist/70">
+      <p className="mt-4 font-mono text-[11px] tracking-[0.15em] text-core-mist">
         {hoverMonth === null ? "HOVER A MONTH ON THE RING" : "MOVE AWAY TO SEE THE YEAR"}
       </p>
     </div>

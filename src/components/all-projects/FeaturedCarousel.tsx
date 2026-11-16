@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Github, Pause, Play } from "lucide-react";
 import type { Project } from "../../constants/projects";
@@ -11,6 +12,8 @@ interface FeaturedCarouselProps {
   onRepos: (repos: string | string[]) => void;
   /** auto-advance interval in ms */
   interval?: number;
+  /** stop auto-advance and live announcements (e.g. while a dialog covers the page) */
+  paused?: boolean;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -24,6 +27,7 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
   projects,
   onRepos,
   interval = 9000,
+  paused = false,
 }) => {
   const rootRef = useRef<HTMLElement>(null);
   const timerRef = useRef<gsap.core.Tween | null>(null);
@@ -51,7 +55,17 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
       gsap.fromTo(
         ".fc-copy > *",
         { y: 22, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: "power3.out", delay: 0.15 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.06,
+          ease: "power3.out",
+          delay: 0.15,
+          // a leftover transform would make the <h2> the containing block of the
+          // title's stretched ::after, shrinking the click target to the heading
+          clearProps: "transform",
+        },
       );
     }, rootRef);
     return () => ctx.revert();
@@ -59,7 +73,7 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
 
   // progress bar drives the auto-advance; restarts on every slide change
   useEffect(() => {
-    if (!autoplay) return;
+    if (!autoplay || paused) return;
     const bar = rootRef.current?.querySelector(".fc-progress-active");
     if (!bar) return;
     const tween = gsap.fromTo(
@@ -73,7 +87,7 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
       tween.kill();
       timerRef.current = null;
     };
-  }, [index, autoplay, interval, next, userPaused]);
+  }, [index, autoplay, interval, next, userPaused, paused]);
 
   // pause while the tab is hidden
   useEffect(() => {
@@ -146,13 +160,23 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
 
         {/* copy */}
         <div className="relative flex flex-1 flex-col p-6 md:p-10">
-          <div key={current.id} className="fc-copy flex flex-1 flex-col justify-center" aria-live="polite">
+          <div
+            key={current.id}
+            data-slug={current.slug}
+            className="fc-copy flex flex-1 flex-col justify-center"
+            aria-live={paused ? "off" : "polite"}
+          >
             <p className="font-mono text-[10px] tracking-[0.2em] text-core-mist">
               {current.finished_date.slice(0, 4)} · {current.role.toUpperCase()}
               {isAi(current) && <span className="ml-2 text-core-icy">· AI</span>}
             </p>
             <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-core-ink md:text-5xl">
-              {current.title}
+              <Link
+                to={`/projects/${current.slug}`}
+                className="after:absolute after:inset-0 after:z-20 after:content-[''] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-core-icy"
+              >
+                {current.title}
+              </Link>
             </h2>
             <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-core-mist md:text-base">
               {current.description}
@@ -173,7 +197,7 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
                   href={current.web_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-5 py-2.5 text-sm font-medium text-core-obsidian transition-colors hover:bg-core-ink"
+                  className="relative z-30 inline-flex items-center gap-1.5 rounded-full bg-core-chrome px-5 py-2.5 text-sm font-medium text-core-obsidian transition-colors hover:bg-core-ink"
                 >
                   Live demo <ArrowUpRight className="h-4 w-4" />
                 </a>
@@ -181,15 +205,21 @@ export const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({
               <button
                 type="button"
                 onClick={() => onRepos(current.repos)}
-                className="inline-flex items-center gap-1.5 rounded-full border border-core-graphite px-5 py-2.5 text-sm font-medium text-core-ink transition-colors hover:border-core-mist"
+                className="relative z-30 inline-flex items-center gap-1.5 rounded-full border border-core-graphite px-5 py-2.5 text-sm font-medium text-core-ink transition-colors hover:border-core-mist"
               >
                 <Github className="h-4 w-4" /> Source
               </button>
+              <span
+                aria-hidden="true"
+                className="inline-flex items-center gap-1.5 px-2 py-2.5 text-sm font-medium text-core-mist"
+              >
+                Details <ArrowRight className="h-4 w-4" />
+              </span>
             </div>
           </div>
 
           {/* controls */}
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+          <div className="relative z-30 mt-8 flex flex-wrap items-center justify-between gap-4">
             <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2" role="tablist" aria-label="Choose project">
               {projects.map((p, i) => (
                 <button

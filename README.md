@@ -193,8 +193,7 @@ npm run lint
 chinjuku-portfolio/
 ├── .vercel/                  # Vercel Project Metadata
 ├── public/                   # Static assets
-│   ├── favicon.ico
-│   └── resume.pdf            # Downloadable/Preview Resume
+│   └── favicon.ico
 ├── src/
 │   ├── assets/               # Local images & background art
 │   ├── components/           # Reusable UI & Section Components

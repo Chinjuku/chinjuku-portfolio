@@ -9,6 +9,7 @@ import {
   type YearActivityData,
 } from "../constants/codeActivities";
 import { ActivityHeader, ActivityInsights, YearRing } from "./code-activities";
+import Container from "./common/Container";
 
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -199,8 +200,8 @@ const CodeActivities: React.FC = () => {
   }, [activityData, selectedYear]);
 
   return (
-    <section id="activity" ref={sectionRef} className="relative z-10 overflow-hidden px-6 py-28 md:px-12">
-      <div className="mx-auto max-w-6xl">
+    <section id="activity" ref={sectionRef} className="relative z-10 overflow-hidden py-28">
+      <Container>
         <ActivityHeader isRefreshing={isRefreshing} onRefresh={handleManualRefresh} />
 
         <div className="grid items-center gap-12 md:grid-cols-12">
@@ -228,7 +229,7 @@ const CodeActivities: React.FC = () => {
             />
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

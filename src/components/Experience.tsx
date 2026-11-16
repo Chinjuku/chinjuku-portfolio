@@ -1,15 +1,18 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { experiences } from "../constants/experiences";
 import { ExperienceSlide } from "./experience/index";
 import { RevealText } from "./motion";
 import { useIsMobile, useReducedMotion } from "./hero/core/hooks";
+import Container from "./common/Container";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const years = experiences.map((e) => new Date(e.finished_date).getFullYear());
 const SPAN = `${Math.min(...years)} – ${Math.max(...years)}`;
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
  * Experience as a horizontal timeline (newest → oldest, left → right).
@@ -21,7 +24,8 @@ const Experience: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const fillRef = useRef<HTMLDivElement>(null);
-  const counterRef = useRef<HTMLSpanElement>(null);
+  const triggerRef = useRef<ScrollTrigger | null>(null);
+  const [active, setActiveIndex] = useState(0);
   const isMobile = useIsMobile();
   const reduced = useReducedMotion();
   const horizontal = !isMobile && !reduced;
@@ -66,9 +70,7 @@ const Experience: React.FC = () => {
       const setActive = (progress: number) => {
         const active = Math.round(progress * (slides.length - 1));
         slides.forEach((s, i) => s.classList.toggle("is-active", i === active));
-        if (counterRef.current) {
-          counterRef.current.textContent = `${String(active + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")}`;
-        }
+        setActiveIndex(active);
       };
       setActive(0);
 
@@ -81,6 +83,8 @@ const Experience: React.FC = () => {
           end: () => `+=${distance()}`,
           pin: true,
           scrub: 1,
+          // settle on the nearest role when the user stops scrolling
+          snap: { snapTo: 1 / (slides.length - 1), duration: { min: 0.2, max: 0.5 }, ease: "power1.inOut" },
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             if (fillRef.current) fillRef.current.style.transform = `scaleX(${self.progress})`;
@@ -88,6 +92,8 @@ const Experience: React.FC = () => {
           },
         },
       });
+
+      triggerRef.current = slide.scrollTrigger ?? null;
 
       // each role rises in as it slides into view from the right
       slides.forEach((s) => {
@@ -105,8 +111,21 @@ const Experience: React.FC = () => {
       });
     }, sectionRef);
     ScrollTrigger.refresh();
-    return () => ctx.revert();
+    return () => {
+      triggerRef.current = null;
+      ctx.revert();
+    };
   }, [horizontal]);
+
+  const goTo = (i: number) => {
+    const st = triggerRef.current;
+    if (!st) return;
+    const target = Math.min(Math.max(i, 0), experiences.length - 1);
+    window.scrollTo({
+      top: st.start + ((st.end - st.start) * target) / (experiences.length - 1),
+      behavior: "smooth",
+    });
+  };
 
   return (
     // React-owned wrapper: the pin-spacer wraps <section>, so React removes this div
@@ -118,17 +137,16 @@ const Experience: React.FC = () => {
           horizontal ? "flex h-screen flex-col justify-center" : "py-24"
         }`}
       >
-        <div className="exp-head mx-auto flex w-full max-w-6xl flex-wrap items-end justify-between gap-6 px-6 md:px-12">
+        <Container className="exp-head flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] tracking-[0.3em] text-core-icy">EXPERIENCE</p>
             <RevealText
               as="h2"
               className="mt-4 text-4xl font-semibold tracking-[-0.03em] text-core-ink md:text-6xl"
               text="Where I've worked"
-              accentWords={["worked"]}
             />
             <p className="mt-3 max-w-md text-base text-core-mist">
-              Internships, part-time roles and the university events I built for.
+              Full-time work, an internship, part-time roles and the university events I built for.
             </p>
           </div>
           <dl className="flex gap-8 font-mono text-[10px] tracking-[0.2em] text-core-mist">
@@ -141,7 +159,7 @@ const Experience: React.FC = () => {
               <dd className="mt-1 text-2xl tracking-tight text-core-ink">{SPAN}</dd>
             </div>
           </dl>
-        </div>
+        </Container>
 
         <div className={`relative mt-12 ${horizontal ? "" : "px-6"}`}>
           {/* the rail the dots sit on (desktop) */}
@@ -154,7 +172,7 @@ const Experience: React.FC = () => {
             ref={trackRef}
             className={
               horizontal
-                ? "exp-horizontal flex w-max gap-10 pl-[max(3rem,calc((100vw-72rem)/2+3rem))] pr-[20vw]"
+                ? "exp-horizontal flex w-max gap-10 pl-[calc(max(0px,(100%_-_80rem)/2)_+_3rem)] pr-[calc(max(0px,(100%_-_80rem)/2)_+_3rem)]"
                 : "exp-vertical mx-auto flex max-w-xl flex-col gap-12"
             }
           >
@@ -165,10 +183,32 @@ const Experience: React.FC = () => {
         </div>
 
         {horizontal && (
-          <div className="mx-auto mt-10 flex w-full max-w-6xl items-center gap-4 px-6 font-mono text-[11px] tracking-[0.2em] text-core-mist md:px-12">
-            <span ref={counterRef}>01 / {String(experiences.length).padStart(2, "0")}</span>
-            <span className="text-core-mist/60">SCROLL →</span>
-          </div>
+          <Container className="mt-10 flex items-center gap-4 font-mono text-[11px] tracking-[0.2em] text-core-chrome">
+            <span aria-live="polite">
+              {pad(active + 1)} / {pad(experiences.length)}
+            </span>
+            <span className="text-core-mist">SCROLL OR USE THE ARROWS</span>
+            <div className="ml-auto flex gap-2">
+              <button
+                type="button"
+                onClick={() => goTo(active - 1)}
+                disabled={active === 0}
+                aria-label="Previous role"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-core-mist/50 text-core-ink transition-colors hover:border-core-ink disabled:opacity-40 disabled:hover:border-core-mist/50"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(active + 1)}
+                disabled={active === experiences.length - 1}
+                aria-label="Next role"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-core-mist/50 text-core-ink transition-colors hover:border-core-ink disabled:opacity-40 disabled:hover:border-core-mist/50"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </Container>
         )}
       </section>
     </div>

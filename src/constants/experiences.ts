@@ -10,19 +10,30 @@ export interface Experience {
 
 export const experiences: Experience[] = [
   {
+    id: 6,
+    role: "Full-stack Developer",
+    company: "Firmer Co., Ltd",
+    period: "Apr 2026 - Present",
+    description:
+      "Full-time Full-stack Developer at Firmer, continuing to build and maintain the inventory system I started on as an intern.",
+    tags: ["Fullstack", "Inventory System", "Full-time"],
+    // ongoing role: the start date stands in so the card sorts first and shows the year
+    finished_date: "2026-04-20",
+  },
+  {
     id: 1,
     role: "Wordpress Developer",
     company: "Sri Ayutthaya",
     period: "Nov 2025 - Jan 2026",
     description:
-      "Continuing development on the inventory project as a part-time Fullstack developer.",
-    tags: ["Wordpress", "Part-time"],
+      "Built a WordPress site for a restaurant ordering system and set up SMTP email notifications for new orders, as a part-time developer.",
+    tags: ["Wordpress", "SMTP", "Part-time"],
     finished_date: "2026-01-10",
   },
   {
     id: 2,
     role: "Fullstack Developer",
-    company: "Firmer Internship",
+    company: "Firmer Co., Ltd",
     period: "Sep 2024 - Mar 2025",
     description: "Worked as a intern developing an inventory project.",
     tags: ["Fullstack", "Inventory System", "Internship"],

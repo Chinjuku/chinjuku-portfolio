@@ -3,6 +3,7 @@ import Navbar from "./components/common/Navbar";
 import ScrollToTop from "./components/common/ScrollToTop";
 import Home from "./pages/Home";
 import AllProjects from "./pages/AllProjects";
+import ProjectDetail from "./pages/ProjectDetail";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<AllProjects />} />
+        <Route path="/projects/:slug" element={<ProjectDetail />} />
       </Routes>
     </main>
   );
