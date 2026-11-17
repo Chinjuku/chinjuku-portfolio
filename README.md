@@ -1,246 +1,125 @@
-# 🚀 CHINJUKU — Mission Control Developer Portfolio
+# CHINJUKU — Mission Control Developer Portfolio
 
-A responsive, high-performance developer portfolio featuring a **Cosmic Cyberpunk HUD / Mission Control** aesthetic. Built with React 19, TypeScript, Vite, TailwindCSS, GSAP, and p5.js.
-
----
-
-## 🛠️ Tech Stack & Architecture
-
-- **Core:** [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vite.dev/)
-- **Styling:** [TailwindCSS](https://tailwindcss.com/) with a unified Cosmic Design System (Cyber Cyan, Nebula Purple, Space Black, Glassmorphic HUD)
-- **Animations:** [GSAP 3](https://greensock.com/gsap/) with [ScrollTrigger](https://greensock.com/scrolltrigger/) (Lens Flare Spotlight Mask scroll interaction)
-- **Canvas / Creative Coding:** [p5.js](https://p5js.org/) (Interactive particle aura & force field effects)
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Routing & State:** [React Router 7](https://reactrouter.com/) with instant SPA scroll restoration & active section scroll-spy
-- **Data Integration:** Live GitHub Contributions Telemetry (`Chinjuku`) with 1-hour `localStorage` caching and manual sync
+พอร์ตโฟลิโอส่วนตัวของ Chinjuku ในธีม **Cosmic Cyberpunk HUD / Mission Control** เป็น Single Page Application ที่เน้นภาพ motion ที่นุ่มนวลและ responsive ทั้ง mobile และ desktop
 
 ---
 
-## 📦 Getting Started Locally
+## Sections & Pages
 
-### Prerequisites
-- **Node.js**: v18.0.0 or higher (v20+ recommended)
-- **Package Manager**: `npm` (v9+) or `yarn`
+**หน้าแรก (`/`)** เรียงเป็น section บนหน้าเดียว และ Navbar จะ highlight section ที่กำลังดูอยู่
+- **Hero:** landing พร้อม force-field background (p5.js) และ HUD telemetry
+- **About:** ข้อมูลโปรไฟล์และรูปพร้อม parallax เบา ๆ
+- **Skills:** tech radar / กริดทักษะ
+- **Currently Building:** โปรเจกต์ที่กำลังทำ พร้อม preview ที่ค่อย ๆ เปลี่ยนภาพ
+- **Experience:** timeline การทำงาน
+- **Code Activities:** GitHub contributions telemetry พร้อม cache 1 ชั่วโมงใน `localStorage` และปุ่ม sync เอง
+- **Contact:** ช่องทางติดต่อ
 
-### 1. Clone & Install Dependencies
+**`/projects`** รายการโปรเจกต์ทั้งหมด พร้อม filter และ Lens Flare Spotlight Mask ตอน scroll
+
+**`/projects/:slug`** หน้า case study ของแต่ละโปรเจกต์: gallery (desktop และ phone), overview, my role, highlights, stack และลิงก์ Next project
+
+**`/personality`** หน้า "The Curious Creator" ที่มีแผง Day to day แบบ interactive
+
+---
+
+## Tech Stack
+
+- **Core:** React 19, TypeScript (strict), Vite 7
+- **Routing:** React Router 7 พร้อม scroll restoration และ scroll-spy
+- **Styling:** Tailwind CSS 3 (`darkMode: "class"`) พร้อม design tokens ในธีม space / nebula / starlight และ light/dark/system
+- **Animation:** GSAP 3 + ScrollTrigger, p5.js (canvas), three.js / React Three Fiber สำหรับ 3D บางส่วน
+- **Icons:** lucide-react
+
+---
+
+## Getting Started
+
+ต้องมี Node.js 18 ขึ้นไป (แนะนำ 20+) และ npm
+
 ```bash
-git clone https://github.com/Chinjuku/chinjuku-portfolio.git
-cd chinjuku-portfolio
-
-# Install dependencies
 npm install
+npm run dev        # เปิดที่ http://localhost:5173
 ```
 
-### 2. Development Server
-Start the local Vite development server with Hot Module Replacement (HMR):
+คำสั่งอื่นที่ใช้บ่อย:
+
 ```bash
-npm run dev
-```
-Open your browser and navigate to `http://localhost:5173`.
-
-### 3. Production Build & Verification
-Compile TypeScript and bundle production assets with Vite:
-```bash
-npm run build
-```
-Preview the production build locally before deploying:
-```bash
-npm run preview
-```
-
-### 4. Code Quality & Linting
-Run ESLint across the codebase:
-```bash
-npm run lint
+npm run build      # tsc -b && vite build
+npm run preview    # ดู production build ก่อน deploy
+npm run lint       # ESLint
+npm run test       # Vitest
 ```
 
 ---
 
-## 🚢 How to Deploy (วิธีการ Deploy แบบละเอียด)
+## Editing Content
 
-โครงการนี้เป็น **Single Page Application (SPA)** ผลลัพธ์จากการ build จะอยู่ที่โฟลเดอร์ `dist/` สามารถนำไป deploy บนคลาวด์แพลตฟอร์มต่างๆ ได้ง่ายและมีประสิทธิภาพสูง โดยมีขั้นตอนดังนี้:
+ข้อมูลทั้งหมดอยู่ใน `src/constants/` ไม่ต้องแก้ component เพื่อเปลี่ยนเนื้อหา
 
----
+| ไฟล์ | เก็บอะไร |
+| --- | --- |
+| `hero.ts` | ข้อความและ telemetry ของหน้าแรก |
+| `about.ts` | โปรไฟล์และรูป |
+| `skills.tsx` | ทักษะและ radar |
+| `experiences.ts` | ประวัติการทำงาน |
+| `projects.ts` | โปรเจกต์ทั้งหมด รวม `gallery` ของแต่ละโปรเจกต์ |
+| `currentlyBuilding.ts` | โปรเจกต์ที่กำลังทำ |
+| `codeActivities.ts` | ค่าตั้งต้นของ GitHub telemetry |
+| `personality.ts` | เนื้อหาหน้า `/personality` |
+| `contact.ts` | ช่องทางติดต่อ |
 
-### วิธีที่ 1: Deploy บน Vercel (แนะนำ - ใช้เวลาน้อยที่สุด)
+**เพิ่มโปรเจกต์ใหม่:** เพิ่ม object ใน `all_projects` ใน `projects.ts` กำหนด `slug` ไม่ซ้ำ จากนั้นวางรูปไว้ที่ `public/projects/<slug>/` และเพิ่ม `gallery`
 
-โปรเจกต์นี้ได้รับการตั้งค่าพร้อมไฟล์ `vercel.json` สำหรับจัดการ SPA Rewrite (`/* -> /index.html`) เรียบร้อยแล้ว เพื่อป้องกันปัญหา **HTTP 404** เมื่อผู้ใช้กด Refresh ขณะอยู่ที่หน้า `/projects`
-
-#### Option A: Deploy ผ่าน Vercel CLI (ทำผ่าน Terminal)
-
-1. **ติดตั้ง Vercel CLI ทั่วโลก (หากยังไม่มี):**
-   ```bash
-   npm install -g vercel
-   ```
-
-2. **เข้าสู่ระบบ Vercel:**
-   ```bash
-   vercel login
-   ```
-
-3. **Deploy ขึ้น Staging / Preview:**
-   ```bash
-   vercel
-   ```
-   *(กด Enter เพื่อตอบรับค่า Default ทั้งหมด)*
-
-4. **Deploy ขึ้น Production ทันที:**
-   ```bash
-   vercel --prod
-   ```
-   ระบบจะทำการ build และส่งมอบ URL Production ให้ทันที (เช่น `https://chinjuku-portfolio.vercel.app`)
+**จำนวนรูปต่อโปรเจกต์:** desktop 5–8 รูป, phone 2–4 รูป และรวมไม่เกินประมาณ 10 รูป รูปที่ไม่ได้ถ่ายจากอุปกรณ์นั้นจริงไม่ควรใส่ในกรอบของอุปกรณ์นั้น
 
 ---
 
-#### Option B: Deploy อัตโนมัติผ่าน GitHub + Vercel Dashboard (CI/CD)
-
-แนะนำวิธีนี้สำหรับการพัฒนาต่อเนื่อง เมื่อ `git push` ขึ้น GitHub ทาง Vercel จะ build และ deploy ให้โดยอัตโนมัติ:
-
-1. นำโค้ดขึ้น GitHub Repository:
-   ```bash
-   git add .
-   git commit -m "feat: ready for production deployment"
-   git push origin main
-   ```
-2. เข้าไปที่ [Vercel Dashboard](https://vercel.com/dashboard)
-3. กดปุ่ม **"Add New..."** $\rightarrow$ เลือก **"Project"**
-4. เลือก Repository `chinjuku-portfolio` แล้วกด **"Import"**
-5. ตรวจสอบการตั้งค่า **Project Configuration**:
-   - **Framework Preset:** `Vite`
-   - **Root Directory:** `./`
-   - **Build Command:** `npm run build` (หรือ `tsc -b && vite build`)
-   - **Output Directory:** `dist`
-   - **Install Command:** `npm install`
-6. กดปุ่ม **"Deploy"**
-7. รอประมาณ 30-45 วินาที เว็บไซต์จะพร้อมใช้งานทั่วโลกผ่าน Global Edge Network
-
-> [!NOTE]
-> ไฟล์ `vercel.json` ในโปรเจกต์มีเนื้อหาดังนี้:
-> ```json
-> {
->   "rewrites": [
->     { "source": "/(.*)", "destination": "/index.html" }
->   ]
-> }
-> ```
-> การตั้งค่านี้สำคัญมากสำหรับ SPA เพราะเมื่อผู้ใช้เข้าผ่าน URL ตรงเช่น `https://domain.com/projects` ตัว Vercel Edge Server จะส่ง `index.html` ให้ React Router ทำงานต่อโดยไม่เกิด 404
-
----
-
-### วิธีที่ 2: Deploy บน Netlify
-
-1. เข้าไปที่ [Netlify Dashboard](https://app.netlify.com/)
-2. กด **"Add new site"** $\rightarrow$ **"Import an existing project"** $\rightarrow$ เชื่อมต่อ GitHub
-3. กำหนดค่า Build Settings:
-   - **Base directory:** (เว้นว่างไว้)
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-4. **การรองรับ SPA Routes บน Netlify:**
-   สร้างไฟล์ชื่อ `public/_redirects` โดยมีข้อความ:
-   ```text
-   /*    /index.html   200
-   ```
-5. กด **"Deploy Site"**
-
----
-
-### วิธีที่ 3: Deploy บน Docker / Self-Hosted Nginx Server
-
-หากต้องการนำไปรันบน VPS, Cloud VM (DigitalOcean, AWS EC2, GCP) หรือใช้ Nginx Reverse Proxy:
-
-1. สั่ง Build Production Bundle บนเครื่องเซิร์ฟเวอร์:
-   ```bash
-   npm install
-   npm run build
-   ```
-2. คัดลอกโฟลเดอร์ `dist/` ไปไว้ที่ `/var/www/chinjuku-portfolio`
-3. ตั้งค่า Nginx Server Block (`/etc/nginx/sites-available/portfolio`):
-   ```nginx
-   server {
-       listen 80;
-       server_name your-domain.com;
-
-       root /var/www/chinjuku-portfolio;
-       index index.html;
-
-       # รองรับ SPA Routing ป้องกันปัญหา 404
-       location / {
-           try_files $uri $uri/ /index.html;
-       }
-
-       # เปิดใช้งาน Gzip Compression เพื่อโหลดเร็วขึ้น
-       gzip on;
-       gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
-
-       # Cache Static Assets ยาวนานเพื่อความเร็วสูงสุด
-       location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff2|pdf)$ {
-           expires 1y;
-           add_header Cache-Control "public, immutable";
-       }
-   }
-   ```
-4. ทดสอบและ Restart Nginx:
-   ```bash
-   sudo nginx -t
-   sudo systemctl reload nginx
-   ```
-
----
-
-## 📁 Directory Structure
+## Project Structure
 
 ```text
-chinjuku-portfolio/
-├── .vercel/                  # Vercel Project Metadata
-├── public/                   # Static assets
-│   └── favicon.ico
-├── src/
-│   ├── assets/               # Local images & background art
-│   ├── components/           # Reusable UI & Section Components
-│   │   ├── About.tsx         # Mission / Profile About section
-│   │   ├── CodeActivities.tsx# GitHub Telemetry & Heat Map Activity Log
-│   │   ├── Contact.tsx       # Contact terminal & Letter clip slide animation
-│   │   ├── Experience.tsx    # Career Timeline / Trajectory HUD
-│   │   ├── ForceFieldBackground.tsx # Interactive p5 canvas force field
-│   │   ├── Hero.tsx          # Hero landing with HUD telemetry
-│   │   ├── Navbar.tsx        # Floating Glassmorphic Capsule Navbar (max-w-6xl)
-│   │   ├── ProfileAura.tsx   # Concentric glowing aura particle field
-│   │   ├── Projects.tsx      # Featured projects showcase
-│   │   ├── ScrollToTop.tsx   # SPA Instant Scroll & ScrollTrigger refresh
-│   │   └── Skills.tsx        # Tech Radar / Grid of proficiencies
-│   ├── context/
-│   │   └── ThemeContext.tsx  # Dark / Light theme token context
-│   ├── data/
-│   │   └── projects.ts       # Central projects catalog & metadata
-│   ├── hooks/
-│   │   ├── useActiveSection.ts # IntersectionObserver scroll spy
-│   │   └── useNavClick.ts    # Smooth in-page and route navigation hook
-│   ├── pages/
-│   │   ├── Home.tsx          # Single-page mission landing
-│   │   └── AllProjects.tsx   # Lens Flare Spotlight Mask + Project Archive
-│   ├── App.tsx               # Root routes & GSAP plugin registration
-│   ├── index.css             # Tailwind directives & cosmic theme tokens
-│   └── main.tsx              # Application entry point
-├── vercel.json               # Vercel SPA rewrite configuration
-├── tailwind.config.js        # Design tokens & color system
-├── tsconfig.json             # TypeScript configuration
-├── vite.config.ts            # Vite bundler options
-└── package.json              # Version 1.2.0 metadata & scripts
+src/
+├── components/
+│   ├── Hero.tsx, About.tsx, Skills.tsx, CurrentlyBuilding.tsx,
+│   │   Experience.tsx, CodeActivities.tsx, Contact.tsx, Projects.tsx
+│   │                         # section shells (เป็นเจ้าของ GSAP timeline และ data)
+│   ├── hero/, skills/, experience/, code-activities/, currently-building/,
+│   │   all-projects/, personality/, stats/, motion/
+│   │                         # sub-components ของแต่ละ section (มี index.ts barrel)
+│   └── common/               # Navbar, RepoModal, ScrollToTop
+├── constants/                # เนื้อหาทั้งหมด (ดู Editing Content)
+├── pages/                    # Home, AllProjects, ProjectDetail, Personality
+├── hooks/                    # useActiveSection, useNavClick
+├── context/                  # ThemeContext (light | dark | system)
+├── utils/
+├── App.tsx                   # routes และ GSAP plugin registration
+└── main.tsx
+
+public/projects/<slug>/       # รูปของแต่ละโปรเจกต์
+vercel.json                   # SPA rewrite สำหรับ Vercel
+tailwind.config.js            # design tokens และ palette
 ```
 
 ---
 
-## ⚡ Verification Checklist Before Deploy
+## Deploy
 
-- [x] รัน `npm run build` ผ่านโดยไม่มี TypeScript errors (`exit code 0`)
-- [x] ตรวจสอบไฟล์ `vercel.json` สำหรับจัดการ SPA Rewrite (`/index.html`)
-- [x] ตรวจสอบการทำงานของ Light/Dark Mode ทุก Section
-- [x] ตรวจสอบการทำงานของหน้า `/projects` Spotlight Mask scroll effect
-- [x] ตรวจสอบ Cache ระบบ GitHub Contributions Telemetry (`localStorage` 1-hour TTL)
+โปรเจกต์นี้เป็น SPA ผลลัพธ์จาก `npm run build` อยู่ที่ `dist/`
+
+**Vercel (แนะนำ):** `vercel.json` มี rewrite `/* → /index.html` ไว้แล้ว ทำให้ refresh ที่ `/projects` หรือ `/personality` ไม่เกิด 404
+
+- วิธีที่ 1: เชื่อม repository ใน Vercel Dashboard แล้ว push ขึ้น `main` ระบบจะ deploy ให้อัตโนมัติ การตั้งค่า: Framework `Vite`, Build `npm run build`, Output `dist`
+- วิธีที่ 2: ใช้ Vercel CLI
+  ```bash
+  npm install -g vercel
+  vercel login
+  vercel --prod
+  ```
+
+ถ้า deploy ที่อื่น ต้องตั้งค่า rewrite ให้ทุก path ส่งกลับไปที่ `index.html` ด้วย
 
 ---
 
-## 📄 License & Credits
+## License
 
-Developed with ❤️ by [Chinjuku](https://github.com/Chinjuku).  
-Personal Portfolio Website & Interactive Mission Control.
+Personal portfolio by [Chinjuku](https://github.com/Chinjuku). ใช้เป็นแรงบันดาลใจได้ แต่ขอให้ไม่คัดลอกเนื้อหาส่วนตัวไปใช้เป็นของตัวเอง

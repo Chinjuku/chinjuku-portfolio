@@ -54,6 +54,13 @@ useEffect(() => {
 - Palette (tailwind.config.js): `space-{black,dark,light,white,canvas}`, `station-{gray,light}`, `nebula-{purple,glow,deep,light}`, `starlight-{cyan,blue,teal,sky}`, `surface-{glass-light,glass-dark,border-light,border-dark}`, `cyber-{emerald,amber,rose}`. Add new colors there, not as hex in JSX.
 - Visual language: space / station / "telemetry" sci-fi HUD (glass panels, mono labels, glow). Responsive with `md:` / `lg:`.
 
+## Project screenshots (gallery limits)
+- Desktop shots: **5–8 per project**.
+- Phone shots: **2–4 per project**, only for screens where mobile differs from desktop. Never reuse a desktop shot in a phone frame.
+- Total: **no more than ~10 shots** per project.
+- Format `.webp`, stored in `public/projects/<slug>/`, referenced from `gallery` in `src/constants/projects.ts`.
+- Exception: FinTax already has 14 shots; don't trim it without asking.
+
 ## Canvas / 3D effects
 - Hero uses p5 (`hero/ForceFieldBackground.tsx`, spec in `.agent/hero-force-field.md`): create the p5 instance in an effect, `remove()` it on cleanup, handle resize, keep it `absolute inset-0` behind content with `pointer-events-none` overlays.
 - Any three.js / R3F scene follows the same rules: lazy-load the heavy component (`React.lazy`), dispose renderer/geometries on unmount, load Blender exports as compressed `.glb` (Draco/meshopt) from `public/`, respect `prefers-reduced-motion`.
