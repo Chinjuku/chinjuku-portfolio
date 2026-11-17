@@ -4,6 +4,7 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import Home from "./pages/Home";
 import AllProjects from "./pages/AllProjects";
 import ProjectDetail from "./pages/ProjectDetail";
+import Personality from "./pages/Personality";
 import { LikeOrbit, SiteStatsProvider } from "./components/stats";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjects />} />
           <Route path="/projects/:slug" element={<ProjectDetail />} />
+          <Route path="/personality" element={<Personality />} />
         </Routes>
 
         <LikeOrbit />

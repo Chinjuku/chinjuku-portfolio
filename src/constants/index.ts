@@ -6,3 +6,4 @@ export * from "./about";
 export * from "./codeActivities";
 export * from "./hero";
 export * from "./currentlyBuilding";
+export * from "./personality";

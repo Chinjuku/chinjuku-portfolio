@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import portrait from "../assets/profile-tech-cartoon.png";
 import { ABOUT_COPY, ABOUT_FACTS } from "../constants/about";
 import { useNavClick } from "../hooks";
@@ -173,6 +174,11 @@ const About: React.FC = () => {
                 <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
             </Magnetic>
+            {/* ลิงก์ไปหน้า /personality */}
+            <Link to="/personality" className="sci-fi-btn-secondary group">
+              More about how I work
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
         </div>
       </Container>
