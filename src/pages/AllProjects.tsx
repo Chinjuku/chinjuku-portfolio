@@ -126,7 +126,7 @@ const AllProjects: React.FC = () => {
         </header>
 
         {/* filters */}
-        <div className="z-30 mt-14 md:sticky md:top-24 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-core-obsidian/80 p-3 backdrop-blur-xl">
+        <div className="z-40 mt-14 md:sticky md:top-24 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-core-obsidian/90 p-3 backdrop-blur-xl">
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by type">
             {KINDS.map((k) => (
               <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={chip(kind === k)}>
@@ -167,7 +167,8 @@ const AllProjects: React.FC = () => {
         ) : (
           <>
             {showFeatured && (
-              <div className="mt-6">
+              // `isolate` keeps the carousel's z-30 controls under the sticky filter bar
+              <div className="isolate mt-6">
                 <FeaturedCarousel
                   projects={filtered.slice(0, CAROUSEL_COUNT)}
                   onRepos={openRepos}
@@ -175,7 +176,7 @@ const AllProjects: React.FC = () => {
                 />
               </div>
             )}
-            <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="isolate mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {gridProjects.map((p) => (
                 <ProjectCard key={p.id} project={p} onRepos={openRepos} />
               ))}
