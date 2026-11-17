@@ -97,9 +97,16 @@ export const all_projects: Project[] = [
     color: "from-sky-400 to-blue-600",
     repos: "https://github.com/Chinjuku/TripFlow",
     web_url: "",
-    image:
-      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1000&auto=format&fit=crop",
+    image: "/projects/tripflow/desktop-02-overview.png",
     finished_date: "2026-05-20",
+    gallery: [
+      { src: "/projects/tripflow/desktop-01-trips.png", device: "desktop", caption: "Group trips list" },
+      { src: "/projects/tripflow/desktop-02-overview.png", device: "desktop", caption: "Trip overview and itinerary" },
+      { src: "/projects/tripflow/desktop-05-finances.png", device: "desktop", caption: "Trip finances and balances" },
+      { src: "/projects/tripflow/desktop-09-central-fund.png", device: "desktop", caption: "Central fund pool" },
+      { src: "/projects/tripflow/desktop-10-monitoring.png", device: "desktop", caption: "Budget monitoring" },
+      { src: "/projects/tripflow/mobile-01-trips.png", device: "phone", caption: "Trips list on mobile" },
+    ],
   },
   {
     id: 3,
@@ -137,9 +144,16 @@ export const all_projects: Project[] = [
       "https://github.com/Chinjuku/ConnextrA-Server",
     ],
     web_url: "",
-    image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop",
+    image: "/projects/connextra/chat.png",
     finished_date: "2025-11-05",
+    gallery: [
+      { src: "/projects/connextra/chat.png", device: "desktop", caption: "Direct chat" },
+      { src: "/projects/connextra/group-chat.png", device: "desktop", caption: "Group chat with members" },
+      { src: "/projects/connextra/create-group.png", device: "desktop", caption: "Create a new group" },
+      { src: "/projects/connextra/add-member.png", device: "desktop", caption: "Add members to a group" },
+      { src: "/projects/connextra/find-group.png", device: "desktop", caption: "Find and join groups" },
+      { src: "/projects/connextra/admin-panel.png", device: "desktop", caption: "Admin dashboard" },
+    ],
   },
   {
     id: 5,
@@ -245,9 +259,15 @@ export const all_projects: Project[] = [
     color: "from-blue-400 to-cyan-500",
     repos: "https://github.com/Chinjuku/Calendoo-Todolist",
     web_url: "",
-    image:
-      "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=1000&auto=format&fit=crop",
+    image: "/projects/calendoo-todolist/ProjectTasks.png",
     finished_date: "2024-04-27",
+    gallery: [
+      { src: "/projects/calendoo-todolist/HomePage.png", device: "desktop", caption: "Landing page" },
+      { src: "/projects/calendoo-todolist/ProjectTasks.png", device: "desktop", caption: "Project task board" },
+      { src: "/projects/calendoo-todolist/AddTask.png", device: "desktop", caption: "Create a task" },
+      { src: "/projects/calendoo-todolist/CalendarNote.png", device: "desktop", caption: "Calendar notes" },
+      { src: "/projects/calendoo-todolist/Notes.png", device: "desktop", caption: "Sticky wall notes" },
+    ],
   },
   {
     id: 12,
@@ -396,8 +416,22 @@ export const all_projects: Project[] = [
     color: "from-slate-300 to-sky-500",
     repos: "https://github.com/Chinjuku/lucent-design-system",
     web_url: "",
-    image: "",
+    image: "/projects/lucent-design-system/storybook-data-display-table.png",
     finished_date: "2026-09-01",
+    // Storybook docs pages (light mode)
+    gallery: [
+      { src: "/projects/lucent-design-system/storybook-data-display-table.png", device: "desktop", caption: "Table with status badges" },
+      { src: "/projects/lucent-design-system/storybook-navigation-stepper.png", device: "desktop", caption: "Stepper" },
+      { src: "/projects/lucent-design-system/storybook-core-card.png", device: "desktop", caption: "Card" },
+      { src: "/projects/lucent-design-system/storybook-data-display-accordion.png", device: "desktop", caption: "Accordion" },
+      { src: "/projects/lucent-design-system/storybook-feedback-alert.png", device: "desktop", caption: "Alert" },
+      { src: "/projects/lucent-design-system/storybook-feedback-toast.png", device: "desktop", caption: "Toast (L3 glass overlay)" },
+      { src: "/projects/lucent-design-system/storybook-data-display-carousel.png", device: "desktop", caption: "Carousel" },
+      { src: "/projects/lucent-design-system/storybook-navigation-tabs.png", device: "desktop", caption: "Tabs" },
+      { src: "/projects/lucent-design-system/storybook-forms-radiogroup.png", device: "desktop", caption: "Radio group" },
+      { src: "/projects/lucent-design-system/storybook-forms-slider.png", device: "desktop", caption: "Slider" },
+      { src: "/projects/lucent-design-system/storybook-forms-uploadfield.png", device: "desktop", caption: "Upload field" },
+    ],
   },
   {
     id: 21,
