@@ -55,12 +55,19 @@ export const PERSONALITY_HUD: PersonalityHudRow[] = [
   { label: "MOTTO", value: "Always curious. Always creating." },
 ];
 
-export interface PersonalityHabit {
-  id: string;
+/** หัวแผงในส่วน Day to day (How I learn / Daily rhythm) */
+export interface PersonalityPanelHead {
   label: string;
   title: string;
   icon: PersonalityIcon;
-  points: string[];
+}
+
+/** วิธีเรียนรู้ 1 แบบ = 1 แท็บในแผง How I learn */
+export interface PersonalityLearnMethod {
+  id: string;
+  tab: string;
+  title: string;
+  text: string;
 }
 
 export const PERSONALITY_COPY = {
@@ -192,31 +199,38 @@ export const PERSONALITY_PILLARS: PersonalityPillar[] = [
   },
 ];
 
-export const PERSONALITY_HABITS: PersonalityHabit[] = [
-  {
-    id: "learn",
-    label: "HOW I LEARN",
-    title: "By building",
-    icon: "book",
-    points: [
-      "Self-taught most of the stack I use at work.",
-      "Learn a tool by shipping a small project with it.",
-      "Ask AI to explain how things really work, then check it in code.",
-      "Watch a video when I need to see the big picture first.",
-    ],
-  },
-  {
-    id: "rhythm",
-    label: "DAILY RHYTHM",
-    title: "Two shifts of making",
-    icon: "clock",
-    points: [
-      "Remote full-stack developer by day.",
-      "Side projects in the evening, usually 8 pm to midnight.",
-      "That second shift is where new ideas get tried first.",
-    ],
-  },
-];
+/** แผง How I learn: แท็บสลับเองได้ (ข้อมูลจาก about-me ที่เจ้าของอนุญาตให้แสดง) */
+export const PERSONALITY_LEARN: PersonalityPanelHead & { methods: PersonalityLearnMethod[] } = {
+  label: "HOW I LEARN",
+  title: "By building",
+  icon: "book",
+  methods: [
+    {
+      id: "build",
+      tab: "BUILD",
+      title: "Ship a small project",
+      text: "The fastest way I learn a new tool is to build something small and real with it, then keep going until it works.",
+    },
+    {
+      id: "ask",
+      tab: "ASK",
+      title: "Ask, then verify",
+      text: "I ask AI to explain how something really works, then check it in code before I trust the answer.",
+    },
+    {
+      id: "watch",
+      tab: "WATCH",
+      title: "See the big picture",
+      text: "When I'm lost, a video helps me see how the pieces fit together before I dig into the details.",
+    },
+    {
+      id: "self",
+      tab: "SELF-TAUGHT",
+      title: "Mostly self-taught",
+      text: "Most of the stack I use at work I learned on my own, one project at a time.",
+    },
+  ],
+};
 
 /** วงจร Mindset: Experiment and learn */
 export const PERSONALITY_LOOP = [
@@ -255,6 +269,8 @@ export interface PersonalityShift {
   start: number;
   end: number;
   status: string;
+  /** ประโยคที่แสดงเมื่อเข็มชี้ช่วงนี้ */
+  detail: string;
 }
 
 /**
@@ -262,11 +278,31 @@ export interface PersonalityShift {
  * หมายเหตุ: about-me บอกแค่ว่าเริ่มงานราว 10 โมง เวลาเลิกงาน 18:00 เป็นค่าร่าง รอเจ้าของยืนยัน
  */
 export const PERSONALITY_RHYTHM = {
+  label: "DAILY RHYTHM",
+  title: "Two shifts of making",
+  icon: "clock" as PersonalityIcon,
   timeZone: "Asia/Bangkok",
   zoneLabel: "BANGKOK",
   shifts: [
-    { id: "day", label: "Day job", start: 10, end: 18, status: "AT WORK" },
-    { id: "evening", label: "Side projects", start: 20, end: 24, status: "BUILDING SIDE PROJECTS" },
+    {
+      id: "day",
+      label: "Day job",
+      start: 10,
+      end: 18,
+      status: "AT WORK",
+      detail: "Remote full-stack developer, building real products with the team.",
+    },
+    {
+      id: "evening",
+      label: "Side projects",
+      start: 20,
+      end: 24,
+      status: "SIDE PROJECTS",
+      detail: "The second shift: where new ideas get tried first.",
+    },
   ] as PersonalityShift[],
   offStatus: "OFFLINE",
+  offDetail: "Away from the keyboard.",
+  scrubHint: "DRAG OR HOVER THE RING",
+  liveLabel: "BACK TO NOW",
 } as const;

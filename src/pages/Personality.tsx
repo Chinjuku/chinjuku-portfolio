@@ -79,22 +79,6 @@ const Personality: React.FC = () => {
           ),
       });
 
-      // แถวรายการ: เส้นคั่นค่อยๆ เลื่อนเข้ามา
-      gsap.utils.toArray<HTMLElement>(".personality-habit").forEach((habit) => {
-        gsap.fromTo(
-          habit.querySelectorAll(".personality-habit-row"),
-          { x: -16, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 0.5,
-            stagger: 0.07,
-            ease: "power3.out",
-            scrollTrigger: { trigger: habit, start: "top 80%", once: true },
-          },
-        );
-      });
-
       // Philosophy: ตัวอักษรสว่างขึ้นทีละตัวตามการ scroll (ย้อนกลับได้เมื่อ scroll ขึ้น)
       gsap.fromTo(
         ".personality-scrub-char",
